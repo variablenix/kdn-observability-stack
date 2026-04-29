@@ -2,8 +2,8 @@
   "apiVersion": "dashboard.grafana.app/v2",
   "kind": "Dashboard",
   "metadata": {
-    "name": "cups-print-org",
-    "generation": 2,
+    "name": "cups-print-[REDACTED]",
+    "generation": 9,
     "creationTimestamp": "2026-04-29T11:54:47Z",
     "labels": {},
     "annotations": {}
@@ -344,8 +344,9 @@
                       "version": "v0",
                       "spec": {
                         "expr": "cups_printer_status{job=~\"$job\"}",
+                        "format": "table",
                         "instant": true,
-                        "legendFormat": "{{printer}}"
+                        "legendFormat": ""
                       },
                       "labels": {
                         "grafana.app/export-label": "prometheus-1"
@@ -364,8 +365,9 @@
                       "version": "v0",
                       "spec": {
                         "expr": "cups_printer_accepting{job=~\"$job\"}",
+                        "format": "table",
                         "instant": true,
-                        "legendFormat": "{{printer}}"
+                        "legendFormat": ""
                       },
                       "labels": {
                         "grafana.app/export-label": "prometheus-1"
@@ -384,8 +386,9 @@
                       "version": "v0",
                       "spec": {
                         "expr": "cups_printer_enabled{job=~\"$job\"}",
+                        "format": "table",
                         "instant": true,
-                        "legendFormat": "{{printer}}"
+                        "legendFormat": ""
                       },
                       "labels": {
                         "grafana.app/export-label": "prometheus-1"
@@ -404,8 +407,9 @@
                       "version": "v0",
                       "spec": {
                         "expr": "cups_jobs_active{job=~\"$job\"}",
+                        "format": "table",
                         "instant": true,
-                        "legendFormat": "{{printer}}"
+                        "legendFormat": ""
                       },
                       "labels": {
                         "grafana.app/export-label": "prometheus-1"
@@ -424,8 +428,9 @@
                       "version": "v0",
                       "spec": {
                         "expr": "cups_jobs_completed{job=~\"$job\"}",
+                        "format": "table",
                         "instant": true,
-                        "legendFormat": "{{printer}}"
+                        "legendFormat": ""
                       },
                       "labels": {
                         "grafana.app/export-label": "prometheus-1"
@@ -455,14 +460,64 @@
                         "instance": true,
                         "job": true
                       },
+                      "includeByName": {},
+                      "indexByName": {},
                       "renameByName": {
-                        "Time": "",
-                        "Value #accepting": "Accepting",
-                        "Value #active": "Active Jobs",
-                        "Value #completed": "Completed Jobs",
-                        "Value #enabled": "Enabled",
-                        "Value #status": "Status",
+                        "Value #accepting": "",
+                        "Value #active": "",
+                        "Value #completed": "",
+                        "Value #enabled": "",
+                        "Value #status": "",
                         "printer": "Printer"
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "Transformation",
+                  "group": "groupBy",
+                  "spec": {
+                    "options": {
+                      "fields": {
+                        "Last (not null)": {
+                          "aggregations": []
+                        },
+                        "Printer": {
+                          "aggregations": [],
+                          "operation": "groupby"
+                        },
+                        "Value #accepting": {
+                          "aggregations": [],
+                          "operation": "groupby"
+                        },
+                        "Value #active": {
+                          "aggregations": [],
+                          "operation": "groupby"
+                        },
+                        "Value #completed": {
+                          "aggregations": [],
+                          "operation": "groupby"
+                        },
+                        "Value #enabled": {
+                          "aggregations": [],
+                          "operation": "groupby"
+                        },
+                        "Value #status": {
+                          "aggregations": [],
+                          "operation": "groupby"
+                        },
+                        "hostname": {
+                          "aggregations": [],
+                          "operation": "groupby"
+                        },
+                        "role": {
+                          "aggregations": [],
+                          "operation": "groupby"
+                        },
+                        "use": {
+                          "aggregations": [],
+                          "operation": "groupby"
+                        }
                       }
                     }
                   }
@@ -933,7 +988,7 @@
                       "group": "prometheus",
                       "version": "v0",
                       "spec": {
-                        "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\", instance=~\"192.168.x.x:9100\"}[5m])) * 100)",
+                        "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\", instance=\"192.0.2.1:9100\"}[5m])) * 100)",
                         "legendFormat": "CPU %"
                       },
                       "labels": {
@@ -1022,7 +1077,7 @@
                       "group": "prometheus",
                       "version": "v0",
                       "spec": {
-                        "expr": "100 * (1 - node_memory_MemAvailable_bytes{instance=\"192.168.x.x:9100\"} / node_memory_MemTotal_bytes{instance=\"192.168.x.x:9100\"})",
+                        "expr": "100 * (1 - node_memory_MemAvailable_bytes{instance=\"192.0.2.1:9100\"} / node_memory_MemTotal_bytes{instance=\"192.0.2.1:9100\"})",
                         "legendFormat": "RAM %"
                       },
                       "labels": {
@@ -1111,7 +1166,7 @@
                       "group": "prometheus",
                       "version": "v0",
                       "spec": {
-                        "expr": "100 * (1 - node_filesystem_avail_bytes{instance=\"192.168.x.x:9100\", mountpoint=\"/\", fstype!=\"tmpfs\"} / node_filesystem_size_bytes{instance=\"192.168.x.x:9100\", mountpoint=\"/\", fstype!=\"tmpfs\"})",
+                        "expr": "100 * (1 - node_filesystem_avail_bytes{instance=\"192.0.2.1:9100\", mountpoint=\"/\", fstype!=\"tmpfs\"} / node_filesystem_size_bytes{instance=\"192.0.2.1:9100\", mountpoint=\"/\", fstype!=\"tmpfs\"})",
                         "legendFormat": "Disk %"
                       },
                       "labels": {
@@ -1265,26 +1320,12 @@
                           "direction": "h"
                         }
                       }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          {
-            "kind": "RowsLayoutRow",
-            "spec": {
-              "title": "Printer Details",
-              "collapse": false,
-              "layout": {
-                "kind": "GridLayout",
-                "spec": {
-                  "items": [
+                    },
                     {
                       "kind": "GridLayoutItem",
                       "spec": {
                         "x": 0,
-                        "y": 0,
+                        "y": 4,
                         "width": 24,
                         "height": 6,
                         "element": {
@@ -1400,7 +1441,7 @@
     "tags": [
       "cups",
       "printing",
-      "org"
+      "[REDACTED]"
     ],
     "timeSettings": {
       "timezone": "browser",
