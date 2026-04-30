@@ -3,8 +3,8 @@
   "kind": "Dashboard",
   "metadata": {
     "name": "cups-print-[REDACTED]",
-    "generation": 9,
-    "creationTimestamp": "2026-04-29T11:54:47Z",
+    "generation": 3,
+    "creationTimestamp": "2026-04-30T06:15:33Z",
     "labels": {},
     "annotations": {}
   },
@@ -17,10 +17,7 @@
             "kind": "DataQuery",
             "group": "grafana",
             "version": "v0",
-            "spec": {},
-            "labels": {
-              "grafana.app/export-label": "grafana-1"
-            }
+            "spec": {}
           },
           "enable": true,
           "hide": true,
@@ -451,62 +448,45 @@
                 },
                 {
                   "kind": "Transformation",
-                  "group": "organize",
-                  "spec": {
-                    "options": {
-                      "excludeByName": {
-                        "Time": true,
-                        "__name__": true,
-                        "instance": true,
-                        "job": true
-                      },
-                      "includeByName": {},
-                      "indexByName": {},
-                      "renameByName": {
-                        "Value #accepting": "",
-                        "Value #active": "",
-                        "Value #completed": "",
-                        "Value #enabled": "",
-                        "Value #status": "",
-                        "printer": "Printer"
-                      }
-                    }
-                  }
-                },
-                {
-                  "kind": "Transformation",
                   "group": "groupBy",
                   "spec": {
                     "options": {
                       "fields": {
-                        "Last (not null)": {
-                          "aggregations": []
-                        },
-                        "Printer": {
-                          "aggregations": [],
-                          "operation": "groupby"
-                        },
                         "Value #accepting": {
-                          "aggregations": [],
-                          "operation": "groupby"
+                          "aggregations": [
+                            "lastNotNull"
+                          ],
+                          "operation": "aggregate"
                         },
                         "Value #active": {
-                          "aggregations": [],
-                          "operation": "groupby"
+                          "aggregations": [
+                            "lastNotNull"
+                          ],
+                          "operation": "aggregate"
                         },
                         "Value #completed": {
-                          "aggregations": [],
-                          "operation": "groupby"
+                          "aggregations": [
+                            "lastNotNull"
+                          ],
+                          "operation": "aggregate"
                         },
                         "Value #enabled": {
-                          "aggregations": [],
-                          "operation": "groupby"
+                          "aggregations": [
+                            "lastNotNull"
+                          ],
+                          "operation": "aggregate"
                         },
                         "Value #status": {
+                          "aggregations": [
+                            "lastNotNull"
+                          ],
+                          "operation": "aggregate"
+                        },
+                        "hostname": {
                           "aggregations": [],
                           "operation": "groupby"
                         },
-                        "hostname": {
+                        "printer": {
                           "aggregations": [],
                           "operation": "groupby"
                         },
@@ -518,6 +498,31 @@
                           "aggregations": [],
                           "operation": "groupby"
                         }
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "Transformation",
+                  "group": "organize",
+                  "spec": {
+                    "options": {
+                      "excludeByName": {
+                        "Time": true,
+                        "__name__": true,
+                        "instance": true,
+                        "job": true
+                      },
+                      "renameByName": {
+                        "Value #accepting (lastNotNull)": "Accepting",
+                        "Value #active (lastNotNull)": "Active Jobs",
+                        "Value #completed (lastNotNull)": "Completed Jobs",
+                        "Value #enabled (lastNotNull)": "Enabled",
+                        "Value #status (lastNotNull)": "Status",
+                        "hostname": "Host",
+                        "printer": "Printer",
+                        "role": "Role",
+                        "use": "Use"
                       }
                     }
                   }
@@ -1475,7 +1480,7 @@
           },
           "label": "Job",
           "hide": "dontHide",
-          "refresh": "onTimeRangeChanged",
+          "refresh": "onDashboardLoad",
           "skipUrlSync": false,
           "query": {
             "kind": "DataQuery",
@@ -1509,7 +1514,7 @@
           },
           "label": "Printer",
           "hide": "dontHide",
-          "refresh": "onTimeRangeChanged",
+          "refresh": "onDashboardLoad",
           "skipUrlSync": false,
           "query": {
             "kind": "DataQuery",
