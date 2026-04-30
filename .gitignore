@@ -1,0 +1,352 @@
+# =============================================================================
+# ops-ref .gitignore
+# Comprehensive ignore rules for a public reference/docs repo.
+# Covers secrets, editor artifacts, OS files, and common tooling.
+# =============================================================================
+
+# =============================================================================
+# secrets & credentials — never commit these
+# =============================================================================
+.env
+.env.*
+!.env.example          # allow example/template env files
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+secrets/
+secrets.yml
+secrets.yaml
+secrets.json
+*_secrets.*
+credentials
+credentials.json
+*token*
+*password*
+*passwd*
+*secret*
+vault-token
+kubeconfig
+*.kubeconfig
+*.kube
+
+# =============================================================================
+# os generated files
+# =============================================================================
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+Icon?
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# =============================================================================
+# editors & ides
+# =============================================================================
+
+# vim / neovim
+*.swp
+*.swo
+*.swn
+*~
+.netrwhist
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+Session.vim
+Sessionx.vim
+.netrwhist
+tags
+[._]*.un~
+
+# neovim
+.nvimrc.local
+
+# vscode
+.vscode/
+!.vscode/extensions.json   # allow recommended extensions list
+*.code-workspace
+.history/
+
+# jetbrains (intellij, goland, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# sublime text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+# emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# nano
+*.save
+
+# =============================================================================
+# shell & scripts
+# =============================================================================
+
+# generated/temp scripts (keep authored scripts)
+*.tmp
+*.temp
+scratch.*
+test.*
+test-*
+try.*
+
+# =============================================================================
+# terraform
+# =============================================================================
+**/.terraform/
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfvars
+!*.tfvars.example          # allow example var files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+crash.log
+crash.*.log
+terraform.rc
+
+# =============================================================================
+# ansible
+# =============================================================================
+*.retry
+.vault_pass
+vault_pass.txt
+inventory/host_vars/*/vault.yml
+inventory/group_vars/*/vault.yml
+.ansible/
+
+# =============================================================================
+# docker
+# =============================================================================
+.dockerignore.local
+
+# =============================================================================
+# kubernetes / helm
+# =============================================================================
+kubeconfig*
+*.kubeconfig
+charts/*.tgz              # packaged helm charts
+tmpcharts/
+
+# =============================================================================
+# python
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+.venv/
+venv/
+env/
+ENV/
+.python-version
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# =============================================================================
+# node / javascript
+# =============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm
+.yarn/cache
+.yarn/unplugged
+.pnpm-store/
+dist/
+.next/
+.nuxt/
+.output/
+.cache/
+
+# =============================================================================
+# go
+# =============================================================================
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+
+# =============================================================================
+# rust
+# =============================================================================
+target/
+Cargo.lock        # uncomment if this is a library (not a binary)
+
+# =============================================================================
+# ruby
+# =============================================================================
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+.bundle/
+vendor/bundle
+
+# =============================================================================
+# java
+# =============================================================================
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# =============================================================================
+# logs & databases
+# =============================================================================
+*.log
+*.log.*
+logs/
+log/
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+
+# =============================================================================
+# archives & binaries
+# =============================================================================
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.tar.xz
+*.rar
+*.7z
+*.gz
+*.bz2
+*.xz
+*.iso
+*.dmg
+*.pkg
+*.deb
+*.rpm
+
+# =============================================================================
+# certificates & keys (belt and suspenders)
+# =============================================================================
+*.pem
+*.key
+*.csr
+*.crt
+*.cert
+*.p7b
+*.p7c
+*.p7r
+*.p8
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.truststore
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+id_ecdsa
+id_ecdsa.*
+known_hosts
+
+# =============================================================================
+# misc
+# =============================================================================
+.cache/
+tmp/
+temp/
+scratch/
+playground/
+.history
+.direnv
+.envrc               # direnv — may contain sensitive exports
+TODO.local.md        # local-only notes
+NOTES.local.md
+sanitize_v2.py
