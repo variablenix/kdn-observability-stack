@@ -1,12 +1,12 @@
 # 📊 Global Observability Stack (Sanitized)
 
-Welcome to the public mirror of my monitoring and observability configurations. These dashboards are the pulse of my **KDN Lab**, a production-grade 10+ node Proxmox environment where I architect and test infrastructure patterns before they hit production.
+Welcome to a public collection of monitoring and observability configurations for a production-grade 10+ node Proxmox environment. The dashboards are designed to help operators evaluate infrastructure patterns before they reach production.
 
 ### **Why this exists**
-As a **Senior Platform & Infrastructure Engineer**, I believe in "Infrastructure as Code" and treating home labs with the same rigor as an enterprise data center. I’m sharing these to provide a baseline for others building complex self-hosted stacks involving high-speed networking, security meshes, and containerized services.
+The project follows **Infrastructure as Code** practices and treats self-hosted environments with the same rigor as an enterprise data center. It provides a baseline for others building complex self-hosted stacks involving high-speed networking, security meshes, and containerized services.
 
 ### **The "Sanitization" Workflow**
-For security and privacy, these files have been processed through a surgical sanitization pipeline before being mirrored from my internal **Gitea** instance.
+For security and privacy, these files have been processed through a sanitization pipeline before being published from an internal **Gitea** instance.
 * **Network Masking:** All public WAN IPs and remote VPS addresses have been replaced with placeholders (`REDACTED_IP`).
 * **Domain Generalization:** Internal subdomains (pointing to my **Authentik** SSO, **Gitea** instance, or **Lounge24 Radio** station) have been generalized to `example-user.pro`.
 * **Portability:** Hardcoded `datasource` UIDs have been stripped and replaced with template variables (`${DS_PROMETHEUS}`) to ensure these dashboards are "plug-and-play" for the community.
@@ -26,4 +26,4 @@ These dashboards are exported in standard Grafana JSON format. To import them:
 3. Upload the JSON and map the `${DS_...}` variables to your local Prometheus or InfluxDB data sources.
 
 ---
-*Maintained by **AK** | [aklein.pro](https://aklein.pro)*
+*Maintained by the KDN Observability Stack contributors.*
