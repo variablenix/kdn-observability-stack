@@ -3324,7 +3324,7 @@
           "options": [],
           "multi": true,
           "includeAll": true,
-          "allValue": "gatekeeper-crowdsec|nexus-vps|dockerlab|vaultwarden|authentik|rpi4|minecraft|moonlab|stargate|grafana-hq",
+          "allValue": "gatekeeper-crowdsec|nexus-vps|dockerlab|aegis|authentik|rpi4|minecraft|moonlab|stargate|grafana-hq",
           "allowCustomValue": true
         }
       },
