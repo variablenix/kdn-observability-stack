@@ -25,5 +25,11 @@ These dashboards are exported in standard Grafana JSON format. To import them:
 2. In your Grafana instance, go to **Dashboards -> Import**.
 3. Upload the JSON and map the `${DS_...}` variables to your local Prometheus or InfluxDB data sources.
 
+### Soju IRC Bouncer
+
+Import [Soju IRC Bouncer](services/Soju-IRC-Bouncer.json) into the **Services** folder and map `${DS_PROMETHEUS}` to your Prometheus data source. Enable Soju's Prometheus listener and scrape it with the job name `soju`; keep the metrics endpoint on a private network. The dashboard uses a 30-second minimum query step for a 30-second scrape interval. Adjust that step if you use a different scrape interval.
+
+The dashboard covers users, connections, IRC protocol traffic, upstream errors, worker panics, process resources, and scrape health. Its metrics work with SQLite and PostgreSQL backends. The Instance selector includes targets whose scrapes are failing, and every query stays scoped to the `soju` job. **Scrape status** reports exporter reachability; upstream IRC connection failures appear separately in the reliability panels. Graphs require newly collected samples and cannot reconstruct missing metrics history.
+
 ---
 *Maintained by the KDN Observability Stack contributors.*
