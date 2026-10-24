@@ -73,6 +73,20 @@ class Dashboard:
                 "fillOpacity": 10, "showPoints": "never", "spanNulls": False, "axisCenteredZero": False}
         elif kind == "table":
             p["options"] = {"showHeader": True, "cellHeight": "sm", "footer": {"show": False}}
+            fields = ["hostname", "server", "name", "machine", "bouncer", "check", "source", "version",
+                      "reason", "origin", "action", "method", "route", "endpoint", "Value"]
+            hidden = ["Time", "__name__", "instance", "job", "location", "role", "use", "os", "kind",
+                      "service", "acquis_type", "datasource_type", "stage", "type"]
+            if "versions" in title.lower():
+                hidden.append("Value")
+            p["transformations"] = [{"id": "organize", "options": {
+                "excludeByName": {key: True for key in hidden},
+                "indexByName": {key: i for i, key in enumerate(fields)},
+                "renameByName": {"hostname": "Host", "server": "Host", "name": "Entity / scenario",
+                                 "machine": "Agent", "bouncer": "Bouncer", "check": "Health check",
+                                 "source": "Log source", "version": "Version", "reason": "Reason",
+                                 "origin": "Origin", "action": "Action", "method": "Method",
+                                 "route": "Route", "endpoint": "Endpoint", "Value": "Status" if binary else "Value"}}}]
         elif kind == "text":
             p["options"] = {"mode": "markdown", "content": text}
         elif kind == "row":

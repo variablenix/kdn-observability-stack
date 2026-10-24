@@ -701,7 +701,64 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Status"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 12,
@@ -779,7 +836,64 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Status"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 13,
@@ -857,7 +971,64 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Status"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 14,
@@ -912,7 +1083,64 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Value"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 15,
@@ -1721,7 +1949,64 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Status"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 27,
@@ -1985,7 +2270,64 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Value"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 32,
@@ -2040,7 +2382,64 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Value"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 33,
@@ -2095,7 +2494,64 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Value"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 34,
@@ -2417,7 +2873,65 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true,
+              "Value": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Value"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 39,
@@ -2472,7 +2986,64 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Value"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 40,
@@ -2527,7 +3098,64 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Value"
+            }
+          }
+        }
+      ]
     },
     {
       "id": 41,
@@ -2652,7 +3280,64 @@
           "interval": "30s"
         }
       ],
-      "interval": "30s"
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "kind": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "name": 2,
+              "machine": 3,
+              "bouncer": 4,
+              "check": 5,
+              "source": 6,
+              "version": 7,
+              "reason": 8,
+              "origin": 9,
+              "action": 10,
+              "method": 11,
+              "route": 12,
+              "endpoint": 13,
+              "Value": 14
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Value"
+            }
+          }
+        }
+      ]
     }
   ],
   "links": [

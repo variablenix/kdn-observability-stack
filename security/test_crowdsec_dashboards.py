@@ -35,6 +35,15 @@ class Dashboards(unittest.TestCase):
                                      and g['y'] < old['y']+old['h'] and g['y']+g['h'] > old['y'])
                 positions.append(g)
 
+    def test_tables_prioritize_readable_dimensions_not_exporter_metadata(self):
+        for d in builder.dashboards().values():
+            for p in d['panels']:
+                if p['type'] == 'table':
+                    options = p['transformations'][0]['options']
+                    self.assertTrue(options['excludeByName']['__name__'])
+                    self.assertTrue(options['excludeByName']['instance'])
+                    self.assertEqual(options['renameByName']['hostname'], 'Host')
+
     def test_queries_use_real_families_safe_rates_and_explicit_scoping(self):
         for d in builder.dashboards().values():
             for p in d['panels']:
