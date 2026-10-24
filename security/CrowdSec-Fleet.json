@@ -685,7 +685,26 @@
             }
           ]
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 110
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "showHeader": true,
@@ -729,7 +748,8 @@
               "acquis_type": true,
               "datasource_type": true,
               "stage": true,
-              "type": true
+              "type": true,
+              "hostname": true
             },
             "indexByName": {
               "hostname": 0,
@@ -820,7 +840,26 @@
             }
           ]
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 110
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "showHeader": true,
@@ -864,7 +903,8 @@
               "acquis_type": true,
               "datasource_type": true,
               "stage": true,
-              "type": true
+              "type": true,
+              "hostname": true
             },
             "indexByName": {
               "hostname": 0,
@@ -955,7 +995,26 @@
             }
           ]
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 110
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "showHeader": true,
@@ -999,7 +1058,8 @@
               "acquis_type": true,
               "datasource_type": true,
               "stage": true,
-              "type": true
+              "type": true,
+              "hostname": true
             },
             "indexByName": {
               "hostname": 0,
@@ -1111,7 +1171,8 @@
               "acquis_type": true,
               "datasource_type": true,
               "stage": true,
-              "type": true
+              "type": true,
+              "hostname": true
             },
             "indexByName": {
               "hostname": 0,
@@ -1933,7 +1994,26 @@
             }
           ]
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 110
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "showHeader": true,

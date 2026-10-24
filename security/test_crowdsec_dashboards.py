@@ -43,6 +43,8 @@ class Dashboards(unittest.TestCase):
                     self.assertTrue(options['excludeByName']['__name__'])
                     self.assertTrue(options['excludeByName']['instance'])
                     self.assertEqual(options['renameByName']['hostname'], 'Host')
+                    if 'crowdsec_health_' in p['targets'][0]['expr']:
+                        self.assertTrue(options['excludeByName']['hostname'])
 
     def test_queries_use_real_families_safe_rates_and_explicit_scoping(self):
         for d in builder.dashboards().values():

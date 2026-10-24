@@ -85,6 +85,9 @@ class Dashboard:
                       "reason", "origin", "action", "method", "route", "endpoint", "Value"]
             hidden = ["Time", "__name__", "instance", "job", "location", "role", "use", "os", "kind",
                       "service", "acquis_type", "datasource_type", "stage", "type"]
+            if expr and "crowdsec_health_" in expr:
+                # This is the collector host, not the agent/bouncer being listed.
+                hidden.append("hostname")
             if "versions" in title.lower():
                 hidden.append("Value")
             p["transformations"] = [{"id": "organize", "options": {
@@ -95,6 +98,10 @@ class Dashboard:
                                  "source": "Log source", "version": "Version", "reason": "Reason",
                                  "origin": "Origin", "action": "Action", "method": "Method",
                                  "route": "Route", "endpoint": "Endpoint", "Value": "Status" if binary else "Value"}}}]
+            if binary:
+                p['fieldConfig']['overrides'].append({'matcher': {'id': 'byName', 'options': 'Status'},
+                    'properties': [{'id': 'custom.width', 'value': 110},
+                                   {'id': 'custom.cellOptions', 'value': {'type': 'color-text'}}]})
         elif kind == "text":
             p["options"] = {"mode": "markdown", "content": text}
         elif kind == "row":
