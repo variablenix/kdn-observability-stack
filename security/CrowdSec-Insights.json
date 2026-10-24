@@ -1,898 +1,1605 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_LAB-PROMETHEUS",
-      "label": "Lab-Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
+  "id": null,
+  "uid": "e7sWOBVnk",
+  "title": "Crowdsec Insights",
+  "description": "Detection trends, source workload and telemetry quality. No raw attacker identities are exported by these metrics.",
+  "tags": [
+    "crowdsec",
+    "security",
+    "fleet"
   ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "12.4.2"
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    }
-  ],
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
-        "datasource": {
-          "uid": "-- Grafana --"
-        },
-        "enable": true,
-        "hide": true,
-        "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "target": {
-          "limit": 100,
-          "matchAny": false,
-          "tags": [],
-          "type": "dashboard"
-        },
-        "type": "dashboard"
-      }
-    ]
-  },
-  "description": "Insights about your security engines",
+  "timezone": "browser",
+  "schemaVersion": 41,
+  "version": 1,
   "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
-  "links": [],
+  "refresh": "30s",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "annotations": {
+    "list": []
+  },
   "panels": [
     {
-      "collapsed": false,
+      "id": 1,
+      "title": "What these insights can and cannot show",
+      "type": "text",
+      "description": "",
       "gridPos": {
-        "h": 1,
-        "w": 24,
         "x": 0,
-        "y": 0
-      },
-      "id": 22,
-      "panels": [],
-      "repeat": "instance",
-      "title": "$instance",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "uid": "${DS_PROMETHEUS}"
+        "y": 0,
+        "w": 24,
+        "h": 4
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "dateTimeAsIso"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 5,
-        "x": 2,
-        "y": 1
-      },
-      "id": 2,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "(process_start_time_seconds{instance=\"$instance\"})*1000",
-          "interval": "",
-          "legendFormat": "{{instance}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Up since",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "displayName": "",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 5,
-        "x": 7,
-        "y": 1
-      },
-      "id": 4,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "sizing": "auto",
-        "text": {}
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "process_resident_memory_bytes{instance=\"$instance\"}",
-          "format": "time_series",
-          "interval": "",
-          "intervalFactor": 3,
-          "legendFormat": "{{instance}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Average Mem Usage",
-      "transparent": true,
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 50
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 5,
-        "x": 12,
-        "y": 1
-      },
-      "id": 6,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto",
-        "text": {}
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "rate(process_cpu_seconds_total{instance=\"$instance\"}[$__interval])*100",
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "{{instance}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Average CPU Usage",
-      "transparent": true,
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 5,
-        "x": 17,
-        "y": 1
-      },
-      "id": 20,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "process_max_fds{instance=\"$instance\"}",
-          "interval": "",
-          "legendFormat": "{{instance}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Process Max FDs",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 5,
-        "x": 2,
-        "y": 10
-      },
-      "id": 11,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "sum(increase(cs_filesource_hits_total{instance=\"$instance\"}[$__interval]) or up * 0) + sum(increase(cs_cloudwatch_stream_hits_total{instance=\"$instance\"}[$__interval]) or up * 0) + sum(increase(cs_journalctlsource_hits_total{instance=\"$instance\"}[$__interval]) or up * 0) + sum(increase(cs_syslogsource_hits_total{instance=\"$instance\"}[$__interval]) or up * 0)",
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Total raw lines",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 5,
-        "x": 7,
-        "y": 10
-      },
-      "id": 12,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "sum(increase(cs_parser_hits_ok_total{instance=\"$instance\"}[$__interval]))",
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Total parsed lines",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 5,
-        "x": 12,
-        "y": 10
-      },
-      "id": 8,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "sum(increase(cs_bucket_overflowed_total{instance=\"$instance\"}[$__interval]))",
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Total Overflows",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 5,
-        "x": 17,
-        "y": 10
-      },
-      "id": 18,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "process_open_fds{instance=\"$instance\"}",
-          "interval": "",
-          "legendFormat": "{{instance}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Process Open FDs",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 5,
-        "x": 4,
-        "y": 19
-      },
-      "id": 14,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "sum(increase(cs_parser_hits_ko_total{instance=\"$instance\"}[$__interval]))",
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "title": "Total unparsed lines",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
+                "color": "blue",
+                "value": null
               }
             ]
           }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 9,
-        "w": 10,
-        "x": 9,
-        "y": 19
-      },
-      "id": 16,
       "options": {
-        "displayMode": "gradient",
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
+        "mode": "markdown",
+        "content": "**Overflows** describe scenario activity, not unique attackers. Tests and internal events are included in native counters. The email report separates them using LAPI event data and identifies service + host, IP, country and ASN. Those dimensions cannot be invented from aggregate metrics. Current retained alerts and active decision records are separate inventories."
+      }
+    },
+    {
+      "id": 2,
+      "title": "Acquired lines — selected range",
+      "type": "stat",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
         },
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
+        "overrides": []
+      },
+      "options": {
         "reduceOptions": {
           "calcs": [
-            "sum"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
         },
-        "showUnfilled": false,
-        "sizing": "auto",
-        "text": {},
-        "valueMode": "color"
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
       },
-      "pluginVersion": "12.4.2",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "targets": [
         {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "exemplar": true,
-          "expr": "sum(increase(cs_bucket_overflowed_total{instance=\"$instance\"}[$__interval])) by (name)",
+          "refId": "A",
+          "expr": "sum(increase({job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\",__name__=~\"cs_filesource_hits_total|cs_dockersource_hits_total\"}[$__range]))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
           "format": "time_series",
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "{{name}}",
-          "refId": "A"
+          "interval": "30s"
         }
       ],
-      "title": "Top scenarios",
-      "transparent": true,
-      "type": "bargauge"
+      "interval": "30s"
+    },
+    {
+      "id": 3,
+      "title": "Parser successes — selected range",
+      "type": "stat",
+      "description": "",
+      "gridPos": {
+        "x": 6,
+        "y": 4,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(increase(cs_parser_hits_ok_total{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__range]))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 4,
+      "title": "Unparsed lines — selected range",
+      "type": "stat",
+      "description": "",
+      "gridPos": {
+        "x": 12,
+        "y": 4,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(increase(cs_parser_hits_ko_total{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__range]))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 5,
+      "title": "Scenario overflows — selected range",
+      "type": "stat",
+      "description": "",
+      "gridPos": {
+        "x": 18,
+        "y": 4,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(increase(cs_bucket_overflowed_total{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__range]))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 6,
+      "title": "Where activity is concentrated",
+      "type": "row",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 1
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 7,
+      "title": "Top 10 scenario overflows — selected range",
+      "type": "table",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 9,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "topk(10,sum by(hostname,name)(increase(cs_bucket_overflowed_total{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__range])))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 8,
+      "title": "Scenario overflow rate",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 12,
+        "y": 9,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisCenteredZero": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by(hostname,name)(rate(cs_bucket_overflowed_total{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__rate_interval]))",
+          "legendFormat": "{{hostname}} / {{name}}",
+          "editorMode": "code",
+          "instant": false,
+          "range": true,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 9,
+      "title": "Top 15 log sources — selected range",
+      "type": "table",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "topk(15,sum by(hostname,source)(increase({job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\",__name__=~\"cs_filesource_hits_total|cs_dockersource_hits_total\"}[$__range])))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 10,
+      "title": "Input rate by source",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 12,
+        "y": 17,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisCenteredZero": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "topk(10,sum by(hostname,source)(rate({job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\",__name__=~\"cs_filesource_hits_total|cs_dockersource_hits_total\"}[$__rate_interval])))",
+          "legendFormat": "{{hostname}} / {{source}}",
+          "editorMode": "code",
+          "instant": false,
+          "range": true,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 11,
+      "title": "Parser successes by host — selected range",
+      "type": "table",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by(hostname)(increase(cs_parser_hits_ok_total{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__range]))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 12,
+      "title": "Unparsed by host — selected range",
+      "type": "table",
+      "description": "",
+      "gridPos": {
+        "x": 12,
+        "y": 25,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by(hostname)(increase(cs_parser_hits_ko_total{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__range]))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 13,
+      "title": "Parser success share of evaluated lines",
+      "type": "timeseries",
+      "description": "Success / evaluated parser lines. Not parser-node traversal ratio. No observations gives N/A, not 100%.",
+      "gridPos": {
+        "x": 0,
+        "y": 33,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisCenteredZero": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by(hostname)(rate(cs_parser_hits_ok_total{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__rate_interval]))/(sum by(hostname)(rate(cs_parser_hits_total{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__rate_interval]))>0)",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": false,
+          "range": true,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 14,
+      "title": "Allowlist node matches by reason — selected range",
+      "type": "table",
+      "description": "",
+      "gridPos": {
+        "x": 12,
+        "y": 33,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by(hostname,reason)(increase(cs_node_wl_hits_ok_total{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__range]))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 15,
+      "title": "Telemetry coverage and freshness",
+      "type": "row",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 41,
+        "w": 24,
+        "h": 1
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 16,
+      "title": "Current scrape status — selected engines",
+      "type": "table",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 42,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "min": 0,
+          "max": 1,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "FAILED",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "PASSING",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "up{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 17,
+      "title": "Scrape success share — selected range",
+      "type": "table",
+      "description": "Only observed samples. Combine with sample coverage; downtime in Prometheus itself is not counted as failed scrapes.",
+      "gridPos": {
+        "x": 12,
+        "y": 42,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "avg_over_time(up{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__range])",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 18,
+      "title": "Sample coverage — expected 30s scrape",
+      "type": "table",
+      "description": "Approximation for the configured 30-second cadence. Adjust denominator if scrape interval differs. Shows newly added targets/history gaps.",
+      "gridPos": {
+        "x": 0,
+        "y": 50,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "clamp_max(count_over_time(up{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__range])/($__range_s/30),1)",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 19,
+      "title": "Scrape duration",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 12,
+        "y": 50,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisCenteredZero": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "scrape_duration_seconds{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": false,
+          "range": true,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 20,
+      "title": "Observed process start changes — selected range",
+      "type": "table",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 58,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "changes(process_start_time_seconds{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}[$__range])",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 21,
+      "title": "Current engine versions",
+      "type": "table",
+      "description": "Read the version label; the info metric value is intentionally zero.",
+      "gridPos": {
+        "x": 12,
+        "y": 58,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "cs_info{job=~\"crowdsec|crowdsec-agents\",hostname=~\"${hostname:regex}\"}",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 22,
+      "title": "Decision and alert context — central LAPI",
+      "type": "row",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 66,
+        "w": 24,
+        "h": 1
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 23,
+      "title": "Current active decisions by origin",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 67,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisCenteredZero": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by(origin)(cs_active_decisions{job=\"crowdsec\"})",
+          "legendFormat": "{{origin}}",
+          "editorMode": "code",
+          "instant": false,
+          "range": true,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 24,
+      "title": "Current active decisions by action",
+      "type": "timeseries",
+      "description": "",
+      "gridPos": {
+        "x": 12,
+        "y": 67,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisCenteredZero": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by(action)(cs_active_decisions{job=\"crowdsec\"})",
+          "legendFormat": "{{action}}",
+          "editorMode": "code",
+          "instant": false,
+          "range": true,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 25,
+      "title": "Retained alerts by scenario",
+      "type": "table",
+      "description": "Retention inventory, not selected-range alert arrivals. Metric labels may aggregate events at the central API.",
+      "gridPos": {
+        "x": 0,
+        "y": 75,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "topk(10,sum by(reason)(cs_alerts{job=\"crowdsec\"}))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 26,
+      "title": "Agent alert POSTs — selected range",
+      "type": "table",
+      "description": "",
+      "gridPos": {
+        "x": 12,
+        "y": 75,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by(machine)(increase(cs_lapi_machine_requests_total{job=\"crowdsec\",method=\"POST\",route=\"/v1/alerts\"}[$__range]))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 27,
+      "title": "Quiet services and missing capabilities",
+      "type": "text",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 83,
+        "w": 24,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Internal-only services can be quiet. A missing lazy scenario counter is not proof that acquisition is broken: inspect input, parser successes, scrape coverage and the named source. Empty per-event tables may be normal. AppSec metrics, per-IP geography and Cloudflare request/challenge totals are not available in these native metrics and are not replaced with fabricated zeros."
+      }
     }
   ],
-  "preload": false,
-  "refresh": "",
-  "schemaVersion": 42,
-  "tags": [],
+  "links": [
+    {
+      "title": "Fleet",
+      "url": "/d/kdn-crowdsec-fleet",
+      "type": "link",
+      "keepTime": true,
+      "includeVars": true
+    },
+    {
+      "title": "Metrics",
+      "url": "/d/crowdsec-engine",
+      "type": "link",
+      "keepTime": true,
+      "includeVars": true
+    },
+    {
+      "title": "Insights",
+      "url": "/d/e7sWOBVnk",
+      "type": "link",
+      "keepTime": true,
+      "includeVars": true
+    }
+  ],
   "templating": {
     "list": [
       {
-        "allowCustomValue": true,
-        "current": {},
-        "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_LAB-PROMETHEUS}"
-        },
-        "definition": "label_values(cs_info,instance)",
-        "includeAll": false,
-        "label": "instance",
-        "name": "instance",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(cs_info,instance)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "regexApplyTo": "value",
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "current": {
-          "text": "",
-          "value": "${DS_LAB-PROMETHEUS}",
-          "selected": true
-        },
         "name": "DS_PROMETHEUS",
-        "options": [],
+        "label": "Prometheus",
+        "type": "datasource",
         "query": "prometheus",
         "refresh": 1,
-        "regex": "",
-        "type": "datasource"
+        "current": {},
+        "options": []
+      },
+      {
+        "name": "hostname",
+        "label": "Engine host",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "definition": "label_values(up{job=~\"crowdsec|crowdsec-agents\"},hostname)",
+        "query": {
+          "query": "label_values(up{job=~\"crowdsec|crowdsec-agents\"},hostname)",
+          "refId": "hosts"
+        },
+        "refresh": 1,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": []
       }
     ]
-  },
-  "time": {
-    "from": "now-30m",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "browser",
-  "title": "Crowdsec Insights",
-  "uid": "e7sWOBVnk",
-  "version": 6,
-  "weekStart": ""
+  }
 }
