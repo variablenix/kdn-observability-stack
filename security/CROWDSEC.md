@@ -32,6 +32,41 @@ uses **NEEDS REFRESH**, not a claim that an update is running. Individual failin
 checks and their reasons remain visible; no failure is suppressed to make the
 overview green. A scheduled quota retry is not a guaranteed upstream reset.
 
+## Nginx gateway maintenance
+
+All three dashboards include current nginx controller/watch status, pending
+advisory review, failed automatic transactions and completed production
+rollbacks. Fleet adds scheduler/check age, watcher findings, complete-history
+status, the latest durable transaction and last verified upgrade/rollback.
+The optional read-only `crowdsec_nginx_*` projection is carried by the existing
+private `crowdsec-health` job; no extra datasource or public endpoint is needed.
+Maintenance warnings add amber ATTENTION to Fleet's overview without relabeling
+a core protection outage. Engine host selection does not filter these panels.
+
+**Up to date** is a successful check, not an upgrade. **Review needed** can mean
+a changed advisory revision or an out-of-policy image; advisory counts are not
+CVE counts. **Waiting for image age** and **Eligible update queued** are update
+gates, not deployment failures. **Rolled back** records completed recovery,
+not a fixed candidate; **Recovery required** means incomplete rollback. Native
+service activity drives **In progress**, not a queued schedule. Same-pin
+acceptance/rehearsal/audit runs are validation, not production upgrades.
+
+`crowdsec_nginx_transactions_24h` is a fixed rolling-24-hour **gauge**, independent
+of the selected dashboard time range. It counts retained transaction outcomes
+by each journal's latest write time, not all phase transitions or every attempt.
+Failures before journaling appear only in current status. Completed automatic
+rollbacks are also failed transactions; those counts are not additive.
+Validation and validation-failure counts remain separate. New-image upgrades
+and production rollbacks require automatic mode and a changed image.
+
+Observations expire after 660 seconds with future-time checks; native daily
+check evidence expires after 26 hours. Missing last-upgrade/rollback evidence
+is N/A when none is retained. Incomplete/unsafe/over-limit history (512 journals,
+64 KiB each) makes counts unavailable, never fabricated zeros. Fixed metric
+labels contain only category/mode/phase/outcome enums, not image digests, run
+IDs, commit hashes, raw errors or credentials. The private email uses the same
+reader and can show versions/short digests without exporting them to Prometheus.
+
 Decision records are not necessarily distinct IPs. Retained alert gauges are
 database inventory, not new detections in the selected window. API POST/poll
 counts are requests, not alerts or blocked traffic. Scenario overflows may

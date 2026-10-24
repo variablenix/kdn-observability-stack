@@ -7,6 +7,27 @@ import build_crowdsec as builder
 
 
 class Dashboards(unittest.TestCase):
+    def test_nginx_status_is_present_fresh_and_test_runs_are_separate(self):
+        for d in builder.dashboards().values():
+            panels = [p for p in d['panels'] if 'Nginx automatic update status' == p['title']]
+            self.assertEqual(len(panels), 1)
+            mappings = panels[0]['fieldConfig']['defaults']['mappings'][0]['options']
+            for code, label in ((0, 'UNAVAILABLE'), (2, 'UP TO DATE'), (4, 'REVIEW NEEDED'),
+                                (7, 'ROLLED BACK'), (8, 'RECOVERY REQUIRED'), (12, 'VALIDATION COMPLETE')):
+                self.assertEqual(mappings[str(code)]['text'], label)
+            for p in d['panels']:
+                for t in p.get('targets', []):
+                    if 'crowdsec_nginx_' in t['expr']:
+                        self.assertIn('<660', t['expr'])
+                        self.assertIn('<=time()+60', t['expr'])
+                        self.assertNotIn('increase(crowdsec_nginx_', t['expr'])
+                        self.assertNotIn('hostname=~', t['expr'])
+        fleet = json.dumps(builder.fleet())
+        self.assertIn('Validation failures', fleet)
+        self.assertIn('fixed rolling', fleet)
+        self.assertIn('same-pin', fleet.lower())
+        self.assertIn('nginx_attention', next(p for p in builder.fleet()['panels'] if p['title'] == 'Overall operational health')['targets'][0]['expr'])
+
     def test_generated_exports_are_current(self):
         for name, data in builder.dashboards().items():
             self.assertEqual(json.loads((Path(__file__).parent/name).read_text()), data)

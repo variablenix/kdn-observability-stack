@@ -11,6 +11,48 @@ LAPI = '{job="crowdsec"}'
 HEALTH = '{job="crowdsec-health"}'
 FRESH = ' and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job="crowdsec-health"}<660)'
 SOURCES = '{job=~"crowdsec|crowdsec-agents",hostname=~"${hostname:regex}",__name__=~"cs_filesource_hits_total|cs_dockersource_hits_total"}'
+NGINX_FRESH = ' and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job="crowdsec-health"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job="crowdsec-health"}<=time()+60)'
+NGINX_STATES = [('UNAVAILABLE', 'gray'), ('IN PROGRESS', 'blue'), ('UP TO DATE', 'green'),
+    ('UPDATED', 'green'), ('REVIEW NEEDED', 'orange'), ('WAITING FOR IMAGE AGE', 'blue'),
+    ('FAILED / BLOCKED', 'red'), ('ROLLED BACK', 'orange'), ('RECOVERY REQUIRED', 'red'),
+    ('DOCS PENDING', 'orange'), ('STALE', 'gray'), ('PREFLIGHT FAILED', 'red'),
+    ('VALIDATION COMPLETE', 'blue'), ('DISABLED', 'orange'), ('ELIGIBLE UPDATE QUEUED', 'blue')]
+
+
+def nginx(metric, labels=''):
+    return 'crowdsec_nginx_' + metric + '{job="crowdsec-health"' + labels + '}' + NGINX_FRESH
+
+
+def maintenance(d, full=False):
+    d.row('Nginx gateway maintenance — fleet-wide')
+    p = d.panel('Nginx automatic update status', nginx('state'), 'stat', 6, 5,
+        description='Current native controller + independent watcher evidence. No change is a successful check, not a deployed upgrade. Same-pin acceptance is validation. In progress requires a running native service; stale evidence is not healthy.')
+    p['fieldConfig']['defaults']['mappings'] = [{'type': 'value', 'options': {
+        str(i): {'text': text, 'color': color, 'index': i} for i, (text, color) in enumerate(NGINX_STATES)}}]
+    d.panel('Pending nginx advisory reviews', nginx('pending_reviews'), 'stat', 6, 5,
+        description='Unacknowledged advisory revisions, not CVE counts. An out-of-policy candidate also sets REVIEW NEEDED even when this is zero.')
+    d.panel('Failed automatic transactions — rolling 24h', nginx('transactions_24h', ',kind="failures"'), 'stat', 6, 5,
+        description='Retained automatic journal outcomes: rejected preflight, incomplete recovery, or rollback. Excludes acceptance/rehearsal/audit. Failures before journaling are visible in current status, not this count.')
+    d.panel('Production rollbacks — rolling 24h', nginx('transactions_24h', ',kind="rollbacks"'), 'stat', 6, 5,
+        description='Retained automatic transactions with a changed candidate and completed rollback. Also included in failed transaction count; not additive. Incomplete rollback is RECOVERY REQUIRED, not completed rollback.')
+    if not full:
+        return
+    d.panel('Automatic scheduler enabled', nginx('scheduler_enabled'), 'stat', 6, 4, binary=True)
+    d.panel('Controller last check age', 'time()-('+nginx('last_check_timestamp_seconds')+')', 'stat', 6, 4, unit='s',
+        description='Daily result may be up to 26 hours old; five-minute observation freshness is enforced separately. STALE after 26 hours.')
+    d.panel('Watcher findings', nginx('watch_errors'), 'stat', 6, 4,
+        description='Registry, advisory or source/runtime/Internal Dockhand drift findings. Unknown/stale watcher evidence is N/A, not zero.')
+    d.panel('Retained history complete', nginx('history_complete'), 'stat', 6, 4, binary=True,
+        description='Reader bound is 512 journals, 64 KiB each. Any missing/malformed/unsafe record or overflow makes counts unavailable instead of silently undercounting.')
+    d.panel('Nginx transactions — fixed rolling 24h', nginx('transactions_24h'), 'table',
+        description='Rolling gauges, not lifetime counters: do not use increase(). Validation failures are separate from automatic failures. Counts use each journal latest write time, not the selected Grafana range.')
+    d.panel('Latest recorded nginx transaction', nginx('transaction_info'), 'table',
+        description='Mode, phase and outcome of the latest durable transaction. Can precede an in-progress validation or a blocked attempt that did not create a journal. A validation activation is not a production upgrade.')
+    d.panel('Last verified production upgrade', '('+nginx('last_upgrade_timestamp_seconds')+')*1000', 'stat', 12, 4, 'dateTimeAsLocal',
+        description='Latest retained automatic completed transaction with a changed image. N/A when none is recorded; not the last acceptance or no-change check.')
+    d.panel('Last completed production rollback', '('+nginx('last_rollback_timestamp_seconds')+')*1000', 'stat', 12, 4, 'dateTimeAsLocal',
+        description='Latest retained completed automatic rollback of a changed image. N/A when none is recorded. Incomplete recovery is shown as a separate current failure.')
+    d.note('Maintenance interpretation', 'Seven owned nginx guards use this controller. The independent watcher checks runtime, canonical Ansible and Internal Dockhand definitions. This collector only reads existing records; it never deploys images, retries Cloudflare or changes timers. **Pending review** and **waiting for image age** are deliberate gates. **Rolled back** means recovery completed, not that the candidate was repaired. Same-pin acceptance/rehearsal/audit runs remain separate. Transaction counts are a fixed rolling **24 hours**, using each retained journal’s latest write, not an exhaustive event log. Pre-journal failed attempts appear in current status only. Missing/incomplete history is N/A, not zero. Observation freshness is 11 minutes; daily check freshness is 26 hours. Core protection health and maintenance warnings remain distinct.')
 
 
 def health(metric, labels=""):
@@ -30,7 +72,11 @@ def operational_severity():
     core = '(sum(1-(' + health('entity_healthy') + ')) == bool 0)'
     collections = '(sum(1-(' + health('check_success', ',check=~"machines|bouncers|decisions"') + ')) == bool 0)'
     engines = '(min(up{job=~"crowdsec|crowdsec-agents"}) == bool 1)'
-    return '(1+(' + health('success') + '))*on() group_left() (' + core + '*' + collections + '*' + engines + ')'
+    warnings_clear = '(' + health('success') + ') * on(job,instance) (1-(' + nginx('attention') + '))'
+    core_clear = '(' + core + '*' + collections + '*' + engines + ')'
+    # Missing maintenance must never hide a positively observed core outage.
+    return ('(1+(' + warnings_clear + '))*on() group_left() ' + core_clear
+            + ' or on() (0*(' + core_clear + ' == 0))')
 
 
 class Dashboard:
@@ -81,11 +127,11 @@ class Dashboard:
                 "fillOpacity": 10, "showPoints": "never", "spanNulls": False, "axisCenteredZero": False}
         elif kind == "table":
             p["options"] = {"showHeader": True, "cellHeight": "sm", "footer": {"show": False}}
-            fields = ["hostname", "server", "name", "machine", "bouncer", "check", "source", "version",
+            fields = ["hostname", "server", "mode", "phase", "outcome", "kind", "name", "machine", "bouncer", "check", "source", "version",
                       "reason", "origin", "action", "method", "route", "endpoint", "Value"]
             hidden = ["Time", "__name__", "instance", "job", "location", "role", "use", "os", "kind",
                       "service", "acquis_type", "datasource_type", "stage", "type"]
-            if expr and "crowdsec_health_" in expr:
+            if expr and ("crowdsec_health_" in expr or 'crowdsec_nginx_' in expr):
                 # This is the collector host, not the agent/bouncer being listed.
                 hidden.append("hostname")
             if "versions" in title.lower():
@@ -97,7 +143,28 @@ class Dashboard:
                                  "machine": "Agent", "bouncer": "Bouncer", "check": "Health check",
                                  "source": "Log source", "version": "Version", "reason": "Reason",
                                  "origin": "Origin", "action": "Action", "method": "Method",
+                                 "mode": "Run mode", "phase": "Transaction phase", "outcome": "Outcome", "kind": "Transaction category",
                                  "route": "Route", "endpoint": "Endpoint", "Value": "Status" if binary else "Value"}}}]
+            if expr and 'crowdsec_nginx_' in expr:
+                p['transformations'][0]['options']['excludeByName'].pop('kind', None)
+                if 'transaction_info' in expr:
+                    p['transformations'][0]['options']['excludeByName']['Value'] = True
+                labels = {
+                    'Run mode': {'automatic': 'Automatic', 'acceptance': 'Same-pin acceptance', 'rehearsal': 'Rehearsal', 'audit': 'Read-only audit'},
+                    'Transaction phase': {x: x.replace('_', ' ').capitalize() for x in (
+                        'checking', 'preflighting', 'promoting', 'deploying', 'rolling_back', 'recovery_required',
+                        'documentation_pending', 'completed', 'rolled_back', 'preflight_failed', 'no_change',
+                        'review_required', 'waiting_for_image_age', 'blocked')},
+                    'Outcome': {'not_recorded': 'No terminal outcome', 'activated': 'Validation activated', 'updated': 'Image upgraded',
+                        'rolled_back': 'Rollback completed', 'rehearsed_without_image_or_git_changes': 'Rehearsal completed — unchanged',
+                        'rehearsal_rolled_back_without_git_changes': 'Rehearsal rollback — no Git change'},
+                    'Transaction category': {'updates': 'Verified image upgrades', 'failures': 'Failed automatic transactions',
+                        'rollbacks': 'Completed production rollbacks', 'validations': 'Validation / audit runs',
+                        'validation_failures': 'Failed validation runs'}}
+                for field, values in labels.items():
+                    p['fieldConfig']['overrides'].append({'matcher': {'id': 'byName', 'options': field},
+                        'properties': [{'id': 'mappings', 'value': [{'type': 'value', 'options': {
+                            key: {'text': value, 'index': i} for i, (key, value) in enumerate(values.items())}}]}]})
             if binary:
                 p['fieldConfig']['overrides'].append({'matcher': {'id': 'byName', 'options': 'Status'},
                     'properties': [{'id': 'custom.width', 'value': 110},
@@ -133,7 +200,7 @@ def fleet():
     d = Dashboard("CrowdSec Fleet", "kdn-crowdsec-fleet", "Operational assurance: current agents, remediation, CAPI and Cloudflare freshness. Engine host filters do not scope central LAPI or fleet health.")
     d.note("Read this first", "**Engine host** filters engine panels. LAPI, bouncer and health panels deliberately remain fleet-wide. **N/A is not healthy or zero.** Health results older than 11 minutes are excluded. Historical graphs and retained alert records are not new attacks. The private email report supplies source IP, country, ASN and service/host investigations; these are not exposed by native engine metrics.", 4)
     p = d.panel("Overall operational health", operational_severity(), "stat", 6, 4,
-                description="HEALTHY: all checks pass. ATTENTION: update/verification warnings with core fleet online. CRITICAL: an expected agent/bouncer, engine scrape, LAPI or core collection is unhealthy. Missing/stale input is N/A, never healthy.")
+                description="HEALTHY: protection and maintenance checks pass. ATTENTION: nginx maintenance or update/verification warnings with core fleet online. CRITICAL: an expected agent/bouncer, engine scrape, LAPI or core collection is unhealthy. Missing/stale input is N/A, never healthy.")
     p['fieldConfig']['defaults'].update({'min': 0, 'max': 2, 'color': {'mode': 'thresholds'},
         'mappings': [{'type': 'value', 'options': {
             '0': {'text': 'CRITICAL', 'color': 'red', 'index': 0},
@@ -184,6 +251,7 @@ def fleet():
     d.panel("Scenario overflows — selected range", increase("cs_bucket_overflowed_total", "hostname,name"), "table", description="Overflows can include tests/internal sources; not confirmed external attackers.")
     d.panel("Engine resident memory", 'process_resident_memory_bytes'+ENGINE, unit="bytes")
     d.panel("Observed process start changes — selected range", 'changes(process_start_time_seconds'+ENGINE+'[$__range])', "table", description="Observed changes only; restarts between scrapes may be missed.")
+    maintenance(d, full=True)
     return d.data
 
 
@@ -224,6 +292,7 @@ def metrics():
     d.panel("File descriptor limit utilization", 'process_open_fds'+ENGINE+'/process_max_fds'+ENGINE, unit="percentunit")
     d.panel("Engine uptime", 'time()-process_start_time_seconds'+ENGINE, unit="s")
     d.panel("Parsing p95 by source", 'histogram_quantile(0.95,sum by(le,hostname,source)(rate(cs_parsing_time_seconds_bucket'+ENGINE+'[$__rate_interval]))) and on(hostname,source) (sum by(hostname,source)(rate(cs_parsing_time_seconds_count'+ENGINE+'[$__rate_interval]))>0)', unit="s", legend="{{hostname}} / {{source}}")
+    maintenance(d)
     return d.data
 
 
@@ -256,6 +325,7 @@ def insights():
     d.panel("Retained alerts by scenario", 'topk(10,sum by(reason)(cs_alerts'+LAPI+'))', "table", description="Retention inventory, not selected-range alert arrivals. Metric labels may aggregate events at the central API.")
     d.panel("Agent alert POSTs — selected range", increase("cs_lapi_machine_requests_total", "machine", '{job="crowdsec",method="POST",route="/v1/alerts"}'), "table")
     d.note("Quiet services and missing capabilities", "Internal-only services can be quiet. A missing lazy scenario counter is not proof that acquisition is broken: inspect input, parser successes, scrape coverage and the named source. Empty per-event tables may be normal. AppSec metrics, per-IP geography and Cloudflare request/challenge totals are not available in these native metrics and are not replaced with fabricated zeros.")
+    maintenance(d)
     return d.data
 
 

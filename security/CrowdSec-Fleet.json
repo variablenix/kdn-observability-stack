@@ -61,7 +61,7 @@
       "id": 2,
       "title": "Overall operational health",
       "type": "stat",
-      "description": "HEALTHY: all checks pass. ATTENTION: update/verification warnings with core fleet online. CRITICAL: an expected agent/bouncer, engine scrape, LAPI or core collection is unhealthy. Missing/stale input is N/A, never healthy.",
+      "description": "HEALTHY: protection and maintenance checks pass. ATTENTION: nginx maintenance or update/verification warnings with core fleet online. CRITICAL: an expected agent/bouncer, engine scrape, LAPI or core collection is unhealthy. Missing/stale input is N/A, never healthy.",
       "gridPos": {
         "x": 0,
         "y": 4,
@@ -139,7 +139,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "(1+(crowdsec_health_success{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660)))*on() group_left() ((sum(1-(crowdsec_health_entity_healthy{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660))) == bool 0)*(sum(1-(crowdsec_health_check_success{job=\"crowdsec-health\",check=~\"machines|bouncers|decisions\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660))) == bool 0)*(min(up{job=~\"crowdsec|crowdsec-agents\"}) == bool 1))",
+          "expr": "(1+((crowdsec_health_success{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660)) * on(job,instance) (1-(crowdsec_nginx_attention{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)))))*on() group_left() ((sum(1-(crowdsec_health_entity_healthy{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660))) == bool 0)*(sum(1-(crowdsec_health_check_success{job=\"crowdsec-health\",check=~\"machines|bouncers|decisions\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660))) == bool 0)*(min(up{job=~\"crowdsec|crowdsec-agents\"}) == bool 1)) or on() (0*(((sum(1-(crowdsec_health_entity_healthy{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660))) == bool 0)*(sum(1-(crowdsec_health_check_success{job=\"crowdsec-health\",check=~\"machines|bouncers|decisions\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660))) == bool 0)*(min(up{job=~\"crowdsec|crowdsec-agents\"}) == bool 1)) == 0))",
           "legendFormat": "{{hostname}}",
           "editorMode": "code",
           "instant": true,
@@ -754,19 +754,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -781,6 +785,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Status"
@@ -909,19 +917,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -936,6 +948,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Status"
@@ -1064,19 +1080,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -1091,6 +1111,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Status"
@@ -1177,19 +1201,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -1204,6 +1232,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Value"
@@ -2062,19 +2094,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -2089,6 +2125,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Status"
@@ -2383,19 +2423,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -2410,6 +2454,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Value"
@@ -2495,19 +2543,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -2522,6 +2574,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Value"
@@ -2607,19 +2663,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -2634,6 +2694,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Value"
@@ -2987,19 +3051,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -3014,6 +3082,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Value"
@@ -3099,19 +3171,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -3126,6 +3202,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Value"
@@ -3211,19 +3291,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -3238,6 +3322,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Value"
@@ -3393,19 +3481,23 @@
             "indexByName": {
               "hostname": 0,
               "server": 1,
-              "name": 2,
-              "machine": 3,
-              "bouncer": 4,
-              "check": 5,
-              "source": 6,
-              "version": 7,
-              "reason": 8,
-              "origin": 9,
-              "action": 10,
-              "method": 11,
-              "route": 12,
-              "endpoint": 13,
-              "Value": 14
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
             },
             "renameByName": {
               "hostname": "Host",
@@ -3420,6 +3512,10 @@
               "origin": "Origin",
               "action": "Action",
               "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
               "route": "Route",
               "endpoint": "Endpoint",
               "Value": "Value"
@@ -3427,6 +3523,1432 @@
           }
         }
       ]
+    },
+    {
+      "id": 43,
+      "title": "Nginx gateway maintenance — fleet-wide",
+      "type": "row",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 108,
+        "w": 24,
+        "h": 1
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {},
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 44,
+      "title": "Nginx automatic update status",
+      "type": "stat",
+      "description": "Current native controller + independent watcher evidence. No change is a successful check, not a deployed upgrade. Same-pin acceptance is validation. In progress requires a running native service; stale evidence is not healthy.",
+      "gridPos": {
+        "x": 0,
+        "y": 109,
+        "w": 6,
+        "h": 5
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "UNAVAILABLE",
+                  "color": "gray",
+                  "index": 0
+                },
+                "1": {
+                  "text": "IN PROGRESS",
+                  "color": "blue",
+                  "index": 1
+                },
+                "2": {
+                  "text": "UP TO DATE",
+                  "color": "green",
+                  "index": 2
+                },
+                "3": {
+                  "text": "UPDATED",
+                  "color": "green",
+                  "index": 3
+                },
+                "4": {
+                  "text": "REVIEW NEEDED",
+                  "color": "orange",
+                  "index": 4
+                },
+                "5": {
+                  "text": "WAITING FOR IMAGE AGE",
+                  "color": "blue",
+                  "index": 5
+                },
+                "6": {
+                  "text": "FAILED / BLOCKED",
+                  "color": "red",
+                  "index": 6
+                },
+                "7": {
+                  "text": "ROLLED BACK",
+                  "color": "orange",
+                  "index": 7
+                },
+                "8": {
+                  "text": "RECOVERY REQUIRED",
+                  "color": "red",
+                  "index": 8
+                },
+                "9": {
+                  "text": "DOCS PENDING",
+                  "color": "orange",
+                  "index": 9
+                },
+                "10": {
+                  "text": "STALE",
+                  "color": "gray",
+                  "index": 10
+                },
+                "11": {
+                  "text": "PREFLIGHT FAILED",
+                  "color": "red",
+                  "index": 11
+                },
+                "12": {
+                  "text": "VALIDATION COMPLETE",
+                  "color": "blue",
+                  "index": 12
+                },
+                "13": {
+                  "text": "DISABLED",
+                  "color": "orange",
+                  "index": 13
+                },
+                "14": {
+                  "text": "ELIGIBLE UPDATE QUEUED",
+                  "color": "blue",
+                  "index": 14
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "crowdsec_nginx_state{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 45,
+      "title": "Pending nginx advisory reviews",
+      "type": "stat",
+      "description": "Unacknowledged advisory revisions, not CVE counts. An out-of-policy candidate also sets REVIEW NEEDED even when this is zero.",
+      "gridPos": {
+        "x": 6,
+        "y": 109,
+        "w": 6,
+        "h": 5
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "crowdsec_nginx_pending_reviews{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 46,
+      "title": "Failed automatic transactions — rolling 24h",
+      "type": "stat",
+      "description": "Retained automatic journal outcomes: rejected preflight, incomplete recovery, or rollback. Excludes acceptance/rehearsal/audit. Failures before journaling are visible in current status, not this count.",
+      "gridPos": {
+        "x": 12,
+        "y": 109,
+        "w": 6,
+        "h": 5
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "crowdsec_nginx_transactions_24h{job=\"crowdsec-health\",kind=\"failures\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 47,
+      "title": "Production rollbacks — rolling 24h",
+      "type": "stat",
+      "description": "Retained automatic transactions with a changed candidate and completed rollback. Also included in failed transaction count; not additive. Incomplete rollback is RECOVERY REQUIRED, not completed rollback.",
+      "gridPos": {
+        "x": 18,
+        "y": 109,
+        "w": 6,
+        "h": 5
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "crowdsec_nginx_transactions_24h{job=\"crowdsec-health\",kind=\"rollbacks\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 48,
+      "title": "Automatic scheduler enabled",
+      "type": "stat",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 114,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "min": 0,
+          "max": 1,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "FAILED",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "PASSING",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "crowdsec_nginx_scheduler_enabled{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 49,
+      "title": "Controller last check age",
+      "type": "stat",
+      "description": "Daily result may be up to 26 hours old; five-minute observation freshness is enforced separately. STALE after 26 hours.",
+      "gridPos": {
+        "x": 6,
+        "y": 114,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "time()-(crowdsec_nginx_last_check_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60))",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 50,
+      "title": "Watcher findings",
+      "type": "stat",
+      "description": "Registry, advisory or source/runtime/Internal Dockhand drift findings. Unknown/stale watcher evidence is N/A, not zero.",
+      "gridPos": {
+        "x": 12,
+        "y": 114,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "crowdsec_nginx_watch_errors{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 51,
+      "title": "Retained history complete",
+      "type": "stat",
+      "description": "Reader bound is 512 journals, 64 KiB each. Any missing/malformed/unsafe record or overflow makes counts unavailable instead of silently undercounting.",
+      "gridPos": {
+        "x": 18,
+        "y": 114,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "min": 0,
+          "max": 1,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "FAILED",
+                  "color": "red",
+                  "index": 0
+                },
+                "1": {
+                  "text": "PASSING",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 52,
+      "title": "Nginx transactions — fixed rolling 24h",
+      "type": "table",
+      "description": "Rolling gauges, not lifetime counters: do not use increase(). Validation failures are separate from automatic failures. Counts use each journal latest write time, not the selected Grafana range.",
+      "gridPos": {
+        "x": 0,
+        "y": 118,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Run mode"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "automatic": {
+                        "text": "Automatic",
+                        "index": 0
+                      },
+                      "acceptance": {
+                        "text": "Same-pin acceptance",
+                        "index": 1
+                      },
+                      "rehearsal": {
+                        "text": "Rehearsal",
+                        "index": 2
+                      },
+                      "audit": {
+                        "text": "Read-only audit",
+                        "index": 3
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Transaction phase"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "checking": {
+                        "text": "Checking",
+                        "index": 0
+                      },
+                      "preflighting": {
+                        "text": "Preflighting",
+                        "index": 1
+                      },
+                      "promoting": {
+                        "text": "Promoting",
+                        "index": 2
+                      },
+                      "deploying": {
+                        "text": "Deploying",
+                        "index": 3
+                      },
+                      "rolling_back": {
+                        "text": "Rolling back",
+                        "index": 4
+                      },
+                      "recovery_required": {
+                        "text": "Recovery required",
+                        "index": 5
+                      },
+                      "documentation_pending": {
+                        "text": "Documentation pending",
+                        "index": 6
+                      },
+                      "completed": {
+                        "text": "Completed",
+                        "index": 7
+                      },
+                      "rolled_back": {
+                        "text": "Rolled back",
+                        "index": 8
+                      },
+                      "preflight_failed": {
+                        "text": "Preflight failed",
+                        "index": 9
+                      },
+                      "no_change": {
+                        "text": "No change",
+                        "index": 10
+                      },
+                      "review_required": {
+                        "text": "Review required",
+                        "index": 11
+                      },
+                      "waiting_for_image_age": {
+                        "text": "Waiting for image age",
+                        "index": 12
+                      },
+                      "blocked": {
+                        "text": "Blocked",
+                        "index": 13
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Outcome"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "not_recorded": {
+                        "text": "No terminal outcome",
+                        "index": 0
+                      },
+                      "activated": {
+                        "text": "Validation activated",
+                        "index": 1
+                      },
+                      "updated": {
+                        "text": "Image upgraded",
+                        "index": 2
+                      },
+                      "rolled_back": {
+                        "text": "Rollback completed",
+                        "index": 3
+                      },
+                      "rehearsed_without_image_or_git_changes": {
+                        "text": "Rehearsal completed — unchanged",
+                        "index": 4
+                      },
+                      "rehearsal_rolled_back_without_git_changes": {
+                        "text": "Rehearsal rollback — no Git change",
+                        "index": 5
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Transaction category"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "updates": {
+                        "text": "Verified image upgrades",
+                        "index": 0
+                      },
+                      "failures": {
+                        "text": "Failed automatic transactions",
+                        "index": 1
+                      },
+                      "rollbacks": {
+                        "text": "Completed production rollbacks",
+                        "index": 2
+                      },
+                      "validations": {
+                        "text": "Validation / audit runs",
+                        "index": 3
+                      },
+                      "validation_failures": {
+                        "text": "Failed validation runs",
+                        "index": 4
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "crowdsec_nginx_transactions_24h{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true,
+              "hostname": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Value"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 53,
+      "title": "Latest recorded nginx transaction",
+      "type": "table",
+      "description": "Mode, phase and outcome of the latest durable transaction. Can precede an in-progress validation or a blocked attempt that did not create a journal. A validation activation is not a production upgrade.",
+      "gridPos": {
+        "x": 12,
+        "y": 118,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Run mode"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "automatic": {
+                        "text": "Automatic",
+                        "index": 0
+                      },
+                      "acceptance": {
+                        "text": "Same-pin acceptance",
+                        "index": 1
+                      },
+                      "rehearsal": {
+                        "text": "Rehearsal",
+                        "index": 2
+                      },
+                      "audit": {
+                        "text": "Read-only audit",
+                        "index": 3
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Transaction phase"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "checking": {
+                        "text": "Checking",
+                        "index": 0
+                      },
+                      "preflighting": {
+                        "text": "Preflighting",
+                        "index": 1
+                      },
+                      "promoting": {
+                        "text": "Promoting",
+                        "index": 2
+                      },
+                      "deploying": {
+                        "text": "Deploying",
+                        "index": 3
+                      },
+                      "rolling_back": {
+                        "text": "Rolling back",
+                        "index": 4
+                      },
+                      "recovery_required": {
+                        "text": "Recovery required",
+                        "index": 5
+                      },
+                      "documentation_pending": {
+                        "text": "Documentation pending",
+                        "index": 6
+                      },
+                      "completed": {
+                        "text": "Completed",
+                        "index": 7
+                      },
+                      "rolled_back": {
+                        "text": "Rolled back",
+                        "index": 8
+                      },
+                      "preflight_failed": {
+                        "text": "Preflight failed",
+                        "index": 9
+                      },
+                      "no_change": {
+                        "text": "No change",
+                        "index": 10
+                      },
+                      "review_required": {
+                        "text": "Review required",
+                        "index": 11
+                      },
+                      "waiting_for_image_age": {
+                        "text": "Waiting for image age",
+                        "index": 12
+                      },
+                      "blocked": {
+                        "text": "Blocked",
+                        "index": 13
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Outcome"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "not_recorded": {
+                        "text": "No terminal outcome",
+                        "index": 0
+                      },
+                      "activated": {
+                        "text": "Validation activated",
+                        "index": 1
+                      },
+                      "updated": {
+                        "text": "Image upgraded",
+                        "index": 2
+                      },
+                      "rolled_back": {
+                        "text": "Rollback completed",
+                        "index": 3
+                      },
+                      "rehearsed_without_image_or_git_changes": {
+                        "text": "Rehearsal completed — unchanged",
+                        "index": 4
+                      },
+                      "rehearsal_rolled_back_without_git_changes": {
+                        "text": "Rehearsal rollback — no Git change",
+                        "index": 5
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Transaction category"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "updates": {
+                        "text": "Verified image upgrades",
+                        "index": 0
+                      },
+                      "failures": {
+                        "text": "Failed automatic transactions",
+                        "index": 1
+                      },
+                      "rollbacks": {
+                        "text": "Completed production rollbacks",
+                        "index": 2
+                      },
+                      "validations": {
+                        "text": "Validation / audit runs",
+                        "index": 3
+                      },
+                      "validation_failures": {
+                        "text": "Failed validation runs",
+                        "index": 4
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "crowdsec_nginx_transaction_info{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "location": true,
+              "role": true,
+              "use": true,
+              "os": true,
+              "service": true,
+              "acquis_type": true,
+              "datasource_type": true,
+              "stage": true,
+              "type": true,
+              "hostname": true,
+              "Value": true
+            },
+            "indexByName": {
+              "hostname": 0,
+              "server": 1,
+              "mode": 2,
+              "phase": 3,
+              "outcome": 4,
+              "kind": 5,
+              "name": 6,
+              "machine": 7,
+              "bouncer": 8,
+              "check": 9,
+              "source": 10,
+              "version": 11,
+              "reason": 12,
+              "origin": 13,
+              "action": 14,
+              "method": 15,
+              "route": 16,
+              "endpoint": 17,
+              "Value": 18
+            },
+            "renameByName": {
+              "hostname": "Host",
+              "server": "Host",
+              "name": "Entity / scenario",
+              "machine": "Agent",
+              "bouncer": "Bouncer",
+              "check": "Health check",
+              "source": "Log source",
+              "version": "Version",
+              "reason": "Reason",
+              "origin": "Origin",
+              "action": "Action",
+              "method": "Method",
+              "mode": "Run mode",
+              "phase": "Transaction phase",
+              "outcome": "Outcome",
+              "kind": "Transaction category",
+              "route": "Route",
+              "endpoint": "Endpoint",
+              "Value": "Value"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 54,
+      "title": "Last verified production upgrade",
+      "type": "stat",
+      "description": "Latest retained automatic completed transaction with a changed image. N/A when none is recorded; not the last acceptance or no-change check.",
+      "gridPos": {
+        "x": 0,
+        "y": 126,
+        "w": 12,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dateTimeAsLocal",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "(crowdsec_nginx_last_upgrade_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60))*1000",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 55,
+      "title": "Last completed production rollback",
+      "type": "stat",
+      "description": "Latest retained completed automatic rollback of a changed image. N/A when none is recorded. Incomplete recovery is shown as a separate current failure.",
+      "gridPos": {
+        "x": 12,
+        "y": 126,
+        "w": 12,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dateTimeAsLocal",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "(crowdsec_nginx_last_rollback_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60))*1000",
+          "legendFormat": "{{hostname}}",
+          "editorMode": "code",
+          "instant": true,
+          "range": false,
+          "format": "time_series",
+          "interval": "30s"
+        }
+      ],
+      "interval": "30s"
+    },
+    {
+      "id": 56,
+      "title": "Maintenance interpretation",
+      "type": "text",
+      "description": "",
+      "gridPos": {
+        "x": 0,
+        "y": 130,
+        "w": 24,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "N/A",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Seven owned nginx guards use this controller. The independent watcher checks runtime, canonical Ansible and Internal Dockhand definitions. This collector only reads existing records; it never deploys images, retries Cloudflare or changes timers. **Pending review** and **waiting for image age** are deliberate gates. **Rolled back** means recovery completed, not that the candidate was repaired. Same-pin acceptance/rehearsal/audit runs remain separate. Transaction counts are a fixed rolling **24 hours**, using each retained journal’s latest write, not an exhaustive event log. Pre-journal failed attempts appear in current status only. Missing/incomplete history is N/A, not zero. Observation freshness is 11 minutes; daily check freshness is 26 hours. Core protection health and maintenance warnings remain distinct."
+      }
     }
   ],
   "links": [
