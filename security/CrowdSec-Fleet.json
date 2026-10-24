@@ -61,7 +61,7 @@
       "id": 2,
       "title": "Overall operational health",
       "type": "stat",
-      "description": "A genuine Cloudflare freshness failure remains FAILED even when every agent is online.",
+      "description": "HEALTHY: all checks pass. ATTENTION: update/verification warnings with core fleet online. CRITICAL: an expected agent/bouncer, engine scrape, LAPI or core collection is unhealthy. Missing/stale input is N/A, never healthy.",
       "gridPos": {
         "x": 0,
         "y": 4,
@@ -73,7 +73,7 @@
           "unit": "short",
           "noValue": "N/A",
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "thresholds": {
             "mode": "absolute",
@@ -83,26 +83,35 @@
                 "value": null
               },
               {
-                "color": "green",
+                "color": "orange",
                 "value": 1
+              },
+              {
+                "color": "green",
+                "value": 2
               }
             ]
           },
           "min": 0,
-          "max": 1,
+          "max": 2,
           "mappings": [
             {
               "type": "value",
               "options": {
                 "0": {
-                  "text": "FAILED",
+                  "text": "CRITICAL",
                   "color": "red",
                   "index": 0
                 },
                 "1": {
-                  "text": "PASSING",
-                  "color": "green",
+                  "text": "ATTENTION",
+                  "color": "orange",
                   "index": 1
+                },
+                "2": {
+                  "text": "HEALTHY",
+                  "color": "green",
+                  "index": 2
                 }
               }
             }
@@ -130,7 +139,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "crowdsec_health_success{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660)",
+          "expr": "(1+(crowdsec_health_success{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660)))*on() group_left() ((sum(1-(crowdsec_health_entity_healthy{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660))) == bool 0)*(sum(1-(crowdsec_health_check_success{job=\"crowdsec-health\",check=~\"machines|bouncers|decisions\"} and on(job,instance) (time()-crowdsec_health_last_run_timestamp_seconds{job=\"crowdsec-health\"}<660))) == bool 0)*(min(up{job=~\"crowdsec|crowdsec-agents\"}) == bool 1))",
           "legendFormat": "{{hostname}}",
           "editorMode": "code",
           "instant": true,
@@ -1610,7 +1619,7 @@
       "id": 22,
       "title": "Community list freshness",
       "type": "stat",
-      "description": "",
+      "description": "NEEDS REFRESH is a real freshness warning, not an outage of every agent. See saved retry and current failure reason. Never means a refresh is currently running.",
       "gridPos": {
         "x": 0,
         "y": 42,
@@ -1628,7 +1637,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
+                "color": "orange",
                 "value": null
               },
               {
@@ -1644,12 +1653,12 @@
               "type": "value",
               "options": {
                 "0": {
-                  "text": "FAILED",
-                  "color": "red",
+                  "text": "NEEDS REFRESH",
+                  "color": "orange",
                   "index": 0
                 },
                 "1": {
-                  "text": "PASSING",
+                  "text": "CURRENT",
                   "color": "green",
                   "index": 1
                 }

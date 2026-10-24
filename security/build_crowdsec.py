@@ -25,6 +25,14 @@ def rate(metric, group="hostname", selector=ENGINE):
     return f'sum by({group})(rate({metric}{selector}[$__rate_interval]))'
 
 
+def operational_severity():
+    # 0 critical, 1 attention, 2 healthy. Missing/stale inputs remain absent.
+    core = '(sum(1-(' + health('entity_healthy') + ')) == bool 0)'
+    collections = '(sum(1-(' + health('check_success', ',check=~"machines|bouncers|decisions"') + ')) == bool 0)'
+    engines = '(min(up{job=~"crowdsec|crowdsec-agents"}) == bool 1)'
+    return '(1+(' + health('success') + '))*on() group_left() (' + core + '*' + collections + '*' + engines + ')'
+
+
 class Dashboard:
     def __init__(self, title, uid, description):
         self.data = {"id": None, "uid": uid, "title": title, "description": description,
@@ -117,7 +125,14 @@ class Dashboard:
 def fleet():
     d = Dashboard("CrowdSec Fleet", "kdn-crowdsec-fleet", "Operational assurance: current agents, remediation, CAPI and Cloudflare freshness. Engine host filters do not scope central LAPI or fleet health.")
     d.note("Read this first", "**Engine host** filters engine panels. LAPI, bouncer and health panels deliberately remain fleet-wide. **N/A is not healthy or zero.** Health results older than 11 minutes are excluded. Historical graphs and retained alert records are not new attacks. The private email report supplies source IP, country, ASN and service/host investigations; these are not exposed by native engine metrics.", 4)
-    d.panel("Overall operational health", health("success"), "stat", 6, 4, binary=True, description="A genuine Cloudflare freshness failure remains FAILED even when every agent is online.")
+    p = d.panel("Overall operational health", operational_severity(), "stat", 6, 4,
+                description="HEALTHY: all checks pass. ATTENTION: update/verification warnings with core fleet online. CRITICAL: an expected agent/bouncer, engine scrape, LAPI or core collection is unhealthy. Missing/stale input is N/A, never healthy.")
+    p['fieldConfig']['defaults'].update({'min': 0, 'max': 2, 'color': {'mode': 'thresholds'},
+        'mappings': [{'type': 'value', 'options': {
+            '0': {'text': 'CRITICAL', 'color': 'red', 'index': 0},
+            '1': {'text': 'ATTENTION', 'color': 'orange', 'index': 1},
+            '2': {'text': 'HEALTHY', 'color': 'green', 'index': 2}}}],
+        'thresholds': {'mode': 'absolute', 'steps': [{'color': 'red', 'value': None}, {'color': 'orange', 'value': 1}, {'color': 'green', 'value': 2}]}})
     d.panel("Central LAPI scrape", 'up{job="crowdsec"}', "stat", 6, 4, binary=True)
     d.panel("Selected engines up", 'sum(up'+ENGINE+')', "stat", 6, 4)
     d.panel("Selected engines configured", 'count(up'+ENGINE+')', "stat", 6, 4)
@@ -137,7 +152,11 @@ def fleet():
     d.panel("Machine last-seen age", health("entity_age_seconds", ',kind="machine"'), legend="{{name}}", unit="s")
     d.panel("Bouncer last-pull age", health("entity_age_seconds", ',kind="bouncer"'), legend="{{name}}", unit="s")
     d.row("Cloudflare and public HTTP gateways")
-    d.panel("Community list freshness", health("check_success", ',check="cloudflare-community-list-status"'), "stat", 6, 4, binary=True)
+    p = d.panel("Community list freshness", health("check_success", ',check="cloudflare-community-list-status"'), "stat", 6, 4, binary=True,
+                description="NEEDS REFRESH is a real freshness warning, not an outage of every agent. See saved retry and current failure reason. Never means a refresh is currently running.")
+    p['fieldConfig']['defaults']['mappings'][0]['options']['0'].update(text='NEEDS REFRESH', color='orange')
+    p['fieldConfig']['defaults']['mappings'][0]['options']['1'].update(text='CURRENT')
+    p['fieldConfig']['defaults']['thresholds']['steps'][0]['color'] = 'orange'
     d.panel("Community list last verification age", '(time()-crowdsec_health_cloudflare_bulk_last_verified_timestamp_seconds'+HEALTH+')'+FRESH, "stat", 6, 4, "s")
     d.panel("Saved next bulk attempt", '('+health("cloudflare_bulk_next_attempt_timestamp_seconds")+')*1000', "stat", 6, 4, "dateTimeAsLocal", description="Read-only saved quota retry. Viewing does not retry, reset or advance it.")
     d.panel("Community candidates omitted", health("cloudflare_bulk_omitted"), "stat", 6, 4, description="Capacity exclusions, not blocked Cloudflare requests.")

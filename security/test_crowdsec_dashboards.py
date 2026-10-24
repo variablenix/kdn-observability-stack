@@ -79,6 +79,18 @@ class Dashboards(unittest.TestCase):
         self.assertIn('sample coverage', notes.lower())
         self.assertIn('not unique attackers', notes)
 
+    def test_overall_status_differentiates_warnings_from_core_outages(self):
+        p = next(p for p in builder.fleet()['panels'] if p['title'] == 'Overall operational health')
+        mapping = p['fieldConfig']['defaults']['mappings'][0]['options']
+        self.assertEqual(mapping['0']['text'], 'CRITICAL')
+        self.assertEqual(mapping['1']['text'], 'ATTENTION')
+        self.assertEqual(mapping['2']['text'], 'HEALTHY')
+        q = p['targets'][0]['expr']
+        self.assertIn('entity_healthy', q)
+        self.assertIn('machines|bouncers|decisions', q)
+        self.assertIn('min(up', q)
+        self.assertNotIn('vector(0)', q)
+
 
 if __name__ == '__main__':
     unittest.main()

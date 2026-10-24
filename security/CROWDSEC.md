@@ -24,6 +24,14 @@ private. Health results older than 660 seconds are excluded, not colored green.
 Without these collectors the corresponding panels display N/A rather than a
 fabricated healthy result. All native queries continue to work independently.
 
+The overall status distinguishes **HEALTHY** (all checks passing), amber
+**ATTENTION** (freshness/update/verification warnings with core services online),
+and red **CRITICAL** (an unhealthy expected agent/bouncer, engine scrape, LAPI or
+core collection). Missing/stale evidence remains N/A. Community-list freshness
+uses **NEEDS REFRESH**, not a claim that an update is running. Individual failing
+checks and their reasons remain visible; no failure is suppressed to make the
+overview green. A scheduled quota retry is not a guaranteed upstream reset.
+
 Decision records are not necessarily distinct IPs. Retained alert gauges are
 database inventory, not new detections in the selected window. API POST/poll
 counts are requests, not alerts or blocked traffic. Scenario overflows may
