@@ -29,6 +29,8 @@ These dashboards are exported in standard Grafana JSON format. To import them:
 
 See the [dated review](docs/dashboard-review-2026-10-24.md) for measured results and limitations across all 32 dashboards. [Immich](docs/IMMICH.md) now includes 74 data panels, six inventory trend graphs, account counts/sizes, recent additions, queues, containers, database, resources and backup/cloud coverage. Its read-only collector and native systemd timer are included.
 
+The [remaining-panel follow-up](docs/dashboard-followup-2026-10-24.md) repairs or replaces unsupported views in 11 dashboards. Its published audit found **826 of 826 panels returning data**, with no empty panel results or query errors in the checked views. Garmin now distinguishes watch uploads from actual health sample freshness; maintenance cards distinguish no recorded events from incomplete history.
+
 InfluxDB dashboards need the correct query language: map the Flux input to a **Flux** connection and Garmin to **InfluxQL**. They are separate data sources. Example addresses, fixed host selectors, bucket names and collector paths must be adapted to the importing deployment. A missing optional metric is labelled as unavailable; it is not converted into a healthy zero.
 
 Dashboard exports can be refreshed with [the sanitizer](tools/export_sanitized.py), a private binding map and optional private literal redactions. Saved query selections are cleared. Inspect every generated diff: automated masking alone does not prove an export is safe to publish. [Provisioning examples](provisioning/) contain no production credentials.

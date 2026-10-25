@@ -570,17 +570,20 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Actions metric not exposed. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
-          "mappings": [],
-          "noValue": "Actions metric not exposed",
+          "unit": "short",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          },
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-yellow",
-                "value": 0
+                "color": "blue",
+                "value": null
               }
             ]
           }
@@ -595,11 +598,6 @@
       },
       "id": 11,
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -607,24 +605,26 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
       },
       "pluginVersion": "12.4.1",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gitea_actions",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
+          "editorMode": "code",
+          "expr": "gitea_projects{job=\"gitea\"}",
+          "legendFormat": "{{instance}}",
+          "instant": true,
+          "range": false
         }
       ],
-      "title": "Number of Actions",
+      "title": "Number of Projects",
       "type": "stat"
     },
     {

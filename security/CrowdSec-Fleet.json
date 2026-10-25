@@ -4797,7 +4797,7 @@
       "id": 54,
       "title": "Last verified production upgrade",
       "type": "stat",
-      "description": "Latest retained automatic completed transaction with a changed image. N/A when none is recorded; not the last acceptance or no-change check.",
+      "description": "Latest retained completed production upgrade. No recorded event is shown only with fresh, complete history and a successful scrape; incomplete/stale history is explicitly unavailable. Same-pin acceptance is not an upgrade; incomplete recovery is not a completed rollback.",
       "gridPos": {
         "x": 0,
         "y": 126,
@@ -4807,7 +4807,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "dateTimeAsLocal",
-          "noValue": "N/A",
+          "noValue": "History unavailable",
           "color": {
             "mode": "palette-classic"
           },
@@ -4819,7 +4819,22 @@
                 "value": null
               }
             ]
-          }
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "No recorded upgrade",
+                  "color": "blue"
+                },
+                "-1": {
+                  "text": "History unavailable / incomplete",
+                  "color": "orange"
+                }
+              }
+            }
+          ]
         },
         "overrides": []
       },
@@ -4843,7 +4858,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "(crowdsec_nginx_last_upgrade_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60))*1000",
+          "expr": "((crowdsec_nginx_last_upgrade_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60) and on(job,instance) (up{job=\"crowdsec-health\"} == 1) and on(job,instance) ((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1)) > 0)*1000 or on(job,instance) (0*((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1) and on(job,instance) (up{job=\"crowdsec-health\"} == 1)) or on(job,instance) (0*up{job=\"crowdsec-health\"}-1)",
           "legendFormat": "{{hostname}}",
           "editorMode": "code",
           "instant": true,
@@ -4858,7 +4873,7 @@
       "id": 55,
       "title": "Last completed production rollback",
       "type": "stat",
-      "description": "Latest retained completed automatic rollback of a changed image. N/A when none is recorded. Incomplete recovery is shown as a separate current failure.",
+      "description": "Latest retained completed production rollback. No recorded event is shown only with fresh, complete history and a successful scrape; incomplete/stale history is explicitly unavailable. Same-pin acceptance is not an upgrade; incomplete recovery is not a completed rollback.",
       "gridPos": {
         "x": 12,
         "y": 126,
@@ -4868,7 +4883,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "dateTimeAsLocal",
-          "noValue": "N/A",
+          "noValue": "History unavailable",
           "color": {
             "mode": "palette-classic"
           },
@@ -4880,7 +4895,22 @@
                 "value": null
               }
             ]
-          }
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "No recorded rollback",
+                  "color": "blue"
+                },
+                "-1": {
+                  "text": "History unavailable / incomplete",
+                  "color": "orange"
+                }
+              }
+            }
+          ]
         },
         "overrides": []
       },
@@ -4904,7 +4934,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "(crowdsec_nginx_last_rollback_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60))*1000",
+          "expr": "((crowdsec_nginx_last_rollback_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60) and on(job,instance) (up{job=\"crowdsec-health\"} == 1) and on(job,instance) ((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1)) > 0)*1000 or on(job,instance) (0*((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1) and on(job,instance) (up{job=\"crowdsec-health\"} == 1)) or on(job,instance) (0*up{job=\"crowdsec-health\"}-1)",
           "legendFormat": "{{hostname}}",
           "editorMode": "code",
           "instant": true,

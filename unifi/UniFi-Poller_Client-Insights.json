@@ -1980,60 +1980,29 @@
       "datasource": {
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Cameras TX / RX bytes per second. Rx is on the negative axis. This graph shows any device with the word \"camera\" in its name and has nothing to do with UniFi Protect/video products. e = wired, w = wireless\nNo client matching the camera filter. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "Receive + transmit byte rates, respecting site, wired/wireless client and AP/switch selections. No device-name convention is required.",
       "fieldConfig": {
         "defaults": {
+          "unit": "Bps",
+          "noValue": "Unavailable",
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "noValue": "No client matching the camera filter",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
+                "color": "blue",
+                "value": null
               }
             ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2046,60 +2015,34 @@
       },
       "id": 15,
       "options": {
-        "dataLinks": [],
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "pluginVersion": "12.4.1",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum by ($Identifier) (rate(unpoller_client_transmit_bytes_total{ap_name=~\"$AP\", name=~\".*camera.*|.*cam$\", site_name=\"$Site\"}[$__interval]))",
+          "editorMode": "code",
+          "expr": "topk(10,sum by(name)((rate(unpoller_client_receive_bytes_total{job=\"unpoller\",site_name=\"$Site\",wired=\"true\",name=~\"$Wired\",sw_name=~\"$Switch\"}[$__rate_interval])+rate(unpoller_client_transmit_bytes_total{job=\"unpoller\",site_name=\"$Site\",wired=\"true\",name=~\"$Wired\",sw_name=~\"$Switch\"}[$__rate_interval])) or (rate(unpoller_client_receive_bytes_total{job=\"unpoller\",site_name=\"$Site\",wired!=\"true\",name=~\"$Wireless\",ap_name=~\"$AP\"}[$__rate_interval])+rate(unpoller_client_transmit_bytes_total{job=\"unpoller\",site_name=\"$Site\",wired!=\"true\",name=~\"$Wireless\",ap_name=~\"$AP\"}[$__rate_interval]))))",
+          "legendFormat": "{{name}}",
           "instant": false,
-          "interval": "$Smooth",
-          "legendFormat": "w {{name}} {{mac}} Tx",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "sum by ($Identifier) (rate(unpoller_client_receive_bytes_total{ap_name=~\"$AP\", name=~\".*camera.*|.*cam$\", site_name=\"$Site\"}[$__interval]))",
-          "interval": "$Smooth",
-          "legendFormat": "w {{name}} {{mac}} Rx",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "sum by ($Identifier) (rate(unpoller_client_transmit_bytes_total{sw_name=~\"$Switch\", name=~\".*camera.*|.*cam$\", site_name=\"$Site\"}[$__interval]))",
-          "interval": "$Smooth",
-          "legendFormat": "e {{name}} {{mac}} Tx",
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "sum by ($Identifier) (rate(unpoller_client_receive_bytes_total{sw_name=~\"$Switch\", name=~\".*camera.*|.*cam$\", site_name=\"$Site\"}[$__interval]))",
-          "interval": "$Smooth",
-          "legendFormat": "e {{name}} {{mac}} Rx",
-          "refId": "D"
+          "range": true
         }
       ],
-      "title": "Client Bandwidth: Cameras",
+      "title": "Top 10 clients by combined throughput",
       "type": "timeseries"
     },
     {

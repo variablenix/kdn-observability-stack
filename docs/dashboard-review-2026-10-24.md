@@ -1,5 +1,7 @@
 # Dashboard review — 2026-10-24 Pacific
 
+The [later follow-up](dashboard-followup-2026-10-24.md) resolves the remaining unsupported/empty panels. Results below describe the earlier pass.
+
 ## Verified result
 
 Reviewed **32 saved dashboards in seven folders**. Applied fixes or missing-data explanations to 25 dashboards across Services, Infrastructure, Containers, Network, Personal and Security. The other dashboards' working queries were retained. Existing CrowdSec provisioning changes were reconciled from the current source rather than overwritten with an older export.

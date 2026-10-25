@@ -584,29 +584,23 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "No failed scan observations. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "Observed scan outcome counters. Missing failure series are not silently converted to a zero failure count.",
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
           "color": {
-            "fixedColor": "light-red",
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "mappings": [],
-          "noValue": "No failed scan observations",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 1
+                "color": "blue",
+                "value": null
               }
             ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
@@ -618,11 +612,6 @@
       },
       "id": 35,
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -630,28 +619,26 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "text": {},
-        "textMode": "auto",
-        "wideLayout": true
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
       },
       "pluginVersion": "12.4.2",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "exemplar": true,
-          "expr": "increase(media_scans{job=~\"^$job$\", success=\"false\"}[$__range])",
+          "expr": "increase(media_scans{job=~\"^$job$\"}[$__range])",
+          "legendFormat": "{{instance}} \u00b7 success={{success}}",
           "instant": true,
-          "interval": "",
-          "legendFormat": "{{instance}}",
-          "refId": "A"
+          "range": false
         }
       ],
-      "title": "Failed scans for period",
+      "title": "Media scan outcomes \u2014 selected range",
       "type": "stat"
     },
     {

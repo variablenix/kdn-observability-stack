@@ -727,32 +727,23 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Unacknowledged heartbeat count. Non-zero indicates connectivity issues between cloudflared and the edge.\nNo retry / latency observations. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "Age of each currently scraped connector process; resets after restart.",
       "fieldConfig": {
         "defaults": {
+          "unit": "s",
+          "noValue": "Unavailable",
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "mappings": [],
-          "noValue": "No retry / latency observations",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 1
-              },
-              {
-                "color": "red",
-                "value": 5
+                "color": "blue",
+                "value": null
               }
             ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
@@ -764,11 +755,6 @@
       },
       "id": 12,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -776,25 +762,26 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
       },
       "pluginVersion": "12.4.2",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "editorMode": "builder",
-          "expr": "sum(cloudflared_tunnel_timer_retries{job=~\"$job\"})",
-          "legendFormat": "retries",
-          "range": true,
-          "refId": "A"
+          "editorMode": "code",
+          "expr": "time()-process_start_time_seconds{job=~\"$job\"}",
+          "legendFormat": "{{instance}}",
+          "instant": true,
+          "range": false
         }
       ],
-      "title": "Heartbeat Retries",
+      "title": "Connector uptime",
       "type": "stat"
     },
     {
@@ -2665,76 +2652,32 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Unacknowledged heartbeat count per tunnel. Non-zero values indicate the edge hasn't responded to keepalive pings \u2014 possible network disruption or edge congestion.\nNo retry / latency observations. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "unit": "percent",
+          "noValue": "Unavailable",
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "noValue": "No retry / latency observations",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "color": "blue",
+                "value": null
               }
             ]
           },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "{{pod}}"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "orange",
-                  "mode": "fixed"
-                }
-              }
-            ]
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false
           }
-        ]
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -2745,16 +2688,14 @@
       "id": 33,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
@@ -2762,16 +2703,19 @@
       "pluginVersion": "12.4.2",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "cloudflared_tunnel_timer_retries{job=~\"$job\"}",
-          "legendFormat": "{{pod}}",
-          "refId": "A"
+          "editorMode": "code",
+          "expr": "100*process_open_fds{job=~\"$job\"}/process_max_fds{job=~\"$job\"}",
+          "legendFormat": "{{instance}}",
+          "instant": false,
+          "range": true
         }
       ],
-      "title": "Heartbeat Retries",
+      "title": "File descriptor capacity used",
       "type": "timeseries"
     },
     {
@@ -4419,106 +4363,32 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Time to establish and acknowledge connections to origin, in milliseconds. Includes DNS resolution, TCP handshake, and TLS handshake to origin. High p99 may indicate DNS resolution delays or origin connection pool exhaustion.\nNo retry / latency observations. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "Native cumulative configuration pushes and errors since connector start. This is not request latency.",
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "noValue": "No retry / latency observations",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "color": "blue",
+                "value": null
               }
             ]
           },
-          "unit": "ms"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p50"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p95"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p99"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false
           }
-        ]
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -4529,16 +4399,14 @@
       "id": 52,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull"
-          ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
@@ -4546,34 +4414,31 @@
       "pluginVersion": "12.4.2",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "histogram_quantile(0.50, sum by (le) (rate(cloudflared_proxy_connect_latency_bucket{job=~\"$job\"}[$__rate_interval])))",
-          "legendFormat": "p50",
-          "refId": "A"
+          "editorMode": "code",
+          "expr": "cloudflared_config_local_config_pushes{job=~\"$job\"}",
+          "legendFormat": "{{instance}} pushes",
+          "instant": false,
+          "range": true
         },
         {
+          "refId": "B",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(cloudflared_proxy_connect_latency_bucket{job=~\"$job\"}[$__rate_interval])))",
-          "legendFormat": "p95",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "histogram_quantile(0.99, sum by (le) (rate(cloudflared_proxy_connect_latency_bucket{job=~\"$job\"}[$__rate_interval])))",
-          "legendFormat": "p99",
-          "refId": "C"
+          "editorMode": "code",
+          "expr": "cloudflared_config_local_config_pushes_errors{job=~\"$job\"}",
+          "legendFormat": "{{instance}} errors",
+          "instant": false,
+          "range": true
         }
       ],
-      "title": "Proxy Connect Latency",
+      "title": "Configuration push outcomes",
       "type": "timeseries"
     },
     {
@@ -4581,106 +4446,32 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Latency of RPC calls initiated by cloudflared (e.g. register_connection). These are control plane operations, not data plane. High latency here affects tunnel registration/reconnection speed.\nNo retry / latency observations. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "Quantiles of retained control-plane RPC observations since process start, not latency in the selected rate window. Idle control planes need not issue new RPCs. Resets on restart.",
       "fieldConfig": {
         "defaults": {
+          "unit": "s",
+          "noValue": "Unavailable",
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "noValue": "No retry / latency observations",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "color": "blue",
+                "value": null
               }
             ]
           },
-          "unit": "s"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p50"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p95"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p99"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false
           }
-        ]
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -4691,16 +4482,14 @@
       "id": 53,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull"
-          ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
@@ -4708,34 +4497,43 @@
       "pluginVersion": "12.4.2",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "histogram_quantile(0.50, sum by (le) (rate(cloudflared_rpc_client_latency_secs_bucket{job=~\"$job\"}[$__rate_interval])))",
-          "legendFormat": "p50",
-          "refId": "A"
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.5, sum by(instance,le)(cloudflared_rpc_client_latency_secs_bucket{job=~\"$job\"}))",
+          "legendFormat": "{{instance}} p50",
+          "instant": false,
+          "range": true
         },
         {
+          "refId": "B",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(cloudflared_rpc_client_latency_secs_bucket{job=~\"$job\"}[$__rate_interval])))",
-          "legendFormat": "p95",
-          "refId": "B"
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by(instance,le)(cloudflared_rpc_client_latency_secs_bucket{job=~\"$job\"}))",
+          "legendFormat": "{{instance}} p95",
+          "instant": false,
+          "range": true
         },
         {
+          "refId": "C",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "histogram_quantile(0.99, sum by (le) (rate(cloudflared_rpc_client_latency_secs_bucket{job=~\"$job\"}[$__rate_interval])))",
-          "legendFormat": "p99",
-          "refId": "C"
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.99, sum by(instance,le)(cloudflared_rpc_client_latency_secs_bucket{job=~\"$job\"}))",
+          "legendFormat": "{{instance}} p99",
+          "instant": false,
+          "range": true
         }
       ],
-      "title": "RPC Client Latency",
+      "title": "RPC client latency \u2014 since connector start",
       "type": "timeseries"
     },
     {
@@ -4743,106 +4541,32 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Latency of RPC calls served by cloudflared (e.g. update_configuration from edge). High values may indicate slow config processing.\nNo retry / latency observations. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "unit": "percent",
+          "noValue": "Unavailable",
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "noValue": "No retry / latency observations",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "color": "blue",
+                "value": null
               }
             ]
           },
-          "unit": "s"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p50"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p95"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "p99"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false
           }
-        ]
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -4853,16 +4577,14 @@
       "id": 54,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull"
-          ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
@@ -4870,34 +4592,19 @@
       "pluginVersion": "12.4.2",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "histogram_quantile(0.50, sum by (le) (rate(cloudflared_rpc_server_latency_secs_bucket{job=~\"$job\"}[$__rate_interval])))",
-          "legendFormat": "p50",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(cloudflared_rpc_server_latency_secs_bucket{job=~\"$job\"}[$__rate_interval])))",
-          "legendFormat": "p95",
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "histogram_quantile(0.99, sum by (le) (rate(cloudflared_rpc_server_latency_secs_bucket{job=~\"$job\"}[$__rate_interval])))",
-          "legendFormat": "p99",
-          "refId": "C"
+          "editorMode": "code",
+          "expr": "100*go_memstats_heap_inuse_bytes{job=~\"$job\"}/(go_memstats_heap_inuse_bytes{job=~\"$job\"}+go_memstats_heap_idle_bytes{job=~\"$job\"})",
+          "legendFormat": "{{instance}}",
+          "instant": false,
+          "range": true
         }
       ],
-      "title": "RPC Server Latency",
+      "title": "Go heap capacity in use",
       "type": "timeseries"
     },
     {
@@ -4905,57 +4612,30 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Distribution of proxy connect latency across histogram buckets. Shows the shape of the latency distribution \u2014 bimodal patterns may indicate DNS cache hits/misses.",
+      "description": "Actual histogram sample count. No origin proxy latency is inferred when its histogram has no observations.",
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "color": "blue",
+                "value": null
               }
             ]
           },
-          "unit": "ms"
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false
+          }
         },
         "overrides": []
       },
@@ -4968,16 +4648,14 @@
       "id": 55,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
@@ -4985,16 +4663,19 @@
       "pluginVersion": "12.4.2",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_proxy_connect_latency_bucket{job=~\"$job\"}[$__rate_interval])) by (le)",
-          "legendFormat": "{{le}}",
-          "refId": "A"
+          "editorMode": "code",
+          "expr": "sum by(instance)(cloudflared_rpc_client_latency_secs_count{job=~\"$job\"})",
+          "legendFormat": "{{instance}}",
+          "instant": false,
+          "range": true
         }
       ],
-      "title": "Proxy Connect Latency Heatmap (rate)",
+      "title": "RPC client observations \u2014 since connector start",
       "type": "timeseries"
     },
     {

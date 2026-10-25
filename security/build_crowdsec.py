@@ -23,6 +23,21 @@ def nginx(metric, labels=''):
     return 'crowdsec_nginx_' + metric + '{job="crowdsec-health"' + labels + '}' + NGINX_FRESH
 
 
+def nginx_last_event(event):
+    """Timestamp or categorical state, never a manufactured event timestamp.
+
+    0 means fresh, successfully read retained history contains no such event.
+    -1 means the history is unavailable/incomplete/stale or the scrape is down.
+    """
+    up = 'up{job="crowdsec-health"}'
+    live = ' and on(job,instance) (' + up + ' == 1)'
+    complete = '((' + nginx('history_complete') + ') == 1)'
+    recorded = '((' + nginx('last_'+event+'_timestamp_seconds') + live + ' and on(job,instance) ' + complete + ') > 0)*1000'
+    empty = '(0*' + complete + live + ')'
+    unknown = '(0*' + up + '-1)'
+    return recorded + ' or on(job,instance) ' + empty + ' or on(job,instance) ' + unknown
+
+
 def maintenance(d, full=False):
     d.row('Nginx gateway maintenance — fleet-wide')
     p = d.panel('Nginx automatic update status', nginx('state'), 'stat', 6, 5,
@@ -48,10 +63,13 @@ def maintenance(d, full=False):
         description='Rolling gauges, not lifetime counters: do not use increase(). Validation failures are separate from automatic failures. Counts use each journal latest write time, not the selected Grafana range.')
     d.panel('Latest recorded nginx transaction', nginx('transaction_info'), 'table',
         description='Mode, phase and outcome of the latest durable transaction. Can precede an in-progress validation or a blocked attempt that did not create a journal. A validation activation is not a production upgrade.')
-    d.panel('Last verified production upgrade', '('+nginx('last_upgrade_timestamp_seconds')+')*1000', 'stat', 12, 4, 'dateTimeAsLocal',
-        description='Latest retained automatic completed transaction with a changed image. N/A when none is recorded; not the last acceptance or no-change check.')
-    d.panel('Last completed production rollback', '('+nginx('last_rollback_timestamp_seconds')+')*1000', 'stat', 12, 4, 'dateTimeAsLocal',
-        description='Latest retained completed automatic rollback of a changed image. N/A when none is recorded. Incomplete recovery is shown as a separate current failure.')
+    for event, title in [('upgrade', 'Last verified production upgrade'), ('rollback', 'Last completed production rollback')]:
+        p = d.panel(title, nginx_last_event(event), 'stat', 12, 4, 'dateTimeAsLocal',
+            description='Latest retained completed production '+event+'. No recorded event is shown only with fresh, complete history and a successful scrape; incomplete/stale history is explicitly unavailable. Same-pin acceptance is not an upgrade; incomplete recovery is not a completed rollback.')
+        p['fieldConfig']['defaults']['noValue'] = 'History unavailable'
+        p['fieldConfig']['defaults']['mappings'] = [{'type': 'value', 'options': {
+            '0': {'text': 'No recorded '+event, 'color': 'blue'},
+            '-1': {'text': 'History unavailable / incomplete', 'color': 'orange'}}}]
     d.note('Maintenance interpretation', 'Seven owned nginx guards use this controller. The independent watcher checks runtime, canonical Ansible and Internal Dockhand definitions. This collector only reads existing records; it never deploys images, retries Cloudflare or changes timers. **Pending review** and **waiting for image age** are deliberate gates. **Rolled back** means recovery completed, not that the candidate was repaired. Same-pin acceptance/rehearsal/audit runs remain separate. Transaction counts are a fixed rolling **24 hours**, using each retained journal’s latest write, not an exhaustive event log. Pre-journal failed attempts appear in current status only. Missing/incomplete history is N/A, not zero. Observation freshness is 11 minutes; daily check freshness is 26 hours. Core protection health and maintenance warnings remain distinct.')
 
 

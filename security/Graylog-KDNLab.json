@@ -97,7 +97,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_journal_append_1_sec_rate",
+          "expr": "gl_journal_append_1_sec_rate{job=\"graylog\"}",
           "legendFormat": "msgs/s",
           "refId": "A"
         }
@@ -168,7 +168,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_journal_read_1_sec_rate",
+          "expr": "gl_journal_read_1_sec_rate{job=\"graylog\"}",
           "legendFormat": "msgs/s",
           "refId": "A"
         }
@@ -239,7 +239,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_journal_entries_uncommitted",
+          "expr": "gl_journal_entries_uncommitted{job=\"graylog\"}",
           "legendFormat": "entries",
           "refId": "A"
         }
@@ -312,7 +312,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_journal_utilization_ratio",
+          "expr": "gl_journal_utilization_ratio{job=\"graylog\"}",
           "legendFormat": "utilization",
           "refId": "A"
         }
@@ -385,7 +385,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_buffer_usage / gl_buffer_size",
+          "expr": "gl_buffer_usage{job=\"graylog\"} / gl_buffer_size{job=\"graylog\"}",
           "legendFormat": "buffer %",
           "refId": "A"
         }
@@ -456,7 +456,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_journal_size",
+          "expr": "gl_journal_size{job=\"graylog\"}",
           "legendFormat": "size",
           "refId": "A"
         }
@@ -553,7 +553,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_journal_append_1_sec_rate",
+          "expr": "gl_journal_append_1_sec_rate{job=\"graylog\"}",
           "legendFormat": "Append (msg/s)",
           "refId": "A"
         },
@@ -562,7 +562,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_journal_read_1_sec_rate",
+          "expr": "gl_journal_read_1_sec_rate{job=\"graylog\"}",
           "legendFormat": "Read (msg/s)",
           "refId": "B"
         }
@@ -659,7 +659,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(gl_input_incoming_messages_total[1m])",
+          "expr": "rate(gl_input_incoming_messages_total{job=\"graylog\"}[1m])",
           "legendFormat": "Incoming (msg/s)",
           "refId": "A"
         },
@@ -668,7 +668,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(gl_input_raw_size_total[1m])",
+          "expr": "rate(gl_input_raw_size_total{job=\"graylog\"}[1m])",
           "legendFormat": "Raw bytes/s",
           "refId": "B"
         }
@@ -752,7 +752,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "jvm_memory_bytes_used{area=\"heap\"}",
+          "expr": "jvm_memory_bytes_used{job=\"graylog\",area=\"heap\"}",
           "legendFormat": "Heap Used",
           "refId": "A"
         }
@@ -822,7 +822,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "jvm_memory_bytes_used{area=\"nonheap\"}",
+          "expr": "jvm_memory_bytes_used{job=\"graylog\",area=\"nonheap\"}",
           "legendFormat": "Non-Heap Used",
           "refId": "A"
         }
@@ -919,7 +919,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "jvm_memory_bytes_used{area=\"heap\"}",
+          "expr": "jvm_memory_bytes_used{job=\"graylog\",area=\"heap\"}",
           "legendFormat": "Heap Used",
           "refId": "A"
         },
@@ -928,7 +928,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "jvm_memory_bytes_used{area=\"nonheap\"}",
+          "expr": "jvm_memory_bytes_used{job=\"graylog\",area=\"nonheap\"}",
           "legendFormat": "Non-Heap Used",
           "refId": "B"
         },
@@ -937,7 +937,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "jvm_memory_bytes_committed{area=\"heap\"}",
+          "expr": "jvm_memory_bytes_committed{job=\"graylog\",area=\"heap\"}",
           "legendFormat": "Heap Committed",
           "refId": "C"
         }
@@ -1034,7 +1034,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(jvm_gc_collection_seconds_sum[1m])",
+          "expr": "rate(jvm_gc_collection_seconds_sum{job=\"graylog\"}[1m])",
           "legendFormat": "{{gc}}",
           "refId": "A"
         }
@@ -1131,7 +1131,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "jvm_threads_current",
+          "expr": "jvm_threads_current{job=\"graylog\"}",
           "legendFormat": "Current",
           "refId": "A"
         },
@@ -1140,7 +1140,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "jvm_threads_daemon",
+          "expr": "jvm_threads_daemon{job=\"graylog\"}",
           "legendFormat": "Daemon",
           "refId": "B"
         },
@@ -1149,7 +1149,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "jvm_threads_peak",
+          "expr": "jvm_threads_peak{job=\"graylog\"}",
           "legendFormat": "Peak",
           "refId": "C"
         }
@@ -1235,7 +1235,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(process_cpu_seconds_total[1m])",
+          "expr": "rate(process_cpu_seconds_total{job=\"graylog\"}[1m])",
           "legendFormat": "CPU",
           "refId": "A"
         }
@@ -1306,7 +1306,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "process_resident_memory_bytes",
+          "expr": "process_resident_memory_bytes{job=\"graylog\"}",
           "legendFormat": "RSS",
           "refId": "A"
         }
@@ -1377,7 +1377,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "process_open_fds",
+          "expr": "process_open_fds{job=\"graylog\"}",
           "legendFormat": "FDs",
           "refId": "A"
         }
@@ -1440,7 +1440,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_journal_segments",
+          "expr": "gl_journal_segments{job=\"graylog\"}",
           "legendFormat": "segments",
           "refId": "A"
         }
@@ -1507,7 +1507,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "jvm_threads_deadlocked",
+          "expr": "jvm_threads_deadlocked{job=\"graylog\"}",
           "legendFormat": "deadlocked",
           "refId": "A"
         }
@@ -1520,28 +1520,23 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "No observations for this selection. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "Measured current failure queue size. This does not infer a historical scheduler failure count.",
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "mappings": [],
-          "noValue": "No observations for this selection",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 1
+                "color": "blue",
+                "value": null
               }
             ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
@@ -1553,11 +1548,6 @@
       },
       "id": 35,
       "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -1565,23 +1555,26 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
       },
       "pluginVersion": "12.4.2",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_job_scheduler_executions_failed",
-          "legendFormat": "failed",
-          "refId": "A"
+          "editorMode": "code",
+          "expr": "gl_failure_queue_size{job=\"graylog\"}",
+          "legendFormat": "{{instance}}",
+          "instant": true,
+          "range": false
         }
       ],
-      "title": "Failed Job Executions",
+      "title": "Failure queue depth",
       "type": "stat"
     },
     {
@@ -1673,7 +1666,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(process_cpu_seconds_total[1m])",
+          "expr": "rate(process_cpu_seconds_total{job=\"graylog\"}[1m])",
           "legendFormat": "CPU %",
           "refId": "A"
         }
@@ -1770,7 +1763,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "process_resident_memory_bytes",
+          "expr": "process_resident_memory_bytes{job=\"graylog\"}",
           "legendFormat": "Resident (RSS)",
           "refId": "A"
         },
@@ -1779,7 +1772,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "process_virtual_memory_bytes",
+          "expr": "process_virtual_memory_bytes{job=\"graylog\"}",
           "legendFormat": "Virtual",
           "refId": "B"
         }
@@ -1889,7 +1882,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(gl_elasticsearch_output_writes_total[1m])",
+          "expr": "rate(gl_elasticsearch_output_writes_total{job=\"graylog\"}[1m])",
           "legendFormat": "Writes/s",
           "refId": "A"
         },
@@ -1898,7 +1891,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(gl_elasticsearch_output_failures_total[1m])",
+          "expr": "rate(gl_elasticsearch_output_failures_total{job=\"graylog\"}[1m])",
           "legendFormat": "Failures/s",
           "refId": "B"
         }
@@ -1995,7 +1988,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(gl_buffer_incoming_messages_total[1m])",
+          "expr": "rate(gl_buffer_incoming_messages_total{job=\"graylog\"}[1m])",
           "legendFormat": "Incoming/s",
           "refId": "A"
         },
@@ -2004,7 +1997,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(gl_buffer_processor_incoming_messages_total[1m])",
+          "expr": "rate(gl_buffer_processor_incoming_messages_total{job=\"graylog\"}[1m])",
           "legendFormat": "Processed/s",
           "refId": "B"
         }
@@ -2101,7 +2094,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(gl_blocking_elasticsearch_output_buffer_flushes_total[1m])",
+          "expr": "rate(gl_blocking_elasticsearch_output_buffer_flushes_total{job=\"graylog\"}[1m])",
           "legendFormat": "Flushes/s",
           "refId": "A"
         },
@@ -2110,7 +2103,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(gl_blocking_elasticsearch_output_buffer_flush_failures_total[1m])",
+          "expr": "rate(gl_blocking_elasticsearch_output_buffer_flush_failures_total{job=\"graylog\"}[1m])",
           "legendFormat": "Flush Failures/s",
           "refId": "B"
         }
@@ -2207,7 +2200,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_traffic_input",
+          "expr": "gl_traffic_input{job=\"graylog\"}",
           "legendFormat": "Input",
           "refId": "A"
         },
@@ -2216,7 +2209,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_traffic_decoded",
+          "expr": "gl_traffic_decoded{job=\"graylog\"}",
           "legendFormat": "Decoded",
           "refId": "B"
         },
@@ -2225,7 +2218,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "gl_traffic_output",
+          "expr": "gl_traffic_output{job=\"graylog\"}",
           "legendFormat": "Output",
           "refId": "C"
         }

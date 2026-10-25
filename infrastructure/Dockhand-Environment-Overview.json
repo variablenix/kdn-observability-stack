@@ -116,28 +116,25 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "No matching state / collection not enabled. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "Native measured count per environment, including zero. Missing environments are not invented as zero.",
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "noValue": "No matching state / collection not enabled",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "orange",
-                "value": 1
+                "color": "blue",
+                "value": null
               }
             ]
-          },
-          "unit": "short"
-        }
+          }
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 4,
@@ -147,11 +144,6 @@
       },
       "id": 2,
       "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -159,23 +151,26 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "value_and_name",
-        "wideLayout": true
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
       },
       "pluginVersion": "13.0.2",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "dockhand_updates_available > 0",
+          "editorMode": "code",
+          "expr": "dockhand_updates_available",
           "legendFormat": "{{env}}",
-          "refId": "A"
+          "instant": true,
+          "range": false
         }
       ],
-      "title": "Updates Available",
+      "title": "Updates available",
       "type": "stat"
     },
     {
@@ -479,62 +474,32 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "No matching state / collection not enabled. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "Fleet totals for each state emitted by Dockhand. Running counts per environment are shown separately. An absent exited/created series is not a measured zero.",
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "stepAfter",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "noValue": "No matching state / collection not enabled",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
+                "color": "blue",
+                "value": null
               }
             ]
           },
-          "unit": "short"
-        }
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -544,46 +509,35 @@
       },
       "id": 11,
       "options": {
-        "annotations": {
-          "clustering": -1,
-          "multiLane": false
-        },
         "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "pluginVersion": "13.0.2",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "dockhand_containers{state=\"exited\"}",
-          "legendFormat": "exited \u2014 {{env}}",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "dockhand_containers{state=\"created\"}",
-          "legendFormat": "created \u2014 {{env}}",
-          "refId": "B"
+          "editorMode": "code",
+          "expr": "sum by(state)(dockhand_containers)",
+          "legendFormat": "{{state}}",
+          "instant": false,
+          "range": true
         }
       ],
-      "title": "Exited / Created Containers",
+      "title": "Containers by state \u2014 fleet total",
       "type": "timeseries"
     },
     {
@@ -1225,32 +1179,25 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "No matching state / collection not enabled. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "Native number of images with scan results. Zero means no scan results are recorded, not zero vulnerabilities. Scan age is not exported.",
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "noValue": "No matching state / collection not enabled",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "blue",
                 "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 86400
-              },
-              {
-                "color": "red",
-                "value": 604800
               }
             ]
-          },
-          "unit": "s"
-        }
+          }
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 5,
@@ -1260,29 +1207,33 @@
       },
       "id": 32,
       "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
-          ]
+          ],
+          "fields": "",
+          "values": false
         },
-        "textMode": "value_and_name"
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
       },
       "pluginVersion": "",
       "targets": [
         {
+          "refId": "A",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "dockhand_scan_oldest_age_seconds",
+          "editorMode": "code",
+          "expr": "dockhand_images_scanned",
           "legendFormat": "{{env}}",
-          "refId": "A"
+          "instant": true,
+          "range": false
         }
       ],
-      "title": "Scan Age (oldest)",
+      "title": "Images with scan results",
       "type": "stat"
     },
     {

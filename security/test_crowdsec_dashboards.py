@@ -7,6 +7,18 @@ import build_crowdsec as builder
 
 
 class Dashboards(unittest.TestCase):
+    def test_event_fallback_fixtures_test_the_current_expression(self):
+        fixture = json.loads((Path(__file__).resolve().parents[1]/'tests/crowdsec-history-promql.test.yml').read_text())
+        self.assertEqual(len(fixture['tests']), 8)
+        for case in fixture['tests']:
+            self.assertEqual(case['promql_expr_test'][0]['expr'], builder.nginx_last_event('upgrade'))
+        fleet = builder.fleet()
+        for p in fleet['panels']:
+            if p['title'] in ('Last verified production upgrade', 'Last completed production rollback'):
+                options = p['fieldConfig']['defaults']['mappings'][0]['options']
+                self.assertIn('No recorded', options['0']['text'])
+                self.assertIn('unavailable', options['-1']['text'])
+
     def test_nginx_status_is_present_fresh_and_test_runs_are_separate(self):
         for d in builder.dashboards().values():
             panels = [p for p in d['panels'] if 'Nginx automatic update status' == p['title']]

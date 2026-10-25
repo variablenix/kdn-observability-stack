@@ -1,0 +1,249 @@
+{
+  "evaluation_interval": "1m",
+  "tests": [
+    {
+      "name": "complete history without event",
+      "interval": "1m",
+      "input_series": [
+        {
+          "series": "up{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_observation_timestamp_seconds{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1000+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_history_complete{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        }
+      ],
+      "promql_expr_test": [
+        {
+          "expr": "((crowdsec_nginx_last_upgrade_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60) and on(job,instance) (up{job=\"crowdsec-health\"} == 1) and on(job,instance) ((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1)) > 0)*1000 or on(job,instance) (0*((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1) and on(job,instance) (up{job=\"crowdsec-health\"} == 1)) or on(job,instance) (0*up{job=\"crowdsec-health\"}-1)",
+          "eval_time": "17m",
+          "exp_samples": [
+            {
+              "labels": "{instance=\"example:9100\",job=\"crowdsec-health\"}",
+              "value": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "incomplete history",
+      "interval": "1m",
+      "input_series": [
+        {
+          "series": "up{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_observation_timestamp_seconds{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1000+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_history_complete{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "0+0x17"
+        }
+      ],
+      "promql_expr_test": [
+        {
+          "expr": "((crowdsec_nginx_last_upgrade_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60) and on(job,instance) (up{job=\"crowdsec-health\"} == 1) and on(job,instance) ((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1)) > 0)*1000 or on(job,instance) (0*((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1) and on(job,instance) (up{job=\"crowdsec-health\"} == 1)) or on(job,instance) (0*up{job=\"crowdsec-health\"}-1)",
+          "eval_time": "17m",
+          "exp_samples": [
+            {
+              "labels": "{instance=\"example:9100\",job=\"crowdsec-health\"}",
+              "value": -1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "stale history",
+      "interval": "1m",
+      "input_series": [
+        {
+          "series": "up{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_observation_timestamp_seconds{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "0+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_history_complete{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        }
+      ],
+      "promql_expr_test": [
+        {
+          "expr": "((crowdsec_nginx_last_upgrade_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60) and on(job,instance) (up{job=\"crowdsec-health\"} == 1) and on(job,instance) ((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1)) > 0)*1000 or on(job,instance) (0*((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1) and on(job,instance) (up{job=\"crowdsec-health\"} == 1)) or on(job,instance) (0*up{job=\"crowdsec-health\"}-1)",
+          "eval_time": "17m",
+          "exp_samples": [
+            {
+              "labels": "{instance=\"example:9100\",job=\"crowdsec-health\"}",
+              "value": -1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "future observation",
+      "interval": "1m",
+      "input_series": [
+        {
+          "series": "up{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_observation_timestamp_seconds{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "2000+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_history_complete{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        }
+      ],
+      "promql_expr_test": [
+        {
+          "expr": "((crowdsec_nginx_last_upgrade_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60) and on(job,instance) (up{job=\"crowdsec-health\"} == 1) and on(job,instance) ((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1)) > 0)*1000 or on(job,instance) (0*((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1) and on(job,instance) (up{job=\"crowdsec-health\"} == 1)) or on(job,instance) (0*up{job=\"crowdsec-health\"}-1)",
+          "eval_time": "17m",
+          "exp_samples": [
+            {
+              "labels": "{instance=\"example:9100\",job=\"crowdsec-health\"}",
+              "value": -1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "scrape down",
+      "interval": "1m",
+      "input_series": [
+        {
+          "series": "up{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "0+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_observation_timestamp_seconds{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1000+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_history_complete{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        }
+      ],
+      "promql_expr_test": [
+        {
+          "expr": "((crowdsec_nginx_last_upgrade_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60) and on(job,instance) (up{job=\"crowdsec-health\"} == 1) and on(job,instance) ((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1)) > 0)*1000 or on(job,instance) (0*((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1) and on(job,instance) (up{job=\"crowdsec-health\"} == 1)) or on(job,instance) (0*up{job=\"crowdsec-health\"}-1)",
+          "eval_time": "17m",
+          "exp_samples": [
+            {
+              "labels": "{instance=\"example:9100\",job=\"crowdsec-health\"}",
+              "value": -1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "recorded upgrade",
+      "interval": "1m",
+      "input_series": [
+        {
+          "series": "up{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_observation_timestamp_seconds{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1000+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_history_complete{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_last_upgrade_timestamp_seconds{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "900+0x17"
+        }
+      ],
+      "promql_expr_test": [
+        {
+          "expr": "((crowdsec_nginx_last_upgrade_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60) and on(job,instance) (up{job=\"crowdsec-health\"} == 1) and on(job,instance) ((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1)) > 0)*1000 or on(job,instance) (0*((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1) and on(job,instance) (up{job=\"crowdsec-health\"} == 1)) or on(job,instance) (0*up{job=\"crowdsec-health\"}-1)",
+          "eval_time": "17m",
+          "exp_samples": [
+            {
+              "labels": "{instance=\"example:9100\",job=\"crowdsec-health\"}",
+              "value": 900000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "event with incomplete history",
+      "interval": "1m",
+      "input_series": [
+        {
+          "series": "up{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_observation_timestamp_seconds{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1000+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_history_complete{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "0+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_last_upgrade_timestamp_seconds{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "900+0x17"
+        }
+      ],
+      "promql_expr_test": [
+        {
+          "expr": "((crowdsec_nginx_last_upgrade_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60) and on(job,instance) (up{job=\"crowdsec-health\"} == 1) and on(job,instance) ((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1)) > 0)*1000 or on(job,instance) (0*((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1) and on(job,instance) (up{job=\"crowdsec-health\"} == 1)) or on(job,instance) (0*up{job=\"crowdsec-health\"}-1)",
+          "eval_time": "17m",
+          "exp_samples": [
+            {
+              "labels": "{instance=\"example:9100\",job=\"crowdsec-health\"}",
+              "value": -1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "missing history metric",
+      "interval": "1m",
+      "input_series": [
+        {
+          "series": "up{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1+0x17"
+        },
+        {
+          "series": "crowdsec_nginx_observation_timestamp_seconds{instance=\"example:9100\",job=\"crowdsec-health\"}",
+          "values": "1000+0x17"
+        }
+      ],
+      "promql_expr_test": [
+        {
+          "expr": "((crowdsec_nginx_last_upgrade_timestamp_seconds{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60) and on(job,instance) (up{job=\"crowdsec-health\"} == 1) and on(job,instance) ((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1)) > 0)*1000 or on(job,instance) (0*((crowdsec_nginx_history_complete{job=\"crowdsec-health\"} and on(job,instance) (time()-crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<660) and on(job,instance) (crowdsec_nginx_observation_timestamp_seconds{job=\"crowdsec-health\"}<=time()+60)) == 1) and on(job,instance) (up{job=\"crowdsec-health\"} == 1)) or on(job,instance) (0*up{job=\"crowdsec-health\"}-1)",
+          "eval_time": "17m",
+          "exp_samples": [
+            {
+              "labels": "{instance=\"example:9100\",job=\"crowdsec-health\"}",
+              "value": -1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

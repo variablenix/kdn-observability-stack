@@ -8424,58 +8424,30 @@
             "type": "prometheus",
             "uid": "${ds_prometheus}"
           },
-          "description": "Displays the current fan speeds (RPM) from hardware sensors via the hwmon interface\nNot exposed by the selected host. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+          "description": "Measured collector success (1) or failure (0) on this host. Does not require physical fan sensors.",
           "fieldConfig": {
             "defaults": {
+              "unit": "short",
+              "noValue": "Unavailable",
               "color": {
                 "mode": "palette-classic"
               },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 20,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "links": [],
-              "mappings": [],
-              "min": 0,
-              "noValue": "Not exposed by the selected host",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "blue",
+                    "value": null
                   }
                 ]
               },
-              "unit": "rotrpm"
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 1,
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "spanNulls": false
+              }
             },
             "overrides": []
           },
@@ -8488,46 +8460,34 @@
           "id": 325,
           "options": {
             "legend": {
-              "calcs": [
-                "min",
-                "mean",
-                "max"
-              ],
               "displayMode": "table",
               "placement": "bottom",
-              "showLegend": true
+              "calcs": [
+                "lastNotNull",
+                "max"
+              ]
             },
             "tooltip": {
-              "hideZeros": false,
               "mode": "multi",
-              "sort": "none"
+              "sort": "desc"
             }
           },
           "pluginVersion": "11.6.1",
           "targets": [
             {
-              "editorMode": "code",
-              "expr": "node_hwmon_fan_rpm{instance=\"$node\",job=\"$job\"} * on(chip) group_left(chip_name) node_hwmon_chip_names{instance=\"$node\",job=\"$job\"}",
-              "format": "time_series",
-              "interval": "",
-              "legendFormat": "{{ chip_name }} {{ sensor }}",
-              "range": true,
               "refId": "A",
-              "step": 240
-            },
-            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds_prometheus}"
+              },
               "editorMode": "code",
-              "expr": "node_hwmon_fan_min_rpm{instance=\"$node\",job=\"$job\"} * on(chip) group_left(chip_name) node_hwmon_chip_names{instance=\"$node\",job=\"$job\"}",
-              "format": "time_series",
-              "hide": true,
-              "interval": "",
-              "legendFormat": "{{ chip_name }} {{ sensor }} rpm min",
-              "range": true,
-              "refId": "B",
-              "step": 240
+              "expr": "node_scrape_collector_success{instance=\"$node\",job=\"$job\"}",
+              "legendFormat": "{{collector}}",
+              "instant": false,
+              "range": true
             }
           ],
-          "title": "Hardware Fan Speed",
+          "title": "Exporter collector health",
           "type": "timeseries"
         }
       ],
@@ -8544,7 +8504,7 @@
       },
       "id": 296,
       "panels": [],
-      "title": "Systemd",
+      "title": "Processes and sockets",
       "type": "row"
     },
     {
@@ -8552,137 +8512,32 @@
         "type": "prometheus",
         "uid": "${ds_prometheus}"
       },
-      "description": "Current number of systemd units in each operational state, such as active, failed, inactive, or transitioning\nNot exposed by the selected host. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "noValue": "Not exposed by the selected host",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "color": "blue",
+                "value": null
               }
             ]
           },
-          "unit": "short"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Failed"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#F2495C",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Active"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#73BF69",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Activating"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#C8F2C2",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Deactivating"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "orange",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Inactive"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false
           }
-        ]
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 10,
@@ -8693,75 +8548,46 @@
       "id": 298,
       "options": {
         "legend": {
-          "calcs": [
-            "min",
-            "mean",
-            "max"
-          ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "pluginVersion": "12.3.3",
       "targets": [
         {
-          "editorMode": "code",
-          "expr": "node_systemd_units{instance=\"$node\",job=\"$job\",state=\"activating\"}",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "Activating",
-          "range": true,
           "refId": "A",
-          "step": 240
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${ds_prometheus}"
+          },
+          "editorMode": "code",
+          "expr": "node_procs_running{instance=\"$node\",job=\"$job\"}",
+          "legendFormat": "Runnable",
+          "instant": false,
+          "range": true
         },
         {
-          "editorMode": "code",
-          "expr": "node_systemd_units{instance=\"$node\",job=\"$job\",state=\"active\"}",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "Active",
-          "range": true,
           "refId": "B",
-          "step": 240
-        },
-        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${ds_prometheus}"
+          },
           "editorMode": "code",
-          "expr": "node_systemd_units{instance=\"$node\",job=\"$job\",state=\"deactivating\"}",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "Deactivating",
-          "range": true,
-          "refId": "C",
-          "step": 240
-        },
-        {
-          "editorMode": "code",
-          "expr": "node_systemd_units{instance=\"$node\",job=\"$job\",state=\"failed\"}",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "Failed",
-          "range": true,
-          "refId": "D",
-          "step": 240
-        },
-        {
-          "editorMode": "code",
-          "expr": "node_systemd_units{instance=\"$node\",job=\"$job\",state=\"inactive\"}",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "Inactive",
-          "range": true,
-          "refId": "E",
-          "step": 240
+          "expr": "node_procs_blocked{instance=\"$node\",job=\"$job\"}",
+          "legendFormat": "Blocked",
+          "instant": false,
+          "range": true
         }
       ],
-      "title": "Systemd Units State",
+      "title": "Runnable and blocked processes",
       "type": "timeseries"
     },
     {
@@ -8769,60 +8595,30 @@
         "type": "prometheus",
         "uid": "${ds_prometheus}"
       },
-      "description": "Current number of active connections per systemd socket, as reported by the Node Exporter systemd collector\nNot exposed by the selected host. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "noValue": "Not exposed by the selected host",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "color": "blue",
+                "value": null
               }
             ]
           },
-          "unit": "short"
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false
+          }
         },
         "overrides": []
       },
@@ -8835,35 +8631,34 @@
       "id": 331,
       "options": {
         "legend": {
-          "calcs": [
-            "min",
-            "mean",
-            "max"
-          ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "pluginVersion": "12.3.3",
       "targets": [
         {
-          "editorMode": "code",
-          "expr": "node_systemd_socket_current_connections{instance=\"$node\",job=\"$job\"}",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "{{ name }}",
-          "range": true,
           "refId": "A",
-          "step": 240
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${ds_prometheus}"
+          },
+          "editorMode": "code",
+          "expr": "node_netstat_Tcp_CurrEstab{instance=\"$node\",job=\"$job\"}",
+          "legendFormat": "Established",
+          "instant": false,
+          "range": true
         }
       ],
-      "title": "Systemd Sockets Current",
+      "title": "Established TCP connections",
       "type": "timeseries"
     },
     {
@@ -8871,60 +8666,30 @@
         "type": "prometheus",
         "uid": "${ds_prometheus}"
       },
-      "description": "Rate of accepted connections per second for each systemd socket\nNot exposed by the selected host. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "unit": "ops",
+          "noValue": "Unavailable",
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "noValue": "Not exposed by the selected host",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "color": "blue",
+                "value": null
               }
             ]
           },
-          "unit": "eps"
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false
+          }
         },
         "overrides": []
       },
@@ -8937,35 +8702,46 @@
       "id": 297,
       "options": {
         "legend": {
-          "calcs": [
-            "min",
-            "mean",
-            "max"
-          ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "pluginVersion": "12.3.3",
       "targets": [
         {
-          "editorMode": "code",
-          "expr": "irate(node_systemd_socket_accepted_connections_total{instance=\"$node\",job=\"$job\"}[$__rate_interval])",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "{{ name }}",
-          "range": true,
           "refId": "A",
-          "step": 240
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${ds_prometheus}"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_netstat_Tcp_ActiveOpens{instance=\"$node\",job=\"$job\"}[$__rate_interval])",
+          "legendFormat": "Active opens",
+          "instant": false,
+          "range": true
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${ds_prometheus}"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_netstat_Tcp_PassiveOpens{instance=\"$node\",job=\"$job\"}[$__rate_interval])",
+          "legendFormat": "Passive opens",
+          "instant": false,
+          "range": true
         }
       ],
-      "title": "Systemd Sockets Accepted",
+      "title": "TCP connection opens / second",
       "type": "timeseries"
     },
     {
@@ -8973,60 +8749,30 @@
         "type": "prometheus",
         "uid": "${ds_prometheus}"
       },
-      "description": "Rate of systemd socket connection refusals per second, typically due to service unavailability or backlog overflow\nNot exposed by the selected host. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
+          "unit": "ops",
+          "noValue": "Unavailable",
           "color": {
             "mode": "palette-classic"
           },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "min": 0,
-          "noValue": "Not exposed by the selected host",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "color": "blue",
+                "value": null
               }
             ]
           },
-          "unit": "eps"
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false
+          }
         },
         "overrides": []
       },
@@ -9039,35 +8785,46 @@
       "id": 332,
       "options": {
         "legend": {
-          "calcs": [
-            "min",
-            "mean",
-            "max"
-          ],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "multi",
-          "sort": "none"
+          "sort": "desc"
         }
       },
       "pluginVersion": "12.3.3",
       "targets": [
         {
-          "editorMode": "code",
-          "expr": "irate(node_systemd_socket_refused_connections_total{instance=\"$node\",job=\"$job\"}[$__rate_interval])",
-          "format": "time_series",
-          "interval": "",
-          "legendFormat": "{{ name }}",
-          "range": true,
           "refId": "A",
-          "step": 240
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${ds_prometheus}"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_netstat_TcpExt_ListenDrops{instance=\"$node\",job=\"$job\"}[$__rate_interval])",
+          "legendFormat": "Listen drops",
+          "instant": false,
+          "range": true
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${ds_prometheus}"
+          },
+          "editorMode": "code",
+          "expr": "rate(node_netstat_TcpExt_ListenOverflows{instance=\"$node\",job=\"$job\"}[$__rate_interval])",
+          "legendFormat": "Listen overflows",
+          "instant": false,
+          "range": true
         }
       ],
-      "title": "Systemd Sockets Refused",
+      "title": "TCP listen queue drops / second",
       "type": "timeseries"
     },
     {
@@ -14903,58 +14660,30 @@
             "type": "prometheus",
             "uid": "${ds_prometheus}"
           },
-          "description": "Number of TCP sockets in key connection states. Requires the --collector.tcpstat flag on node_exporter\nNot exposed by the selected host. Missing data is not a measured zero. Check the selected range and collector capabilities.",
+          "description": "",
           "fieldConfig": {
             "defaults": {
+              "unit": "short",
+              "noValue": "Unavailable",
               "color": {
                 "mode": "palette-classic"
               },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 20,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "links": [],
-              "mappings": [],
-              "min": 0,
-              "noValue": "Not exposed by the selected host",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "blue",
+                    "value": null
                   }
                 ]
               },
-              "unit": "short"
+              "custom": {
+                "drawStyle": "line",
+                "lineWidth": 1,
+                "fillOpacity": 10,
+                "showPoints": "never",
+                "spanNulls": false
+              }
             },
             "overrides": []
           },
@@ -14967,75 +14696,58 @@
           "id": 320,
           "options": {
             "legend": {
-              "calcs": [
-                "min",
-                "mean",
-                "max"
-              ],
               "displayMode": "table",
               "placement": "bottom",
-              "showLegend": true
+              "calcs": [
+                "lastNotNull",
+                "max"
+              ]
             },
             "tooltip": {
-              "hideZeros": false,
               "mode": "multi",
-              "sort": "none"
+              "sort": "desc"
             }
           },
           "pluginVersion": "11.6.1",
           "targets": [
             {
-              "editorMode": "code",
-              "expr": "node_tcp_connection_states{state=\"established\",instance=\"$node\",job=\"$job\"}",
-              "format": "time_series",
-              "interval": "",
-              "legendFormat": "Established",
-              "range": true,
               "refId": "A",
-              "step": 240
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds_prometheus}"
+              },
+              "editorMode": "code",
+              "expr": "node_sockstat_TCP_inuse{instance=\"$node\",job=\"$job\"}",
+              "legendFormat": "TCP",
+              "instant": false,
+              "range": true
             },
             {
-              "editorMode": "code",
-              "expr": "node_tcp_connection_states{state=\"fin_wait2\",instance=\"$node\",job=\"$job\"}",
-              "format": "time_series",
-              "interval": "",
-              "legendFormat": "FIN_WAIT2",
-              "range": true,
               "refId": "B",
-              "step": 240
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds_prometheus}"
+              },
+              "editorMode": "code",
+              "expr": "node_sockstat_UDP_inuse{instance=\"$node\",job=\"$job\"}",
+              "legendFormat": "UDP",
+              "instant": false,
+              "range": true
             },
             {
-              "editorMode": "code",
-              "expr": "node_tcp_connection_states{state=\"listen\",instance=\"$node\",job=\"$job\"}",
-              "format": "time_series",
-              "interval": "",
-              "legendFormat": "Listen",
-              "range": true,
               "refId": "C",
-              "step": 240
-            },
-            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${ds_prometheus}"
+              },
               "editorMode": "code",
-              "expr": "node_tcp_connection_states{state=\"time_wait\",instance=\"$node\",job=\"$job\"}",
-              "format": "time_series",
-              "interval": "",
-              "legendFormat": "TIME_WAIT",
-              "range": true,
-              "refId": "D",
-              "step": 240
-            },
-            {
-              "editorMode": "code",
-              "expr": "node_tcp_connection_states{state=\"close_wait\", instance=\"$node\", job=\"$job\"}",
-              "format": "time_series",
-              "interval": "",
-              "legendFormat": "CLOSE_WAIT",
-              "range": true,
-              "refId": "E",
-              "step": 240
+              "expr": "node_sockstat_RAW_inuse{instance=\"$node\",job=\"$job\"}",
+              "legendFormat": "RAW",
+              "instant": false,
+              "range": true
             }
           ],
-          "title": "TCP Stat",
+          "title": "Socket usage by protocol",
           "type": "timeseries"
         }
       ],
