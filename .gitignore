@@ -350,3 +350,7 @@ playground/
 TODO.local.md        # local-only notes
 NOTES.local.md
 sanitize_v2.py
+
+# Private dashboard audit/deployment evidence
+*-private.json
+*-private.yaml

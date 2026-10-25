@@ -108,7 +108,7 @@ class Dashboard:
             self.x = self.height = 0
         p = {"id": len(self.data["panels"])+1, "title": title, "type": kind,
              "description": description, "gridPos": {"x": self.x, "y": self.y, "w": width, "h": height},
-             "fieldConfig": {"defaults": {"unit": unit, "noValue": "N/A", "color": {"mode": "palette-classic"},
+             "fieldConfig": {"defaults": {"unit": unit, "noValue": "No alert POST observations" if title == "Agent alert POSTs — selected range" else "N/A", "color": {"mode": "palette-classic"},
                                           "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": None}]}}, "overrides": []},
              "options": {}}
         if expr:

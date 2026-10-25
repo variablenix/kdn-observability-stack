@@ -1,47 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_INFLUXDB",
-      "label": "influxdb",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB"
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "12.4.1"
-    },
-    {
-      "type": "datasource",
-      "id": "influxdb",
-      "name": "InfluxDB",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -147,7 +104,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "description": "Download speed - measures how quickly you can pull data from a server on the internet to your device.",
       "fieldConfig": {
@@ -207,7 +164,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "groupBy": [
             {
@@ -227,6 +184,7 @@
           "orderByTime": "ASC",
           "policy": "default",
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"download_bits\")\r\n  |> drop(columns: [\"server_host\",\"server_name\",\"server_id\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -269,7 +227,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "description": "Upload speed - measures how quickly you send data from your device to the internet.",
       "fieldConfig": {
@@ -329,7 +287,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "groupBy": [
             {
@@ -349,6 +307,7 @@
           "orderByTime": "ASC",
           "policy": "default",
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"upload_bits\")\r\n  |> drop(columns: [\"server_host\",\"server_name\",\"server_id\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -391,7 +350,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "description": "Also called latency, ping is the reaction time of your connection - that is, how quickly your device gets a response after you've sent out a request.",
       "fieldConfig": {
@@ -450,7 +409,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "groupBy": [
             {
@@ -470,6 +429,7 @@
           "orderByTime": "ASC",
           "policy": "default",
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ping\")\r\n  |> drop(columns: [\"server_host\",\"server_name\",\"server_id\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -512,7 +472,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "description": "Also called Packet Delay Variation (PDV), jitter is a measure of the variability in ping over time.\nThis metric shows the average difference between consecutive latency measurements.",
       "fieldConfig": {
@@ -571,7 +531,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "groupBy": [
             {
@@ -591,6 +551,7 @@
           "orderByTime": "ASC",
           "policy": "default",
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ping_jitter\")\r\n  |> drop(columns: [\"server_host\",\"server_name\",\"server_id\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -633,7 +594,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "description": "Packet loss occurs when a packet of data being sent over the internet is not received or is incomplete. This is described in the percentage of packets lost compared to packets sent.",
       "fieldConfig": {
@@ -692,7 +653,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "groupBy": [
             {
@@ -712,6 +673,7 @@
           "orderByTime": "ASC",
           "policy": "default",
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"packet_loss\")\r\n  |> drop(columns: [\"server_host\",\"server_name\",\"server_id\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -754,7 +716,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "fieldConfig": {
         "defaults": {
@@ -804,7 +766,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "groupBy": [
             {
@@ -824,6 +786,7 @@
           "orderByTime": "ASC",
           "policy": "default",
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"download_bits\")\r\n  |> group(columns: [\"_field\", \"_measurement\"], mode:\"by\")\r\n  |> last()\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -875,7 +838,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "description": "Download speed - measures how quickly you can pull data from a server on the internet to your device.\n\nUpload speed - measures how quickly you send data from your device to the internet.",
       "fieldConfig": {
@@ -1009,9 +972,10 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"download_bits\" or r[\"_field\"] == \"upload_bits\")\r\n  |> drop(columns: [\"server_host\",\"server_name\",\"server_id\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "A"
         }
       ],
@@ -1038,7 +1002,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "description": "Also called latency, ping is the reaction time of your connection - that is, how quickly your device gets a response after you've sent out a request.",
       "fieldConfig": {
@@ -1150,9 +1114,10 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ping\")\r\n  |> drop(columns: [\"server_host\",\"server_name\",\"server_id\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "A"
         }
       ],
@@ -1178,7 +1143,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "description": "Also called Packet Delay Variation (PDV), jitter is a measure of the variability in ping over time.\nThis metric shows the average difference between consecutive latency measurements.",
       "fieldConfig": {
@@ -1344,9 +1309,10 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ping_jitter\" or r[\"_field\"] == \"download_jitter\" or r[\"_field\"] == \"upload_jitter\")\r\n  |> drop(columns: [\"server_host\",\"server_name\",\"server_id\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "C"
         }
       ],
@@ -1374,7 +1340,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "description": "Low - Minimum Latency (formerly, Latency) measures the best case latency for the user at the time they decide to take a Speedtest.\n\nAvg - Primary-Server Latency is the interquartile mean (IQM or midmean) of the idle latency tests taken prior to the download portion of a Speedtest.\n\nHigh - Multi-server latency measures latency to multiple connections and then takes an average.",
       "fieldConfig": {
@@ -1516,9 +1482,10 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"download_latency_avg\" or r[\"_field\"] == \"download_latency_high\" or r[\"_field\"] == \"download_latency_low\")\r\n  |> drop(columns: [\"server_host\",\"server_name\",\"server_id\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "C"
         }
       ],
@@ -1553,7 +1520,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "description": "Low - Minimum Latency (formerly, Latency) measures the best case latency for the user at the time they decide to take a Speedtest.\n\nAvg - Primary-Server Latency is the interquartile mean (IQM or midmean) of the idle latency tests taken prior to the download portion of a Speedtest.\n\nHigh - Multi-server latency measures latency to multiple connections and then takes an average.",
       "fieldConfig": {
@@ -1695,9 +1662,10 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"upload_latency_avg\" or r[\"_field\"] == \"upload_latency_high\" or r[\"_field\"] == \"upload_latency_low\")\r\n  |> drop(columns: [\"server_host\",\"server_name\",\"server_id\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "C"
         }
       ],
@@ -1742,7 +1710,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "description": "Average speeds received by server",
       "fieldConfig": {
@@ -2206,13 +2174,14 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "groupBy": [],
           "measurement": "speedtest",
           "orderByTime": "ASC",
           "policy": "default",
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"download_bits\" or r[\"_field\"] == \"id\" or r[\"_field\"] == \"ping\" or r[\"_field\"] == \"scheduled\" or r[\"_field\"] == \"server_host\" or r[\"_field\"] == \"server_id\" or r[\"_field\"] == \"server_name\" or r[\"_field\"] == \"upload_bits\" or r[\"_field\"] == \"ping_jitter\" or r[\"_field\"] == \"packet_loss\" or r[\"_field\"] == \"upload_latency_avg\" or r[\"_field\"] == \"download_latency_avg\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "table",
           "select": [
@@ -2392,7 +2361,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${DS_INFLUXDB}"
+        "uid": "${DS_INFLUXDB_FLUX}"
       },
       "fieldConfig": {
         "defaults": {
@@ -2689,9 +2658,10 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${DS_INFLUXDB}"
+            "uid": "${DS_INFLUXDB_FLUX}"
           },
           "query": "from(bucket: \"${bucket}\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"speedtest\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"download\" or r[\"_field\"] == \"download_bits\" or r[\"_field\"] == \"download_jitter\" or r[\"_field\"] == \"id\" or r[\"_field\"] == \"packet_loss\" or r[\"_field\"] == \"ping\" or r[\"_field\"] == \"ping_jitter\" or r[\"_field\"] == \"scheduled\" or r[\"_field\"] == \"server_host\" or r[\"_field\"] == \"server_id\" or r[\"_field\"] == \"server_name\" or r[\"_field\"] == \"upload\" or r[\"_field\"] == \"upload_bits\" or r[\"_field\"] == \"upload_jitter\" or r[\"_field\"] == \"upload_latency_avg\" or r[\"_field\"] == \"download_latency_avg\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "rawQuery": true,
           "refId": "A"
         }
       ],
@@ -2797,17 +2767,13 @@
     "list": [
       {
         "current": {
-          "text": [
-            "$__all"
-          ],
-          "value": [
-            "$__all"
-          ]
+          "text": "speedtest-tracker",
+          "value": "speedtest-tracker"
         },
         "description": "InfluxDBv2 bucket",
-        "includeAll": true,
+        "includeAll": false,
         "label": "SpeedTest Tracker",
-        "multi": true,
+        "multi": false,
         "name": "bucket",
         "options": [
           {
@@ -2823,7 +2789,7 @@
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -2844,6 +2810,15 @@
   "timezone": "browser",
   "title": "Speedtest Tracker v2",
   "uid": "g7QsvEtVk",
-  "version": 6,
-  "weekStart": ""
+  "version": 1,
+  "weekStart": "",
+  "__inputs": [
+    {
+      "name": "DS_INFLUXDB_FLUX",
+      "label": "InfluxDB Flux",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB Flux"
+    }
+  ]
 }

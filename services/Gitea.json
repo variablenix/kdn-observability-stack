@@ -1,41 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_LAB-PROMETHEUS",
-      "label": "Lab-Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "12.4.1"
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -61,7 +24,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -146,7 +109,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "process_resident_memory_bytes{job=\"gitea\"}",
           "interval": "",
@@ -161,7 +124,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -246,7 +209,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "process_cpu_seconds_total{job=\"gitea\"}",
           "instant": false,
@@ -262,7 +225,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -347,7 +310,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "process_open_fds{job=\"gitea\"}",
           "format": "time_series",
@@ -365,7 +328,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -411,7 +374,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_accesses",
           "interval": "",
@@ -425,7 +388,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -471,7 +434,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_repositories",
           "interval": "",
@@ -485,7 +448,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -531,7 +494,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_users",
           "interval": "",
@@ -545,7 +508,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -591,7 +554,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_issues",
           "interval": "",
@@ -605,11 +568,13 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
+      "description": "Actions metric not exposed. Missing data is not a measured zero. Check the selected range and collector capabilities.",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
+          "noValue": "Actions metric not exposed",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -651,7 +616,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_actions",
           "interval": "",
@@ -665,7 +630,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -711,7 +676,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_labels",
           "interval": "",
@@ -725,7 +690,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -771,7 +736,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_organizations",
           "interval": "",
@@ -785,7 +750,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -831,7 +796,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_teams",
           "interval": "",
@@ -845,7 +810,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -891,7 +856,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_follows",
           "interval": "",
@@ -905,7 +870,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -951,7 +916,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_publickeys",
           "interval": "",
@@ -965,7 +930,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1011,7 +976,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_stars",
           "interval": "",
@@ -1025,7 +990,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1071,7 +1036,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_webhooks",
           "interval": "",
@@ -1085,7 +1050,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1131,7 +1096,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_releases",
           "interval": "",
@@ -1145,7 +1110,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1191,7 +1156,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_comments",
           "interval": "",
@@ -1205,7 +1170,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1251,7 +1216,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_milestones",
           "interval": "",
@@ -1265,7 +1230,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_LAB-PROMETHEUS}"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1311,7 +1276,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_LAB-PROMETHEUS}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "expr": "gitea_watches",
           "interval": "",
@@ -1334,7 +1299,7 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -1352,6 +1317,15 @@
   "timezone": "browser",
   "title": "Gitea",
   "uid": "nNq1Iw5Gz",
-  "version": 2,
-  "weekStart": ""
+  "version": 1,
+  "weekStart": "",
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ]
 }

@@ -2600,7 +2600,7 @@
       "fieldConfig": {
         "defaults": {
           "unit": "short",
-          "noValue": "N/A",
+          "noValue": "No alert POST observations",
           "color": {
             "mode": "palette-classic"
           },

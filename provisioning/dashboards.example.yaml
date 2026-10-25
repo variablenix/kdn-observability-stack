@@ -1,0 +1,15 @@
+apiVersion: 1
+providers:
+  - name: reviewed-services
+    orgId: 1
+    folder: Services
+    folderUid: services
+    type: file
+    disableDeletion: true
+    allowUiUpdates: true
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards/services
+      foldersFromFilesStructure: false
+# Render datasource input placeholders to your actual UIDs before file provisioning.
+# Preserve existing UIDs/folder UIDs when updating a deployment.

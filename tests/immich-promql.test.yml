@@ -1,0 +1,81 @@
+{
+  "rule_files": [],
+  "evaluation_interval": "30s",
+  "tests": [
+    {
+      "interval": "30s",
+      "input_series": [
+        {
+          "series": "immich_inventory_assets{immich_host=\"media-a\",media_type=\"IMAGE\",state=\"active\"}",
+          "values": "10+0x20"
+        },
+        {
+          "series": "immich_inventory_unique_originals{immich_host=\"media-a\"}",
+          "values": "9+0x20"
+        },
+        {
+          "series": "immich_collector_success{immich_host=\"media-a\",component=\"inventory\",instance=\"media-a:9100\"}",
+          "values": "1+0x20"
+        },
+        {
+          "series": "immich_collector_timestamp_seconds{immich_host=\"media-a\",component=\"inventory\",instance=\"media-a:9100\"}",
+          "values": "0+30x20"
+        },
+        {
+          "series": "node_boot_time_seconds{job=\"node-exporters\",instance=\"media-a:9100\"}",
+          "values": "100+0x20"
+        },
+        {
+          "series": "node_boot_time_seconds{job=\"node-exporters\",instance=\"unrelated:9100\"}",
+          "values": "150+0x20"
+        }
+      ],
+      "promql_expr_test": [
+        {
+          "expr": "((sum by(immich_host) (immich_inventory_assets{immich_host=~\".*\",state=\"active\"})) and on(immich_host) (immich_collector_success{immich_host=~\".*\",component=\"inventory\"} == 1) and on(immich_host) (time()-immich_collector_timestamp_seconds{immich_host=~\".*\",component=\"inventory\"}<180)) - on(immich_host) ((immich_inventory_unique_originals{immich_host=~\".*\"}) and on(immich_host) (immich_collector_success{immich_host=~\".*\",component=\"inventory\"} == 1) and on(immich_host) (time()-immich_collector_timestamp_seconds{immich_host=~\".*\",component=\"inventory\"}<180))",
+          "eval_time": "5m",
+          "exp_samples": [
+            {
+              "labels": "{immich_host=\"media-a\"}",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "expr": "(time()-node_boot_time_seconds{job=\"node-exporters\",instance=~\".*:9100\"}) and on(instance) label_replace(immich_collector_success{immich_host=~\".*\",component=\"inventory\"},\"instance\",\"$1:9100\",\"immich_host\",\"(.+)\")",
+          "eval_time": "5m",
+          "exp_samples": [
+            {
+              "labels": "{job=\"node-exporters\",instance=\"media-a:9100\"}",
+              "value": 200
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "interval": "30s",
+      "input_series": [
+        {
+          "series": "immich_inventory_assets{immich_host=\"media-a\",media_type=\"IMAGE\",state=\"active\"}",
+          "values": "10+0x20"
+        },
+        {
+          "series": "immich_collector_success{immich_host=\"media-a\",component=\"inventory\"}",
+          "values": "0+0x20"
+        },
+        {
+          "series": "immich_collector_timestamp_seconds{immich_host=\"media-a\",component=\"inventory\"}",
+          "values": "0+0x20"
+        }
+      ],
+      "promql_expr_test": [
+        {
+          "expr": "(sum by(immich_host) (immich_inventory_assets{immich_host=~\".*\",media_type=\"IMAGE\",state=\"active\"})) and on(immich_host) (immich_collector_success{immich_host=~\".*\",component=\"inventory\"} == 1) and on(immich_host) (time()-immich_collector_timestamp_seconds{immich_host=~\".*\",component=\"inventory\"}<180)",
+          "eval_time": "5m",
+          "exp_samples": []
+        }
+      ]
+    }
+  ]
+}

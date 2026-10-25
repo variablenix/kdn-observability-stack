@@ -7,10 +7,10 @@ The project follows **Infrastructure as Code** practices and treats self-hosted 
 
 ### **The "Sanitization" Workflow**
 For security and privacy, these files have been processed through a sanitization pipeline before being published from an internal **Gitea** instance.
-* **Network Masking:** All public WAN IPs and remote VPS addresses have been replaced with placeholders (`REDACTED_IP`).
-* **Domain Generalization:** Internal subdomains (pointing to my **Authentik** SSO, **Gitea** instance, or **Lounge24 Radio** station) have been generalized to `example-user.pro`.
-* **Portability:** Hardcoded `datasource` UIDs have been stripped and replaced with template variables (`${DS_PROMETHEUS}`) to ensure these dashboards are "plug-and-play" for the community.
-* **Secret Management:** No API keys, tokens, or hashes are contained within this repository.
+* **Network Masking:** Deployment addresses are replaced with documentation examples or placeholders. New exports use RFC 5737 example addresses.
+* **Domain Generalization:** Private service domains are generalized to example domains.
+* **Portability:** Deployment-specific data-source UIDs are replaced with import inputs such as `${DS_PROMETHEUS}`. Match the query language and adapt site-specific selectors before use.
+* **Secret Management:** Live credentials and private telemetry samples are excluded from publication.
 
 ### **What’s Monitored?**
 * **Core Infrastructure:** Real-time health of a **10+ node Proxmox cluster** and **Docker-GitOps** workflows.
@@ -24,6 +24,14 @@ These dashboards are exported in standard Grafana JSON format. To import them:
 1. Download the JSON file for the service you wish to monitor.
 2. In your Grafana instance, go to **Dashboards -> Import**.
 3. Upload the JSON and map the `${DS_...}` variables to your local Prometheus or InfluxDB data sources.
+
+### Reviewed dashboards and Immich inventory
+
+See the [dated review](docs/dashboard-review-2026-10-24.md) for measured results and limitations across all 32 dashboards. [Immich](docs/IMMICH.md) now includes 74 data panels, six inventory trend graphs, account counts/sizes, recent additions, queues, containers, database, resources and backup/cloud coverage. Its read-only collector and native systemd timer are included.
+
+InfluxDB dashboards need the correct query language: map the Flux input to a **Flux** connection and Garmin to **InfluxQL**. They are separate data sources. Example addresses, fixed host selectors, bucket names and collector paths must be adapted to the importing deployment. A missing optional metric is labelled as unavailable; it is not converted into a healthy zero.
+
+Dashboard exports can be refreshed with [the sanitizer](tools/export_sanitized.py), a private binding map and optional private literal redactions. Saved query selections are cleared. Inspect every generated diff: automated masking alone does not prove an export is safe to publish. [Provisioning examples](provisioning/) contain no production credentials.
 
 ### Soju IRC Bouncer
 

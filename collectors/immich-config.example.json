@@ -1,0 +1,10 @@
+{
+  "immich_host": "immich.example.net",
+  "postgres_container": "immich_postgres",
+  "redis_container": "immich_redis",
+  "database": "immich",
+  "database_user": "postgres",
+  "queue_prefix": "immich_bull",
+  "include_account_labels": false,
+  "backup_state_directory": "/var/lib/immich-backup/state"
+}

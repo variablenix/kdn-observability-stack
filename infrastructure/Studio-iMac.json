@@ -1,53 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_LAB-PROMETHEUS",
-      "label": "Lab-Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "12.4.2"
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -1955,7 +1906,7 @@
           "refId": "B"
         }
       ],
-      "title": "Network Traffic (en1 — Ethernet)",
+      "title": "Network Traffic (en1 \u2014 Ethernet)",
       "type": "timeseries"
     },
     {
@@ -2078,7 +2029,7 @@
     }
   ],
   "preload": false,
-  "refresh": "5s",
+  "refresh": "1m",
   "schemaVersion": 42,
   "tags": [
     "macos",
@@ -2089,31 +2040,32 @@
   "templating": {
     "list": [
       {
-        "current": {},
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_LAB-PROMETHEUS}"
+          "uid": "${DS_PROMETHEUS}"
         },
-        "includeAll": false,
+        "definition": "label_values(up{job=\"imac\"}, instance)",
+        "includeAll": true,
         "label": "Instance",
+        "multi": false,
         "name": "node",
         "options": [],
         "query": {
-          "qryType": 1,
-          "query": "label_values(node_uname_info{job=\"node\", instance=~\"imac.*\"}, instance)",
-          "refId": "StandardVariableQuery"
+          "query": "label_values(up{job=\"imac\"}, instance)",
+          "refId": "node"
         },
-        "refresh": 2,
+        "refresh": 1,
         "regexApplyTo": "value",
         "sort": 1,
         "type": "query"
       },
       {
-        "current": {
-          "text": "",
-          "value": "${DS_LAB-PROMETHEUS}",
-          "selected": true
-        },
+        "current": {},
         "includeAll": false,
         "label": "Datasource",
         "name": "datasource",
@@ -2125,13 +2077,22 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Studio iMac",
   "uid": "studio-imac-macos",
-  "version": 5,
-  "weekStart": ""
+  "version": 1,
+  "weekStart": "",
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ]
 }
