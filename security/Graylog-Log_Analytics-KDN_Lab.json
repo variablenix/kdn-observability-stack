@@ -15,75 +15,70 @@
       }
     ]
   },
-  "description": "Graylog log volume and per-host breakdown \u2014 KDN Lab",
+  "description": "Log activity, fleet triage, pfSense firewall traffic, and security signals from the Graylog OpenSearch indexes. The Fleet host filter scopes fleet panels. Firewall, CrowdSec, Relay, and all-input panels show their own sources.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "links": [
     {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": false,
-      "tags": [],
-      "targetBlank": true,
       "title": "Open Graylog",
-      "tooltip": "",
       "type": "link",
-      "url": "https://monitoring.example.net"
+      "url": "${graylog_url:raw}",
+      "icon": "external link",
+      "targetBlank": true
+    },
+    {
+      "title": "Service Health",
+      "type": "link",
+      "url": "/d/graylog-kdnlab",
+      "icon": "external link",
+      "targetBlank": true
+    },
+    {
+      "title": "Graylog dashboards",
+      "type": "link",
+      "url": "${graylog_url:raw}/dashboards",
+      "icon": "external link",
+      "targetBlank": true
+    },
+    {
+      "title": "Graylog search",
+      "type": "link",
+      "url": "${graylog_url:raw}/search",
+      "icon": "external link",
+      "targetBlank": true
     }
   ],
   "liveNow": false,
   "panels": [
     {
-      "collapsed": false,
+      "id": 100,
+      "type": "row",
+      "title": "Overview",
       "gridPos": {
-        "h": 1,
-        "w": 24,
         "x": 0,
-        "y": 0
+        "y": 0,
+        "w": 24,
+        "h": 1
       },
-      "id": 41,
-      "title": "\ud83d\udcca Overview",
-      "type": "row"
+      "collapsed": false,
+      "panels": []
     },
     {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "blue",
-            "mode": "fixed"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 0,
-        "y": 1
-      },
       "id": 1,
+      "title": "Indexed messages",
+      "type": "stat",
+      "description": "All records in the Graylog message indexes over the selected time range.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 5
+      },
       "options": {
-        "colorMode": "background",
-        "graphMode": "area",
+        "colorMode": "value",
+        "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
@@ -95,29 +90,46 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "auto",
+        "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
-          "alias": "Total",
+          "alias": "Indexed messages",
           "bucketAggs": [
             {
               "field": "timestamp",
-              "id": "2",
+              "id": "3",
               "settings": {
-                "interval": "1d",
+                "interval": "auto",
                 "min_doc_count": "0",
                 "trimEdges": "0"
               },
               "type": "date_histogram"
             }
           ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
+          "luceneQueryType": "Metric",
           "metrics": [
             {
               "id": "1",
@@ -125,134 +137,123 @@
             }
           ],
           "query": "*",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
           "refId": "A",
-          "timeField": "timestamp"
+          "hide": false
         }
       ],
-      "title": "Total Messages",
-      "type": "stat"
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
     },
     {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "green",
-            "mode": "fixed"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 1
-      },
       "id": 2,
+      "title": "Fleet messages",
+      "type": "stat",
+      "description": "TCP syslog from fleet hosts in the current host selection.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 5
+      },
       "options": {
-        "colorMode": "background",
-        "graphMode": "area",
+        "colorMode": "value",
+        "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "sum"
           ],
           "fields": "",
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "auto",
+        "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
-          "alias": "Msgs/hr",
+          "alias": "Fleet messages",
           "bucketAggs": [
             {
               "field": "timestamp",
-              "id": "2",
+              "id": "3",
               "settings": {
-                "interval": "1h",
+                "interval": "auto",
                 "min_doc_count": "0",
                 "trimEdges": "0"
               },
               "type": "date_histogram"
             }
           ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
+          "luceneQueryType": "Metric",
           "metrics": [
             {
               "id": "1",
               "type": "count"
             }
           ],
-          "query": "*",
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene})",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
           "refId": "A",
-          "timeField": "timestamp"
+          "hide": false
         }
       ],
-      "title": "Messages Last Hour",
-      "type": "stat"
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
     },
     {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "orange",
-            "mode": "fixed"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 8,
-        "y": 1
-      },
       "id": 3,
+      "title": "pfSense firewall blocks",
+      "type": "stat",
+      "description": "Blocked packet log records emitted by the pfSense firewall.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 8,
+        "y": 1,
+        "w": 4,
+        "h": 5
+      },
       "options": {
-        "colorMode": "background",
+        "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
@@ -265,79 +266,82 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "auto",
+        "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
-          "alias": "pfSense",
+          "alias": "pfSense firewall blocks",
           "bucketAggs": [
             {
               "field": "timestamp",
-              "id": "2",
+              "id": "3",
               "settings": {
-                "interval": "1d",
+                "interval": "auto",
                 "min_doc_count": "0",
                 "trimEdges": "0"
               },
               "type": "date_histogram"
             }
           ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
+          "luceneQueryType": "Metric",
           "metrics": [
             {
               "id": "1",
               "type": "count"
             }
           ],
-          "query": "source:pfSense OR source:pfsense OR source:filterlog*",
+          "query": "gl2_source_input:\"${syslog_udp_input:raw}\" AND gl2_remote_ip:\"${pfsense_ip:raw}\" AND source:filterlog* AND facility:local0 AND message:block",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
           "refId": "A",
-          "timeField": "timestamp"
+          "hide": false
         }
       ],
-      "title": "pfSense Messages",
-      "type": "stat"
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
     },
     {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "purple",
-            "mode": "fixed"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 12,
-        "y": 1
-      },
       "id": 4,
+      "title": "Fleet warnings and errors",
+      "type": "stat",
+      "description": "Fleet syslog with a severity of warning or higher (0\u20134).",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 12,
+        "y": 1,
+        "w": 4,
+        "h": 5
+      },
       "options": {
-        "colorMode": "background",
+        "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
@@ -350,162 +354,82 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "auto",
+        "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
-          "alias": "Proxmox",
+          "alias": "Fleet warnings and errors",
           "bucketAggs": [
             {
               "field": "timestamp",
-              "id": "2",
+              "id": "3",
               "settings": {
-                "interval": "1d",
+                "interval": "auto",
                 "min_doc_count": "0",
                 "trimEdges": "0"
               },
               "type": "date_histogram"
             }
           ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
+          "luceneQueryType": "Metric",
           "metrics": [
             {
               "id": "1",
               "type": "count"
             }
           ],
-          "query": "source:proxmox",
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene}) AND level:[0 TO 4]",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
           "refId": "A",
-          "timeField": "timestamp"
+          "hide": false
         }
       ],
-      "title": "Proxmox Messages",
-      "type": "stat"
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
     },
     {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 16,
-        "y": 1
-      },
       "id": 5,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "sum"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
+      "title": "Fleet SSH failures",
+      "type": "stat",
+      "description": "Failed authentication markers from SSH daemon logs on the selected fleet hosts.",
       "pluginVersion": "13.0.2",
-      "targets": [
-        {
-          "alias": "Auth Failures",
-          "bucketAggs": [
-            {
-              "field": "timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "1d",
-                "min_doc_count": "0",
-                "trimEdges": "0"
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
-          "metrics": [
-            {
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "message:\"Failed password\" OR message:\"authentication failure\" OR message:\"Invalid user\"",
-          "refId": "A",
-          "timeField": "timestamp"
-        }
-      ],
-      "title": "Auth Failures",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
       "gridPos": {
-        "h": 4,
+        "x": 16,
+        "y": 1,
         "w": 4,
-        "x": 20,
-        "y": 1
+        "h": 5
       },
-      "id": 6,
       "options": {
-        "colorMode": "background",
+        "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
@@ -518,451 +442,168 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "auto",
+        "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
-          "alias": "SSH Failed",
+          "alias": "Fleet SSH failures",
           "bucketAggs": [
             {
               "field": "timestamp",
-              "id": "2",
+              "id": "3",
               "settings": {
-                "interval": "1d",
+                "interval": "auto",
                 "min_doc_count": "0",
                 "trimEdges": "0"
               },
               "type": "date_histogram"
             }
           ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
+          "luceneQueryType": "Metric",
           "metrics": [
             {
               "id": "1",
               "type": "count"
             }
           ],
-          "query": "message:\"Failed password\"",
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene}) AND application_name:(\"sshd\" OR \"sshd-session\" OR \"sshd-auth\") AND message:(\"Failed password\" OR \"Invalid user\" OR \"authentication failure\" OR \"Failed publickey\" OR \"maximum authentication attempts\")",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
           "refId": "A",
-          "timeField": "timestamp"
+          "hide": false
         }
       ],
-      "title": "SSH Failed Logins",
-      "type": "stat"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 5
-      },
-      "id": 42,
-      "title": "\ud83d\udcc8 Message Volume Over Time",
-      "type": "row"
-    },
-    {
       "datasource": {
-        "type": "elasticsearch",
+        "type": "grafana-opensearch-datasource",
         "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 6
-      },
-      "id": 10,
-      "options": {
-        "annotations": {
-          "clustering": -1,
-          "multiLane": false
-        },
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
+      }
+    },
+    {
+      "id": 6,
+      "title": "CrowdSec detection records",
+      "type": "stat",
+      "description": "Parsed local detection records in the selected time range. For deduplicated counts and seven days of history, open the CrowdSec search.",
       "pluginVersion": "13.0.2",
-      "targets": [
-        {
-          "alias": "Messages",
-          "bucketAggs": [
-            {
-              "field": "timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto"
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
-          "metrics": [
-            {
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "source:moonlab OR source:docker-lab OR source:proxmox OR source:nexus-node OR source:k8s-prod01 OR source:authentik OR source:stargate OR source:minecraft OR source:gatekeeper OR source:rpi4\n",
-          "rawDSLQuery": "",
-          "refId": "A",
-          "timeField": "timestamp"
-        }
-      ],
-      "title": "Total Log Volume Over Time",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
       "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 14
+        "x": 20,
+        "y": 1,
+        "w": 4,
+        "h": 5
       },
-      "id": 43,
-      "title": "\ud83d\udda5\ufe0f Per-Host Breakdown",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 15
-      },
-      "id": 20,
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "values": [
-            "value",
-            "percent"
-          ]
-        },
-        "pieType": "pie",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "sum"
           ],
           "fields": "",
           "values": false
         },
-        "sort": "desc",
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
       },
-      "pluginVersion": "13.0.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
-          "alias": "{{term source}}",
+          "alias": "CrowdSec detection records",
           "bucketAggs": [
             {
-              "field": "source",
-              "id": "2",
+              "field": "timestamp",
+              "id": "3",
               "settings": {
-                "execution_hint": "map",
-                "min_doc_count": "1",
-                "order": "desc",
-                "orderBy": "_count",
-                "size": "20"
+                "interval": "auto",
+                "min_doc_count": "0",
+                "trimEdges": "0"
               },
-              "type": "terms"
+              "type": "date_histogram"
             }
           ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
+          "luceneQueryType": "Metric",
           "metrics": [
             {
               "id": "1",
               "type": "count"
             }
           ],
-          "query": "*",
-          "refId": "A",
-          "timeField": "timestamp"
-        }
-      ],
-      "title": "Log Share by Host",
-      "type": "piechart"
-    },
-    {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 15
-      },
-      "id": 21,
-      "options": {
-        "barRadius": 0.05,
-        "barWidth": 0.7,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "orientation": "horizontal",
-        "showValue": "auto",
-        "stacking": "none",
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
-      },
-      "pluginVersion": "13.0.2",
-      "targets": [
-        {
-          "alias": "{{term source}}",
-          "bucketAggs": [
-            {
-              "field": "source",
-              "id": "2",
-              "settings": {
-                "execution_hint": "map",
-                "min_doc_count": "1",
-                "order": "desc",
-                "orderBy": "_count",
-                "size": "15"
-              },
-              "type": "terms"
-            }
-          ],
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND application_name:crowdsec-graylog AND crowdsec_kind:local_detection_v1 AND _exists_:crowdsec_alert_key",
+          "queryType": "lucene",
+          "timeField": "timestamp",
           "datasource": {
-            "type": "elasticsearch",
+            "type": "grafana-opensearch-datasource",
             "uid": "${DS_GRAYLOG_OPENSEARCH}"
           },
-          "metrics": [
-            {
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "*",
           "refId": "A",
-          "timeField": "timestamp"
+          "hide": false
         }
       ],
-      "title": "Top Hosts by Log Volume",
-      "type": "barchart"
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
     },
     {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
+      "id": 10,
+      "title": "Indexed volume by input",
+      "type": "timeseries",
+      "description": "Messages per time bucket. pfSense UDP is filtered by the sender address, and GELF is shown as its own series.",
+      "pluginVersion": "13.0.2",
       "gridPos": {
-        "h": 8,
-        "w": 24,
         "x": 0,
-        "y": 25
+        "y": 6,
+        "w": 24,
+        "h": 8
       },
-      "id": 22,
       "options": {
         "annotations": {
           "clustering": -1,
@@ -980,71 +621,20 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.0.2",
-      "targets": [
-        {
-          "alias": "{{term source}}",
-          "bucketAggs": [
-            {
-              "field": "source",
-              "id": "3",
-              "settings": {
-                "execution_hint": "map",
-                "min_doc_count": "1",
-                "order": "desc",
-                "orderBy": "_count",
-                "size": "15"
-              },
-              "type": "terms"
-            },
-            {
-              "field": "timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": "0",
-                "trimEdges": "0"
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
-          "metrics": [
-            {
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "source:moonlab OR source:dockerlab OR source:stargate OR source:grafana OR source:aegis OR source:authentik OR source:kubelife OR source:minecraft OR source:gatekeeper OR source:rpi4 OR source:nexus OR source:proxmox",
-          "refId": "A",
-          "timeField": "timestamp"
-        }
-      ],
-      "title": "Log Volume by Host Over Time",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 33
-      },
-      "id": 44,
-      "title": "\ud83d\udd10 Security Events",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -1057,7 +647,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 15,
+            "fillOpacity": 12,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -1071,7 +661,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "showValues": false,
             "spanNulls": false,
             "stacking": {
@@ -1081,55 +671,17 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 34
-      },
-      "id": 30,
-      "options": {
-        "annotations": {
-          "clustering": -1,
-          "multiLane": false
+          }
         },
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
+        "overrides": []
       },
-      "pluginVersion": "13.0.2",
       "targets": [
         {
-          "alias": "SSH Accepted",
+          "alias": "Fleet TCP syslog",
           "bucketAggs": [
             {
               "field": "timestamp",
-              "id": "2",
+              "id": "3",
               "settings": {
                 "interval": "auto",
                 "min_doc_count": "0",
@@ -1138,26 +690,29 @@
               "type": "date_histogram"
             }
           ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
+          "luceneQueryType": "Metric",
           "metrics": [
             {
               "id": "1",
               "type": "count"
             }
           ],
-          "query": "message:\"Accepted password\" OR message:\"Accepted publickey\"",
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene})",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
           "refId": "A",
-          "timeField": "timestamp"
+          "hide": false
         },
         {
-          "alias": "SSH Failed",
+          "alias": "pfSense UDP syslog",
           "bucketAggs": [
             {
               "field": "timestamp",
-              "id": "4",
+              "id": "3",
               "settings": {
                 "interval": "auto",
                 "min_doc_count": "0",
@@ -1166,31 +721,116 @@
               "type": "date_histogram"
             }
           ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
+          "luceneQueryType": "Metric",
           "metrics": [
             {
-              "id": "3",
+              "id": "1",
               "type": "count"
             }
           ],
-          "query": "message:\"Failed password\"",
+          "query": "gl2_source_input:\"${syslog_udp_input:raw}\" AND gl2_remote_ip:\"${pfsense_ip:raw}\"",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
           "refId": "B",
-          "timeField": "timestamp"
+          "hide": false
+        },
+        {
+          "alias": "Application GELF",
+          "bucketAggs": [
+            {
+              "field": "timestamp",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": "0",
+                "trimEdges": "0"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "luceneQueryType": "Metric",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "gl2_source_input:\"${gelf_input:raw}\"",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "C",
+          "hide": false
         }
       ],
-      "title": "SSH Logins \u2014 Accepted vs Failed",
-      "type": "timeseries"
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
     },
     {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      "id": 101,
+      "type": "row",
+      "title": "Fleet activity",
+      "gridPos": {
+        "x": 0,
+        "y": 14,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 22,
+      "title": "Fleet volume by host",
+      "type": "timeseries",
+      "description": "Counts per host and time bucket, scoped by the fleet host selector.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 16,
+        "h": 8
+      },
+      "options": {
+        "annotations": {
+          "clustering": -1,
+          "multiLane": false
+        },
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -1203,7 +843,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 15,
+            "fillOpacity": 12,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -1217,7 +857,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "showValues": false,
             "spanNulls": false,
             "stacking": {
@@ -1227,303 +867,468 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 34
-      },
-      "id": 31,
-      "options": {
-        "annotations": {
-          "clustering": -1,
-          "multiLane": false
+          }
         },
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
+        "overrides": []
       },
-      "pluginVersion": "13.0.2",
-      "targets": [
-        {
-          "alias": "Sudo",
-          "bucketAggs": [
-            {
-              "field": "timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": "0",
-                "trimEdges": "0"
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
-          "metrics": [
-            {
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "message:sudo",
-          "refId": "A",
-          "timeField": "timestamp"
-        }
-      ],
-      "title": "Sudo Usage Over Time",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 42
-      },
-      "id": 32,
-      "options": {
-        "annotations": {
-          "clustering": -1,
-          "multiLane": false
-        },
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "13.0.2",
-      "targets": [
-        {
-          "alias": "Audit Events",
-          "bucketAggs": [
-            {
-              "field": "timestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto",
-                "min_doc_count": "0",
-                "trimEdges": "0"
-              },
-              "type": "date_histogram"
-            }
-          ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
-          "metrics": [
-            {
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "message:\"type=SYSCALL\" OR message:\"type=USER_AUTH\" OR message:\"type=USER_LOGIN\"",
-          "refId": "A",
-          "timeField": "timestamp"
-        }
-      ],
-      "title": "Audit Events Over Time",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        }
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 42
-      },
-      "id": 33,
-      "options": {
-        "annotations": {
-          "clustering": -1,
-          "multiLane": false
-        },
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "13.0.2",
       "targets": [
         {
           "alias": "{{term source}}",
           "bucketAggs": [
             {
               "field": "source",
+              "id": "2",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_count",
+                "size": "14"
+              },
+              "type": "terms"
+            },
+            {
+              "field": "timestamp",
               "id": "3",
               "settings": {
-                "execution_hint": "map",
+                "interval": "auto",
+                "min_doc_count": "0",
+                "trimEdges": "0"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "luceneQueryType": "Metric",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene})",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
+    },
+    {
+      "id": 20,
+      "title": "Top fleet hosts",
+      "type": "table",
+      "description": "Counts by hostname over the selected time range.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 16,
+        "y": 15,
+        "w": 8,
+        "h": 8
+      },
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "alias": "",
+          "bucketAggs": [
+            {
+              "field": "source",
+              "id": "2",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_count",
+                "size": "14"
+              },
+              "type": "terms"
+            }
+          ],
+          "luceneQueryType": "Metric",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene})",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
+    },
+    {
+      "id": 23,
+      "title": "Fleet warnings and errors over time",
+      "type": "timeseries",
+      "description": "Warning and error counts from the selected fleet hosts.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 23,
+        "w": 16,
+        "h": 8
+      },
+      "options": {
+        "annotations": {
+          "clustering": -1,
+          "multiLane": false
+        },
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "alias": "Warnings",
+          "bucketAggs": [
+            {
+              "field": "timestamp",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": "0",
+                "trimEdges": "0"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "luceneQueryType": "Metric",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene}) AND level:4",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "A",
+          "hide": false
+        },
+        {
+          "alias": "Errors and higher",
+          "bucketAggs": [
+            {
+              "field": "timestamp",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": "0",
+                "trimEdges": "0"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "luceneQueryType": "Metric",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene}) AND level:[0 TO 3]",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "B",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
+    },
+    {
+      "id": 21,
+      "title": "Top processes with warnings and errors",
+      "type": "table",
+      "description": "Messages at syslog levels 0\u20134 from the selected fleet hosts.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 16,
+        "y": 23,
+        "w": 8,
+        "h": 8
+      },
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "alias": "",
+          "bucketAggs": [
+            {
+              "field": "application_name",
+              "id": "2",
+              "settings": {
                 "min_doc_count": "1",
                 "order": "desc",
                 "orderBy": "_count",
                 "size": "10"
               },
               "type": "terms"
+            }
+          ],
+          "luceneQueryType": "Metric",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene}) AND level:[0 TO 4]",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
+    },
+    {
+      "id": 102,
+      "type": "row",
+      "title": "Firewall and security",
+      "gridPos": {
+        "x": 0,
+        "y": 31,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 31,
+      "title": "pfSense firewall passes and blocks",
+      "type": "timeseries",
+      "description": "Counts logged pass and block records from filterlog. These counts are not total network traffic.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "options": {
+        "annotations": {
+          "clustering": -1,
+          "multiLane": false
+        },
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "alias": "Passes",
+          "bucketAggs": [
             {
               "field": "timestamp",
-              "id": "2",
+              "id": "3",
               "settings": {
                 "interval": "auto",
                 "min_doc_count": "0",
@@ -1532,88 +1337,704 @@
               "type": "date_histogram"
             }
           ],
-          "datasource": {
-            "type": "elasticsearch",
-            "uid": "${DS_GRAYLOG_OPENSEARCH}"
-          },
+          "luceneQueryType": "Metric",
           "metrics": [
             {
               "id": "1",
               "type": "count"
             }
           ],
-          "query": "message:\"Failed password\" OR message:\"authentication failure\" OR message:\"Invalid user\"",
-          "refId": "A",
-          "timeField": "timestamp"
-        }
-      ],
-      "title": "Auth Failures by Host",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 50
-      },
-      "id": 45,
-      "title": "\ud83d\udccb Recent Log Messages",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "elasticsearch",
-        "uid": "${DS_GRAYLOG_OPENSEARCH}"
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 51
-      },
-      "id": 40,
-      "options": {
-        "dedupStrategy": "none",
-        "enableInfiniteScrolling": false,
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showControls": false,
-        "showFieldSelector": false,
-        "showLabels": true,
-        "showLevel": true,
-        "showTime": true,
-        "sortOrder": "Descending",
-        "timestampResolution": "ms",
-        "unwrappedColumns": false,
-        "wrapLogMessage": true
-      },
-      "pluginVersion": "13.0.2",
-      "targets": [
-        {
-          "bucketAggs": [],
+          "query": "gl2_source_input:\"${syslog_udp_input:raw}\" AND gl2_remote_ip:\"${pfsense_ip:raw}\" AND source:filterlog* AND facility:local0 AND message:pass",
+          "queryType": "lucene",
+          "timeField": "timestamp",
           "datasource": {
-            "type": "elasticsearch",
+            "type": "grafana-opensearch-datasource",
             "uid": "${DS_GRAYLOG_OPENSEARCH}"
           },
+          "refId": "A",
+          "hide": false
+        },
+        {
+          "alias": "Blocks",
+          "bucketAggs": [
+            {
+              "field": "timestamp",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": "0",
+                "trimEdges": "0"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "luceneQueryType": "Metric",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "gl2_source_input:\"${syslog_udp_input:raw}\" AND gl2_remote_ip:\"${pfsense_ip:raw}\" AND source:filterlog* AND facility:local0 AND message:block",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "B",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
+    },
+    {
+      "id": 30,
+      "title": "Fleet SSH accepted and failed",
+      "type": "timeseries",
+      "description": "Accepted and failed SSH authentication markers on selected fleet hosts.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 12,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "options": {
+        "annotations": {
+          "clustering": -1,
+          "multiLane": false
+        },
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "alias": "Accepted",
+          "bucketAggs": [
+            {
+              "field": "timestamp",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": "0",
+                "trimEdges": "0"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "luceneQueryType": "Metric",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene}) AND application_name:(\"sshd\" OR \"sshd-session\" OR \"sshd-auth\") AND message:(\"Accepted publickey\" OR \"Accepted password\" OR \"Accepted keyboard-interactive\")",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "A",
+          "hide": false
+        },
+        {
+          "alias": "Failed",
+          "bucketAggs": [
+            {
+              "field": "timestamp",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": "0",
+                "trimEdges": "0"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "luceneQueryType": "Metric",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene}) AND application_name:(\"sshd\" OR \"sshd-session\" OR \"sshd-auth\") AND message:(\"Failed password\" OR \"Invalid user\" OR \"authentication failure\" OR \"Failed publickey\" OR \"maximum authentication attempts\")",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "B",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
+    },
+    {
+      "id": 32,
+      "title": "CrowdSec scenarios",
+      "type": "table",
+      "description": "Parsed local detection records by scenario. A quiet time range can be empty.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 40,
+        "w": 12,
+        "h": 7
+      },
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "alias": "",
+          "bucketAggs": [
+            {
+              "field": "crowdsec_scenario",
+              "id": "2",
+              "settings": {
+                "min_doc_count": "1",
+                "order": "desc",
+                "orderBy": "_count",
+                "size": "12"
+              },
+              "type": "terms"
+            }
+          ],
+          "luceneQueryType": "Metric",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND application_name:crowdsec-graylog AND crowdsec_kind:local_detection_v1 AND _exists_:crowdsec_alert_key",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
+    },
+    {
+      "id": 33,
+      "title": "Relay application log volume",
+      "type": "timeseries",
+      "description": "GELF records from the Relay application container.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 12,
+        "y": 40,
+        "w": 12,
+        "h": 7
+      },
+      "options": {
+        "annotations": {
+          "clustering": -1,
+          "multiLane": false
+        },
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "alias": "Relay messages",
+          "bucketAggs": [
+            {
+              "field": "timestamp",
+              "id": "3",
+              "settings": {
+                "interval": "auto",
+                "min_doc_count": "0",
+                "trimEdges": "0"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "luceneQueryType": "Metric",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "gl2_source_input:\"${gelf_input:raw}\" AND container_name:relay",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      }
+    },
+    {
+      "id": 103,
+      "type": "row",
+      "title": "Recent messages",
+      "gridPos": {
+        "x": 0,
+        "y": 47,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 40,
+      "title": "Recent fleet messages",
+      "type": "table",
+      "description": "Up to 100 messages from the selected fleet host or all fleet hosts. Open Graylog to search the full message history.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 48,
+        "w": 24,
+        "h": 11
+      },
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 185
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Host"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 145
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Process"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 160
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Severity"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "alias": "",
+          "bucketAggs": [],
+          "format": "table",
+          "luceneQueryType": "RawData",
           "metrics": [
             {
               "id": "1",
               "settings": {
-                "limit": "500"
+                "order": "desc",
+                "size": "100",
+                "useTimeRange": true
               },
-              "type": "logs"
+              "type": "raw_data"
             }
           ],
-          "query": "*",
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene})",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
           "refId": "A",
-          "timeField": "timestamp"
+          "hide": false
         }
       ],
-      "title": "Recent Messages \u2014 All Hosts",
-      "type": "logs"
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      },
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "timestamp",
+                "source",
+                "application_name",
+                "level",
+                "message"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "application_name": 2,
+              "level": 3,
+              "message": 4,
+              "source": 1,
+              "timestamp": 0
+            },
+            "renameByName": {
+              "application_name": "Process",
+              "level": "Severity",
+              "message": "Message",
+              "source": "Host",
+              "timestamp": "Time"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "title": "Recent fleet warnings and errors",
+      "type": "table",
+      "description": "Up to 100 severity 0\u20134 messages from the selected fleet host or all fleet hosts.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 59,
+        "w": 24,
+        "h": 10
+      },
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 185
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Host"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 145
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Process"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 160
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Severity"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "alias": "",
+          "bucketAggs": [],
+          "format": "table",
+          "luceneQueryType": "RawData",
+          "metrics": [
+            {
+              "id": "1",
+              "settings": {
+                "order": "desc",
+                "size": "100",
+                "useTimeRange": true
+              },
+              "type": "raw_data"
+            }
+          ],
+          "query": "gl2_source_input:\"${syslog_tcp_input:raw}\" AND source:(${fleet_host:lucene}) AND level:[0 TO 4]",
+          "queryType": "lucene",
+          "timeField": "timestamp",
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "${DS_GRAYLOG_OPENSEARCH}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "${DS_GRAYLOG_OPENSEARCH}"
+      },
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "timestamp",
+                "source",
+                "application_name",
+                "level",
+                "message"
+              ]
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "application_name": 2,
+              "level": 3,
+              "message": 4,
+              "source": 1,
+              "timestamp": 0
+            },
+            "renameByName": {
+              "application_name": "Process",
+              "level": "Severity",
+              "message": "Message",
+              "source": "Host",
+              "timestamp": "Time"
+            }
+          }
+        }
+      ]
     }
   ],
   "preload": false,
@@ -1621,26 +2042,104 @@
   "schemaVersion": 42,
   "tags": [
     "graylog",
+    "homelab",
+    "kdn-lab",
     "logs",
-    "security",
-    "kdn-lab"
+    "opensearch",
+    "security"
   ],
   "templating": {
     "list": [
       {
-        "allowCustomValue": true,
-        "current": {},
-        "hide": 0,
-        "includeAll": false,
-        "label": "Graylog OpenSearch",
-        "multi": false,
-        "name": "DS_GRAYLOG_OPENSEARCH",
+        "name": "graylog_url",
+        "label": "Graylog URL",
+        "type": "textbox",
+        "query": "https://graylog.example.com",
+        "current": {
+          "text": "https://graylog.example.com",
+          "value": "https://graylog.example.com"
+        },
         "options": [],
-        "query": "grafana-opensearch-datasource",
-        "refresh": 1,
-        "regex": "",
+        "description": "Base URL of the Graylog web interface.",
         "skipUrlSync": false,
-        "type": "datasource"
+        "hide": 0
+      },
+      {
+        "name": "syslog_tcp_input",
+        "label": "Syslog TCP input ID",
+        "type": "textbox",
+        "query": "tcp-input-id",
+        "current": {
+          "text": "tcp-input-id",
+          "value": "tcp-input-id"
+        },
+        "options": [],
+        "description": "Set this to the value in your Graylog deployment.",
+        "skipUrlSync": false,
+        "hide": 0
+      },
+      {
+        "name": "syslog_udp_input",
+        "label": "Syslog UDP input ID",
+        "type": "textbox",
+        "query": "udp-input-id",
+        "current": {
+          "text": "udp-input-id",
+          "value": "udp-input-id"
+        },
+        "options": [],
+        "description": "Set this to the value in your Graylog deployment.",
+        "skipUrlSync": false,
+        "hide": 0
+      },
+      {
+        "name": "gelf_input",
+        "label": "Application GELF input ID",
+        "type": "textbox",
+        "query": "gelf-input-id",
+        "current": {
+          "text": "gelf-input-id",
+          "value": "gelf-input-id"
+        },
+        "options": [],
+        "description": "Set this to the value in your Graylog deployment.",
+        "skipUrlSync": false,
+        "hide": 0
+      },
+      {
+        "name": "pfsense_ip",
+        "label": "pfSense syslog sender",
+        "type": "textbox",
+        "query": "192.0.2.1",
+        "current": {
+          "text": "192.0.2.1",
+          "value": "192.0.2.1"
+        },
+        "options": [],
+        "description": "Set this to the value in your Graylog deployment.",
+        "skipUrlSync": false,
+        "hide": 0
+      },
+      {
+        "name": "fleet_host",
+        "label": "Fleet host (fleet panels)",
+        "type": "query",
+        "datasource": {
+          "type": "grafana-opensearch-datasource",
+          "uid": "${DS_GRAYLOG_OPENSEARCH}"
+        },
+        "query": "{\"find\": \"terms\", \"field\": \"source\", \"query\": \"gl2_source_input:\\\"${syslog_tcp_input:raw}\\\"\", \"size\": 100}",
+        "definition": "{\"find\": \"terms\", \"field\": \"source\", \"query\": \"gl2_source_input:\\\"${syslog_tcp_input:raw}\\\"\", \"size\": 100}",
+        "refresh": 2,
+        "sort": 1,
+        "multi": false,
+        "includeAll": true,
+        "allValue": "*",
+        "options": [],
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
       }
     ]
   },
@@ -1666,5 +2165,13 @@
   "title": "Graylog \u2014 Log Analytics \u2014 KDN Lab",
   "uid": "graylog-logs-kdnlab",
   "version": 1,
-  "__inputs": []
+  "__inputs": [
+    {
+      "name": "DS_GRAYLOG_OPENSEARCH",
+      "label": "OpenSearch",
+      "type": "datasource",
+      "pluginId": "grafana-opensearch-datasource",
+      "pluginName": "OpenSearch"
+    }
+  ]
 }

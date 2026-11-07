@@ -23,7 +23,13 @@ For security and privacy, these files have been processed through a sanitization
 These dashboards are exported in standard Grafana JSON format. To import them:
 1. Download the JSON file for the service you wish to monitor.
 2. In your Grafana instance, go to **Dashboards -> Import**.
-3. Upload the JSON and map the `${DS_...}` variables to your local Prometheus or InfluxDB data sources.
+3. Upload the JSON and map the `${DS_...}` variables to your local Prometheus, InfluxDB, or OpenSearch data sources.
+
+### Graylog
+
+Import [Log Analytics](security/Graylog-Log_Analytics-KDN_Lab.json) with the Grafana OpenSearch plugin. Map the OpenSearch input to your Graylog message indexes with `timestamp` as the time field. Enter your TCP syslog, UDP syslog, and GELF input IDs and your pfSense sender address in the dashboard controls. The fleet host dropdown is populated from the selected TCP syslog input. CrowdSec and Relay panels require their corresponding log records.
+
+Import [Service Health](security/Graylog-KDNLab.json) with Prometheus. It uses the `graylog` scrape job for ingest and journal metrics and the `node-exporters` job for filesystem metrics. Set **Node Exporter instance** and **Graylog data mount** to the labels used by your host. Set **Graylog URL** on both dashboards to enable links into your instance.
 
 ### Reviewed dashboards and Immich inventory
 

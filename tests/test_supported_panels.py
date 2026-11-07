@@ -65,7 +65,24 @@ class SupportedPanels(unittest.TestCase):
         d = self.models['graylog-kdnlab']
         for p in builder.walk(d['panels']):
             for t in p.get('targets', []):
-                self.assertIn('job="graylog"', t['expr'])
+                expr = t['expr']
+                if 'node_filesystem_' in expr:
+                    self.assertIn('job="node-exporters"', expr)
+                    self.assertIn('instance="$node_instance"', expr)
+                else:
+                    self.assertIn('job="graylog"', expr)
+
+    def test_graylog_analytics_uses_the_opensearch_import_binding(self):
+        dashboard = self.models['graylog-logs-kdnlab']
+        self.assertEqual(dashboard['__inputs'][0]['pluginId'], 'grafana-opensearch-datasource')
+        targets = [target for panel in builder.walk(dashboard['panels']) for target in panel.get('targets', [])]
+        self.assertTrue(targets)
+        for target in targets:
+            self.assertEqual(target['datasource'], {
+                'type': 'grafana-opensearch-datasource',
+                'uid': '${DS_GRAYLOG_OPENSEARCH}',
+            })
+        self.assertTrue(any(target.get('luceneQueryType') == 'RawData' for target in targets))
 
     def test_tunnel_control_plane_window_is_explicit(self):
         d = self.models['cloudflared-tunnel']

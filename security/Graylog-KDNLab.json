@@ -19,60 +19,48 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "links": [],
+  "links": [
+    {
+      "title": "Log Analytics",
+      "type": "link",
+      "url": "/d/graylog-logs-kdnlab",
+      "icon": "external link",
+      "targetBlank": true
+    },
+    {
+      "title": "Open Graylog",
+      "type": "link",
+      "url": "${graylog_url:raw}",
+      "icon": "external link",
+      "targetBlank": true
+    }
+  ],
   "panels": [
     {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
       "id": 100,
-      "panels": [],
-      "title": "\ud83d\udce8 Message Throughput",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 100
-              },
-              {
-                "color": "red",
-                "value": 500
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
+      "type": "row",
+      "title": "Graylog host storage and backlog",
       "gridPos": {
-        "h": 4,
-        "w": 4,
         "x": 0,
-        "y": 1
+        "y": 0,
+        "w": 24,
+        "h": 1
       },
-      "id": 1,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 60,
+      "title": "Graylog NVMe disk used",
+      "type": "stat",
+      "description": "Dedicated filesystem for Graylog's journal and OpenSearch indexes. Watch this before it reaches the OpenSearch disk watermark.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 6,
+        "h": 4
+      },
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -90,60 +78,65 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "gl_journal_append_1_sec_rate{job=\"graylog\"}",
-          "legendFormat": "msgs/s",
-          "refId": "A"
-        }
-      ],
-      "title": "Input Throughput (msg/s)",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "unit": "percentunit",
+          "decimals": 1,
+          "min": 0,
+          "max": 1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "value": 0,
+                "color": "green"
               },
               {
-                "color": "yellow",
-                "value": 100
+                "value": 0.75,
+                "color": "orange"
               },
               {
-                "color": "red",
-                "value": 500
+                "value": 0.85,
+                "color": "red"
               }
             ]
           },
-          "unit": "short"
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
+      "targets": [
+        {
+          "expr": "1 - (node_filesystem_avail_bytes{job=\"node-exporters\",instance=\"$node_instance\",mountpoint=\"$graylog_data_mount\"} / node_filesystem_size_bytes{job=\"node-exporters\",instance=\"$node_instance\",mountpoint=\"$graylog_data_mount\"})",
+          "legendFormat": "NVMe used",
+          "range": true,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 61,
+      "title": "Graylog NVMe free space",
+      "type": "stat",
+      "description": "Available bytes on the dedicated Graylog filesystem.",
+      "pluginVersion": "13.0.2",
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 1
+        "x": 6,
+        "y": 1,
+        "w": 6,
+        "h": 4
       },
-      "id": 2,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -161,60 +154,139 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "gl_journal_read_1_sec_rate{job=\"graylog\"}",
-          "legendFormat": "msgs/s",
-          "refId": "A"
-        }
-      ],
-      "title": "Journal Read Rate (msg/s)",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "unit": "bytes",
+          "decimals": 1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "value": 0,
+                "color": "green"
               },
               {
-                "color": "yellow",
-                "value": 1000
+                "value": 100000,
+                "color": "yellow"
               },
               {
-                "color": "red",
-                "value": 10000
+                "value": 1000000,
+                "color": "red"
               }
             ]
           },
-          "unit": "short"
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
+      "targets": [
+        {
+          "expr": "node_filesystem_avail_bytes{job=\"node-exporters\",instance=\"$node_instance\",mountpoint=\"$graylog_data_mount\"}",
+          "legendFormat": "Available",
+          "range": true,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 62,
+      "title": "Graylog host root disk used",
+      "type": "stat",
+      "description": "Root filesystem usage. Live Graylog log data uses the separate NVMe filesystem.",
+      "pluginVersion": "13.0.2",
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 8,
-        "y": 1
+        "x": 12,
+        "y": 1,
+        "w": 6,
+        "h": 4
       },
-      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 1,
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 0.75,
+                "color": "orange"
+              },
+              {
+                "value": 0.85,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "1 - (node_filesystem_avail_bytes{job=\"node-exporters\",instance=\"$node_instance\",mountpoint=\"/\"} / node_filesystem_size_bytes{job=\"node-exporters\",instance=\"$node_instance\",mountpoint=\"/\"})",
+          "legendFormat": "Root used",
+          "range": true,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 63,
+      "title": "Journal discards (last hour)",
+      "type": "stat",
+      "description": "Messages discarded by the Graylog journal over the past hour.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 18,
+        "y": 1,
+        "w": 6,
+        "h": 4
+      },
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -232,62 +304,503 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 1,
+                "color": "orange"
+              },
+              {
+                "value": 10,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
+          "expr": "increase(gl_kafka_journal_write_discarded_messages_total{job=\"graylog\"}[1h])",
+          "legendFormat": "Discarded",
+          "range": true,
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 64,
+      "title": "Disk use over time",
+      "type": "timeseries",
+      "description": "Compare Graylog's dedicated filesystem with the Graylog host's root filesystem.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 12,
+        "h": 7
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "1 - (node_filesystem_avail_bytes{job=\"node-exporters\",instance=\"$node_instance\",mountpoint=\"$graylog_data_mount\"} / node_filesystem_size_bytes{job=\"node-exporters\",instance=\"$node_instance\",mountpoint=\"$graylog_data_mount\"})",
+          "legendFormat": "Graylog NVMe",
+          "range": true,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        },
+        {
+          "expr": "1 - (node_filesystem_avail_bytes{job=\"node-exporters\",instance=\"$node_instance\",mountpoint=\"/\"} / node_filesystem_size_bytes{job=\"node-exporters\",instance=\"$node_instance\",mountpoint=\"/\"})",
+          "legendFormat": "Host root",
+          "range": true,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "B",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 65,
+      "title": "Journal backlog over time",
+      "type": "timeseries",
+      "description": "Uncommitted journal entries. A sustained increase can indicate that indexing is falling behind.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 12,
+        "y": 5,
+        "w": 12,
+        "h": 7
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "gl_journal_entries_uncommitted{job=\"graylog\"}",
+          "legendFormat": "Uncommitted",
+          "range": true,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 101,
+      "type": "row",
+      "title": "\ud83d\udce8 Message Throughput",
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 1,
+      "title": "Input Throughput (msg/s)",
+      "type": "stat",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 4,
+        "h": 4
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 100,
+                "color": "yellow"
+              },
+              {
+                "value": 500,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "gl_journal_append_1_sec_rate{job=\"graylog\"}",
+          "legendFormat": "msgs/s",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 2,
+      "title": "Journal Read Rate (msg/s)",
+      "type": "stat",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 4,
+        "y": 13,
+        "w": 4,
+        "h": 4
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 100,
+                "color": "yellow"
+              },
+              {
+                "value": 500,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "gl_journal_read_1_sec_rate{job=\"graylog\"}",
+          "legendFormat": "msgs/s",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Journal Uncommitted Entries",
+      "type": "stat",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 8,
+        "y": 13,
+        "w": 4,
+        "h": 4
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 1000,
+                "color": "yellow"
+              },
+              {
+                "value": 10000,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
           "expr": "gl_journal_entries_uncommitted{job=\"graylog\"}",
           "legendFormat": "entries",
-          "refId": "A"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
         }
       ],
-      "title": "Journal Uncommitted Entries",
-      "type": "stat"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 0.5
-              },
-              {
-                "color": "red",
-                "value": 0.8
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 12,
-        "y": 1
-      },
+      }
+    },
+    {
       "id": 4,
+      "title": "Journal Utilization",
+      "type": "stat",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 12,
+        "y": 13,
+        "w": 4,
+        "h": 4
+      },
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -305,62 +818,63 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 0.5,
+                "color": "yellow"
+              },
+              {
+                "value": 0.8,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "gl_journal_utilization_ratio{job=\"graylog\"}",
           "legendFormat": "utilization",
-          "refId": "A"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
         }
       ],
-      "title": "Journal Utilization",
-      "type": "stat"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 16,
-        "y": 1
-      },
+      }
+    },
+    {
       "id": 5,
+      "title": "Buffer usage by stage",
+      "type": "stat",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 16,
+        "y": 13,
+        "w": 4,
+        "h": 4
+      },
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -378,60 +892,64 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "gl_buffer_usage{job=\"graylog\"} / gl_buffer_size{job=\"graylog\"}",
-          "legendFormat": "buffer %",
-          "refId": "A"
-        }
-      ],
-      "title": "Input Buffer Usage",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "value": 0,
+                "color": "green"
               },
               {
-                "color": "yellow",
-                "value": 100000
+                "value": 50,
+                "color": "yellow"
               },
               {
-                "color": "red",
-                "value": 1000000
+                "value": 80,
+                "color": "red"
               }
             ]
           },
-          "unit": "decbytes"
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 20,
-        "y": 1
-      },
+      "targets": [
+        {
+          "expr": "gl_buffer_usage{job=\"graylog\"} / gl_buffer_size{job=\"graylog\"}",
+          "legendFormat": "{{type}}",
+          "range": true,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
       "id": 6,
+      "title": "Journal Size",
+      "type": "stat",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 20,
+        "y": 13,
+        "w": 4,
+        "h": 4
+      },
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -449,28 +967,90 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decbytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 100000,
+                "color": "yellow"
+              },
+              {
+                "value": 1000000,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "gl_journal_size{job=\"graylog\"}",
           "legendFormat": "size",
-          "refId": "A"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
         }
       ],
-      "title": "Journal Size",
-      "type": "stat"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 10,
+      "title": "Message Rate \u2014 Append vs Read",
+      "type": "timeseries",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 12,
+        "h": 8
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -507,138 +1087,49 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 5
-      },
-      "id": 10,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.4.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "gl_journal_append_1_sec_rate{job=\"graylog\"}",
           "legendFormat": "Append (msg/s)",
-          "refId": "A"
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "A",
+          "hide": false
+        },
+        {
           "expr": "gl_journal_read_1_sec_rate{job=\"graylog\"}",
           "legendFormat": "Read (msg/s)",
-          "refId": "B"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "B",
+          "hide": false
         }
       ],
-      "title": "Message Rate \u2014 Append vs Read",
-      "type": "timeseries"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 5
-      },
+      }
+    },
+    {
       "id": 11,
+      "title": "Incoming messages by input",
+      "type": "timeseries",
+      "description": "Per-second message rate from Graylog's configured syslog and GELF inputs.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 12,
+        "y": 17,
+        "w": 12,
+        "h": 8
+      },
       "options": {
         "legend": {
           "calcs": [],
@@ -652,191 +1143,22 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "rate(gl_input_incoming_messages_total{job=\"graylog\"}[1m])",
-          "legendFormat": "Incoming (msg/s)",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "rate(gl_input_raw_size_total{job=\"graylog\"}[1m])",
-          "legendFormat": "Raw bytes/s",
-          "refId": "B"
-        }
-      ],
-      "title": "Syslog UDP Input \u2014 Incoming Messages",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 13
-      },
-      "id": 101,
-      "panels": [],
-      "title": "\ud83e\udde0 JVM Memory & GC",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "max": 4294967296,
-          "min": 0,
+          "unit": "suffix: msg/s",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "value": 0,
+                "color": "green"
               },
               {
-                "color": "yellow",
-                "value": 3000000000
-              },
-              {
-                "color": "red",
-                "value": 3500000000
+                "value": 80,
+                "color": "red"
               }
             ]
           },
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 0,
-        "y": 14
-      },
-      "id": 20,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "jvm_memory_bytes_used{job=\"graylog\",area=\"heap\"}",
-          "legendFormat": "Heap Used",
-          "refId": "A"
-        }
-      ],
-      "title": "JVM Heap Used",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 500000000
-              },
-              {
-                "color": "red",
-                "value": 1000000000
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 6,
-        "y": 14
-      },
-      "id": 21,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "jvm_memory_bytes_used{job=\"graylog\",area=\"nonheap\"}",
-          "legendFormat": "Non-Heap Used",
-          "refId": "A"
-        }
-      ],
-      "title": "JVM Non-Heap Used",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
           "color": {
             "mode": "palette-classic"
           },
@@ -873,32 +1195,218 @@
             "thresholdsStyle": {
               "mode": "off"
             }
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(gl_input_incoming_messages_total{job=\"graylog\",input_type=\"org.graylog2.inputs.syslog.tcp.SyslogTCPInput\"}[$__rate_interval]))",
+          "legendFormat": "Syslog TCP",
+          "range": true,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
           },
-          "mappings": [],
+          "refId": "A",
+          "hide": false
+        },
+        {
+          "expr": "sum(rate(gl_input_incoming_messages_total{job=\"graylog\",input_type=\"org.graylog2.inputs.syslog.udp.SyslogUDPInput\"}[$__rate_interval]))",
+          "legendFormat": "Syslog UDP",
+          "range": true,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "B",
+          "hide": false
+        },
+        {
+          "expr": "sum(rate(gl_input_incoming_messages_total{job=\"graylog\",input_type=\"org.graylog2.inputs.gelf.udp.GELFUDPInput\"}[$__rate_interval]))",
+          "legendFormat": "GELF UDP",
+          "range": true,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "C",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 102,
+      "type": "row",
+      "title": "\ud83e\udde0 JVM Memory & GC",
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 20,
+      "title": "JVM Heap Used",
+      "type": "gauge",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 26,
+        "w": 6,
+        "h": 6
+      },
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decbytes",
+          "min": 0,
+          "max": 4294967296,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
+                "value": 0,
+                "color": "green"
               },
               {
-                "color": "red",
-                "value": 80
+                "value": 3000000000,
+                "color": "yellow"
+              },
+              {
+                "value": 3500000000,
+                "color": "red"
               }
             ]
           },
-          "unit": "decbytes"
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{job=\"graylog\",area=\"heap\"}",
+          "legendFormat": "Heap Used",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 21,
+      "title": "JVM Non-Heap Used",
+      "type": "gauge",
+      "description": "",
+      "pluginVersion": "13.0.2",
       "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 12,
-        "y": 14
+        "x": 6,
+        "y": 26,
+        "w": 6,
+        "h": 6
       },
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decbytes",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 500000000,
+                "color": "yellow"
+              },
+              {
+                "value": 1000000000,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "jvm_memory_bytes_used{job=\"graylog\",area=\"nonheap\"}",
+          "legendFormat": "Non-Heap Used",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
       "id": 22,
+      "title": "JVM Memory \u2014 Heap vs Non-Heap Over Time",
+      "type": "timeseries",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 12,
+        "y": 26,
+        "w": 12,
+        "h": 6
+      },
       "options": {
         "legend": {
           "calcs": [],
@@ -912,46 +1420,140 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decbytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "jvm_memory_bytes_used{job=\"graylog\",area=\"heap\"}",
           "legendFormat": "Heap Used",
-          "refId": "A"
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "A",
+          "hide": false
+        },
+        {
           "expr": "jvm_memory_bytes_used{job=\"graylog\",area=\"nonheap\"}",
           "legendFormat": "Non-Heap Used",
-          "refId": "B"
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "B",
+          "hide": false
+        },
+        {
           "expr": "jvm_memory_bytes_committed{job=\"graylog\",area=\"heap\"}",
           "legendFormat": "Heap Committed",
-          "refId": "C"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "C",
+          "hide": false
         }
       ],
-      "title": "JVM Memory \u2014 Heap vs Non-Heap Over Time",
-      "type": "timeseries"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 23,
+      "title": "GC Collection Time",
+      "type": "timeseries",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 12,
+        "h": 6
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -988,32 +1590,39 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
+          }
         },
         "overrides": []
       },
+      "targets": [
+        {
+          "expr": "rate(jvm_gc_collection_seconds_sum{job=\"graylog\"}[1m])",
+          "legendFormat": "{{gc}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 24,
+      "title": "JVM Threads",
+      "type": "timeseries",
+      "description": "",
+      "pluginVersion": "13.0.2",
       "gridPos": {
-        "h": 6,
+        "x": 12,
+        "y": 32,
         "w": 12,
-        "x": 0,
-        "y": 20
+        "h": 6
       },
-      "id": 23,
       "options": {
         "legend": {
           "calcs": [],
@@ -1027,28 +1636,22 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "rate(jvm_gc_collection_seconds_sum{job=\"graylog\"}[1m])",
-          "legendFormat": "{{gc}}",
-          "refId": "A"
-        }
-      ],
-      "title": "GC Collection Time",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -1085,132 +1688,72 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 6,
-        "w": 12,
-        "x": 12,
-        "y": 20
-      },
-      "id": 24,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.4.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "jvm_threads_current{job=\"graylog\"}",
           "legendFormat": "Current",
-          "refId": "A"
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "A",
+          "hide": false
+        },
+        {
           "expr": "jvm_threads_daemon{job=\"graylog\"}",
           "legendFormat": "Daemon",
-          "refId": "B"
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "B",
+          "hide": false
+        },
+        {
           "expr": "jvm_threads_peak{job=\"graylog\"}",
           "legendFormat": "Peak",
-          "refId": "C"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "C",
+          "hide": false
         }
       ],
-      "title": "JVM Threads",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 26
-      },
-      "id": 102,
-      "panels": [],
-      "title": "\u2699\ufe0f Process & System",
-      "type": "row"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 0.5
-              },
-              {
-                "color": "red",
-                "value": 0.8
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
+      }
+    },
+    {
+      "id": 103,
+      "type": "row",
+      "title": "\u2699\ufe0f Process & System",
       "gridPos": {
-        "h": 4,
-        "w": 4,
         "x": 0,
-        "y": 27
+        "y": 38,
+        "w": 24,
+        "h": 1
       },
+      "collapsed": false,
+      "panels": []
+    },
+    {
       "id": 30,
+      "title": "CPU Usage",
+      "type": "stat",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 39,
+        "w": 4,
+        "h": 4
+      },
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -1228,60 +1771,63 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 0.5,
+                "color": "yellow"
+              },
+              {
+                "value": 0.8,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "rate(process_cpu_seconds_total{job=\"graylog\"}[1m])",
           "legendFormat": "CPU",
-          "refId": "A"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
         }
       ],
-      "title": "CPU Usage",
-      "type": "stat"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 500000000
-              },
-              {
-                "color": "red",
-                "value": 1000000000
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 27
-      },
+      }
+    },
+    {
       "id": 31,
+      "title": "Resident Memory",
+      "type": "stat",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 4,
+        "y": 39,
+        "w": 4,
+        "h": 4
+      },
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -1299,60 +1845,61 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decbytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 500000000,
+                "color": "yellow"
+              },
+              {
+                "value": 1000000000,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "process_resident_memory_bytes{job=\"graylog\"}",
           "legendFormat": "RSS",
-          "refId": "A"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
         }
       ],
-      "title": "Resident Memory",
-      "type": "stat"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 500
-              },
-              {
-                "color": "red",
-                "value": 900
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 8,
-        "y": 27
-      },
+      }
+    },
+    {
       "id": 32,
+      "title": "Open File Descriptors",
+      "type": "stat",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 8,
+        "y": 39,
+        "w": 4,
+        "h": 4
+      },
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -1370,119 +1917,61 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "process_open_fds{job=\"graylog\"}",
-          "legendFormat": "FDs",
-          "refId": "A"
-        }
-      ],
-      "title": "Open File Descriptors",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "unit": "short",
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 12,
-        "y": 27
-      },
-      "id": 33,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "expr": "gl_journal_segments{job=\"graylog\"}",
-          "legendFormat": "segments",
-          "refId": "A"
-        }
-      ],
-      "title": "Journal Segments",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
+                "value": 0,
+                "color": "green"
               },
               {
-                "color": "red",
-                "value": 1
+                "value": 500,
+                "color": "yellow"
+              },
+              {
+                "value": 900,
+                "color": "red"
               }
             ]
           },
-          "unit": "short"
+          "color": {
+            "mode": "thresholds"
+          }
         },
         "overrides": []
       },
+      "targets": [
+        {
+          "expr": "process_open_fds{job=\"graylog\"}",
+          "legendFormat": "FDs",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 33,
+      "title": "Journal Segments",
+      "type": "stat",
+      "description": "",
+      "pluginVersion": "13.0.2",
       "gridPos": {
-        "h": 4,
+        "x": 12,
+        "y": 39,
         "w": 4,
-        "x": 16,
-        "y": 27
+        "h": 4
       },
-      "id": 34,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -1500,27 +1989,133 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.2",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
       "targets": [
         {
+          "expr": "gl_journal_segments{job=\"graylog\"}",
+          "legendFormat": "segments",
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "jvm_threads_deadlocked{job=\"graylog\"}",
-          "legendFormat": "deadlocked",
-          "refId": "A"
+          "refId": "A",
+          "hide": false
         }
       ],
-      "title": "JVM Deadlocked Threads",
-      "type": "stat"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 34,
+      "title": "JVM Deadlocked Threads",
+      "type": "stat",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 16,
+        "y": 39,
+        "w": 4,
+        "h": 4
       },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 1,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "jvm_threads_deadlocked{job=\"graylog\"}",
+          "legendFormat": "deadlocked",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 35,
+      "title": "Failure queue depth",
+      "type": "stat",
       "description": "Measured current failure queue size. This does not infer a historical scheduler failure count.",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 20,
+        "y": 39,
+        "w": 4,
+        "h": 4
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
@@ -1540,26 +2135,6 @@
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 20,
-        "y": 27
-      },
-      "id": 35,
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "colorMode": "value",
-        "graphMode": "none",
-        "textMode": "auto"
-      },
-      "pluginVersion": "12.4.2",
       "targets": [
         {
           "refId": "A",
@@ -1574,16 +2149,52 @@
           "range": false
         }
       ],
-      "title": "Failure queue depth",
-      "type": "stat"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 40,
+      "title": "CPU Usage Over Time",
+      "type": "timeseries",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 43,
+        "w": 12,
+        "h": 7
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "percentunit",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -1620,67 +2231,68 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 31
-      },
-      "id": 40,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.4.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "rate(process_cpu_seconds_total{job=\"graylog\"}[1m])",
           "legendFormat": "CPU %",
-          "refId": "A"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "A",
+          "hide": false
         }
       ],
-      "title": "CPU Usage Over Time",
-      "type": "timeseries"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 41,
+      "title": "Process Memory Over Time",
+      "type": "timeseries",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 12,
+        "y": 43,
+        "w": 12,
+        "h": 7
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "decbytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -1717,89 +2329,91 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "decbytes"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 31
-      },
-      "id": 41,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.4.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "process_resident_memory_bytes{job=\"graylog\"}",
           "legendFormat": "Resident (RSS)",
-          "refId": "A"
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "A",
+          "hide": false
+        },
+        {
           "expr": "process_virtual_memory_bytes{job=\"graylog\"}",
           "legendFormat": "Virtual",
-          "refId": "B"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "B",
+          "hide": false
         }
       ],
-      "title": "Process Memory Over Time",
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 38
-      },
-      "id": 103,
-      "panels": [],
-      "title": "\ud83d\udd0d OpenSearch Output",
-      "type": "row"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 104,
+      "type": "row",
+      "title": "\ud83d\udd0d OpenSearch Output",
+      "gridPos": {
+        "x": 0,
+        "y": 50,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "id": 50,
+      "title": "OpenSearch Writes vs Failures",
+      "type": "timeseries",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 51,
+        "w": 12,
+        "h": 7
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -1836,76 +2450,78 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 39
-      },
-      "id": 50,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.4.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "rate(gl_elasticsearch_output_writes_total{job=\"graylog\"}[1m])",
           "legendFormat": "Writes/s",
-          "refId": "A"
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "A",
+          "hide": false
+        },
+        {
           "expr": "rate(gl_elasticsearch_output_failures_total{job=\"graylog\"}[1m])",
           "legendFormat": "Failures/s",
-          "refId": "B"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "B",
+          "hide": false
         }
       ],
-      "title": "OpenSearch Writes vs Failures",
-      "type": "timeseries"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 51,
+      "title": "Output Buffer \u2014 Incoming vs Processed",
+      "type": "timeseries",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 12,
+        "y": 51,
+        "w": 12,
+        "h": 7
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -1942,76 +2558,78 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 39
-      },
-      "id": 51,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.4.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "rate(gl_buffer_incoming_messages_total{job=\"graylog\"}[1m])",
           "legendFormat": "Incoming/s",
-          "refId": "A"
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "A",
+          "hide": false
+        },
+        {
           "expr": "rate(gl_buffer_processor_incoming_messages_total{job=\"graylog\"}[1m])",
           "legendFormat": "Processed/s",
-          "refId": "B"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "B",
+          "hide": false
         }
       ],
-      "title": "Output Buffer \u2014 Incoming vs Processed",
-      "type": "timeseries"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 52,
+      "title": "Batch Flush \u2014 Success vs Failures",
+      "type": "timeseries",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 0,
+        "y": 58,
+        "w": 12,
+        "h": 7
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -2048,76 +2666,78 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 46
-      },
-      "id": 52,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.4.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "rate(gl_blocking_elasticsearch_output_buffer_flushes_total{job=\"graylog\"}[1m])",
           "legendFormat": "Flushes/s",
-          "refId": "A"
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "A",
+          "hide": false
+        },
+        {
           "expr": "rate(gl_blocking_elasticsearch_output_buffer_flush_failures_total{job=\"graylog\"}[1m])",
           "legendFormat": "Flush Failures/s",
-          "refId": "B"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "B",
+          "hide": false
         }
       ],
-      "title": "Batch Flush \u2014 Success vs Failures",
-      "type": "timeseries"
-    },
-    {
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
+      }
+    },
+    {
+      "id": 53,
+      "title": "Traffic \u2014 Input / Decoded / Output",
+      "type": "timeseries",
+      "description": "",
+      "pluginVersion": "13.0.2",
+      "gridPos": {
+        "x": 12,
+        "y": 58,
+        "w": 12,
+        "h": 7
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": 0,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
           "color": {
             "mode": "palette-classic"
           },
@@ -2154,77 +2774,46 @@
             "thresholdsStyle": {
               "mode": "off"
             }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 46
-      },
-      "id": 53,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.4.2",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
           "expr": "gl_traffic_input{job=\"graylog\"}",
           "legendFormat": "Input",
-          "refId": "A"
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "A",
+          "hide": false
+        },
+        {
           "expr": "gl_traffic_decoded{job=\"graylog\"}",
           "legendFormat": "Decoded",
-          "refId": "B"
-        },
-        {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "refId": "B",
+          "hide": false
+        },
+        {
           "expr": "gl_traffic_output{job=\"graylog\"}",
           "legendFormat": "Output",
-          "refId": "C"
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "refId": "C",
+          "hide": false
         }
       ],
-      "title": "Traffic \u2014 Input / Decoded / Output",
-      "type": "timeseries"
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      }
     }
   ],
   "preload": false,
@@ -2237,7 +2826,50 @@
     "kdn-lab"
   ],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "name": "graylog_url",
+        "label": "Graylog URL",
+        "type": "textbox",
+        "query": "https://graylog.example.com",
+        "current": {
+          "text": "https://graylog.example.com",
+          "value": "https://graylog.example.com"
+        },
+        "options": [],
+        "description": "Base URL of the Graylog web interface.",
+        "skipUrlSync": false,
+        "hide": 0
+      },
+      {
+        "name": "node_instance",
+        "label": "Node Exporter instance",
+        "type": "textbox",
+        "query": "192.0.2.1:9100",
+        "current": {
+          "text": "192.0.2.1:9100",
+          "value": "192.0.2.1:9100"
+        },
+        "options": [],
+        "description": "Prometheus instance label for the Graylog host.",
+        "skipUrlSync": false,
+        "hide": 0
+      },
+      {
+        "name": "graylog_data_mount",
+        "label": "Graylog data mount",
+        "type": "textbox",
+        "query": "/srv/graylog-data",
+        "current": {
+          "text": "/srv/graylog-data",
+          "value": "/srv/graylog-data"
+        },
+        "options": [],
+        "description": "Mountpoint of the dedicated Graylog data disk.",
+        "skipUrlSync": false,
+        "hide": 0
+      }
+    ]
   },
   "time": {
     "from": "now-1h",
