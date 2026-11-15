@@ -25,6 +25,12 @@ These dashboards are exported in standard Grafana JSON format. To import them:
 2. In your Grafana instance, go to **Dashboards -> Import**.
 3. Upload the JSON and map the `${DS_...}` variables to your local Prometheus, InfluxDB, or OpenSearch data sources.
 
+### pfSense and WireGuard
+
+Import [pfSense - Telegraf](infrastructure/pfSense-Telegraf.json) with Prometheus. Set **pfSense Telegraf host** to the `host` label on your Telegraf metrics. The scrape health card expects the `pfsense` job, and the tunnel traffic panels use `tun_wg0`. Adjust these selectors if yours differ.
+
+The interface, system, and PF counter panels use standard Telegraf metrics. Peer handshakes and transfers, WireGuard interface state, the PF state limit, and WAN probe quality also need a separate collector that reports `wireguard_*` and `pfsense_*` metrics. For those panels, set **Collector server** to the `server` label on the `node-exporters` scrape job. Without those metrics, the corresponding panels show no data.
+
 ### Graylog
 
 Import [Log Analytics](security/Graylog-Log_Analytics-KDN_Lab.json) with the Grafana OpenSearch plugin. Map the OpenSearch input to your Graylog message indexes with `timestamp` as the time field. Enter your TCP syslog, UDP syslog, and GELF input IDs and your pfSense sender address in the dashboard controls. The fleet host dropdown is populated from the selected TCP syslog input. CrowdSec and Relay panels require their corresponding log records.
