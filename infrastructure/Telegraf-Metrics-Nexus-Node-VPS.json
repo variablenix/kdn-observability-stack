@@ -116,7 +116,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r.host =~ /${host}/ and\n    r._measurement == \"system\" and\n    r._field == \"uptime\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r.host == \"${telegraf_host}\" and\n    r._measurement == \"system\" and\n    r._field == \"uptime\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -221,7 +221,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"disk\")\n  |> filter(fn: (r) => r.host == \"${host}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"used_percent\")\n  |> filter(fn: (r) => r[\"path\"] == \"/\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"disk\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"used_percent\")\n  |> filter(fn: (r) => r[\"path\"] == \"/\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -326,7 +326,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) =>  r.host == \"${host}\")\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"load5\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) =>  r.host == \"${telegraf_host}\")\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"load5\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -427,7 +427,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r.host == \"${host}\" and \n    r._measurement == \"system\" and\n    r._field == \"n_cpus\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\n  |> filter(fn: (r) =>\n    r.host == \"${telegraf_host}\" and \n    r._measurement == \"system\" and\n    r._field == \"n_cpus\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -532,7 +532,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${bucket}\")\n    |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n    |> filter(fn: (r) => r._measurement == \"cpu\" and  r.host == \"${host}\" and r._field == \"usage_idle\" and r.cpu == \"cpu-total\")\n    |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n    |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n    |> map(fn: (r) => ({r: r.usage_idle * -1.0 + 100.0}))",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n    |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n    |> filter(fn: (r) => r._measurement == \"cpu\" and  r.host == \"${telegraf_host}\" and r._field == \"usage_idle\" and r.cpu == \"cpu-total\")\n    |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n    |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n    |> map(fn: (r) => ({r: r.usage_idle * -1.0 + 100.0}))",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -637,7 +637,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"mem\")\n  |> filter(fn: (r) => r[\"_field\"] == \"used_percent\")\n  |> filter(fn: (r) =>  r.host == \"${host}\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"mem\")\n  |> filter(fn: (r) => r[\"_field\"] == \"used_percent\")\n  |> filter(fn: (r) =>  r.host == \"${telegraf_host}\")\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\n  |> yield(name: \"last\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -743,7 +743,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_iowait\")\n  |> filter(fn: (r) =>  r.host == \"${host}\")\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_iowait\")\n  |> filter(fn: (r) =>  r.host == \"${telegraf_host}\")\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1184,7 +1184,7 @@
         "y": 5
       },
       "id": 12054,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -1233,7 +1233,7 @@
           "measurement": "mem_inactive",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT mean(total) as total, mean(used) as used, mean(cached) as cached, mean(free) as free, mean(buffered) as buffered  FROM \"mem\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc\n\n  from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r.host == \"${host}\")\n  |> filter(fn: (r) => r._measurement == \"mem\")\n  |> filter(fn: (r) => r._field == \"used_percent\" or r._field == \"cached\" or r._field == \"free\" or r._field == \"buffered\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\")\n  |> filter(fn: (r) => r._measurement == \"mem\")\n  |> filter(fn: (r) => r._field == \"used\" or r._field == \"cached\" or r._field == \"free\" or r._field == \"buffered\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1328,7 +1328,7 @@
         "y": 15
       },
       "id": 65092,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -1377,7 +1377,7 @@
           "measurement": "cpu_percentageBusy",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT mean(usage_user) as \"user\", mean(usage_system) as \"system\", mean(usage_softirq) as \"softirq\", mean(usage_steal) as \"steal\", mean(usage_nice) as \"nice\", mean(usage_irq) as \"irq\", mean(usage_iowait) as \"iowait\", mean(usage_guest) as \"guest\", mean(usage_guest_nice) as \"guest_nice\"  FROM \"cpu\" WHERE \"host\" =~ /$server$/ and cpu = 'cpu-total' AND $timeFilter GROUP BY time($interval), *\n\nfrom(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart)\n  |> filter(fn: (r) => r.host == \"${host}\")\n  |> filter(fn: (r) => r._measurement == \"cpu\")\n  |> filter(fn: (r) => r._field == \"usage_system\" or r._field == \"usage_softirq\" or r._field == \"steal\" or r._field == \"usage_nice\" or r._field == \"usage_irq\"  or r._field == \"usage_iowait\"  or r._field == \"usage_guest\"  or r._field == \"guest_nice\")\n  |> filter(fn: (r) => r.cpu =~ /$cpu$/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n  ",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\")\n  |> filter(fn: (r) => r._measurement == \"cpu\")\n  |> filter(fn: (r) => r._field == \"usage_system\" or r._field == \"usage_softirq\" or r._field == \"steal\" or r._field == \"usage_nice\" or r._field == \"usage_irq\"  or r._field == \"usage_iowait\"  or r._field == \"usage_guest\"  or r._field == \"guest_nice\")\n  |> filter(fn: (r) => (r.cpu == \"${cpu}\" or \"${cpu}\" == \"__all_cpus\"))\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -1471,7 +1471,7 @@
         "y": 25
       },
       "id": 54694,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -1518,7 +1518,7 @@
           ],
           "measurement": "system_load1",
           "policy": "default",
-          "query": "//SELECT mean(load1) as load1,mean(load5) as load5,mean(load15) as load15 FROM \"system\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), * ORDER BY asc\n\nfrom(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"load1\" or r[\"_field\"] == \"load5\" or r[\"_field\"] == \"load15\")\n  |> filter(fn: (r) => r.host == \"${host}\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\n  |> filter(fn: (r) => r[\"_field\"] == \"load1\" or r[\"_field\"] == \"load5\" or r[\"_field\"] == \"load15\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1611,7 +1611,7 @@
         "y": 25
       },
       "id": 65089,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -1660,7 +1660,7 @@
           "measurement": "cpu_percentageBusy",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT 100 - mean(\"usage_idle\") FROM \"cpu\" WHERE (\"cpu\" =~ /cpu[0-9].*/ AND \"host\" =~ /^$server$/) AND $timeFilter GROUP BY time($interval), \"cpu\" fill(null)\n\nfrom(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_idle\")\n  |> filter(fn: (r) => r[\"cpu\"] =~ /cpu[0-9].*/)\n  |> filter(fn: (r) => r.host == \"${host}\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({r with usage_idle: 100.0 - r.usage_idle}))",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_idle\")\n  |> filter(fn: (r) => r[\"cpu\"] =~ /cpu[0-9].*/)\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> map(fn: (r) => ({r with usage_idle: 100.0 - r.usage_idle}))",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -1755,7 +1755,7 @@
         "y": 32
       },
       "id": 28239,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -1861,7 +1861,7 @@
         "y": 32
       },
       "id": 65097,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -2003,7 +2003,7 @@
         "y": 41
       },
       "id": 52240,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -2058,7 +2058,7 @@
           "measurement": "disk_total",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT mean(total) AS \"total\", mean(used) as \"used\", mean(free) as \"free\" FROM \"disk\" WHERE \"host\" =~ /$server$/ AND \"path\" = '/' AND $timeFilter GROUP BY time($interval), \"host\", \"path\"\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"disk\")\n  |> filter(fn: (r) => r.host == \"${host}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"used\" or r[\"_field\"] == \"free\")\n  |> filter(fn: (r) => r[\"path\"] == \"/\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"disk\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"used\" or r[\"_field\"] == \"free\")\n  |> filter(fn: (r) => r[\"path\"] == \"/\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -2176,7 +2176,7 @@
         "y": 41
       },
       "id": 65090,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -2230,7 +2230,7 @@
           "measurement": "disk_total",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT mean(\"used_percent\") AS \"used_percent\" FROM \"disk\" WHERE (\"host\" =~ /^$server$/) AND $timeFilter GROUP BY time($interval), \"path\", \"device\", \"fstype\" fill(null)\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"disk\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.device =~ /$disk$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"used_percent\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"disk\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and (r.device == \"${disk}\" or \"${disk}\" == \"__all_devices\"))\n  |> filter(fn: (r) => r[\"_field\"] == \"used_percent\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -2365,7 +2365,7 @@
         "y": 49
       },
       "id": 33458,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "alertThreshold": true,
         "legend": {
@@ -2421,7 +2421,7 @@
           "measurement": "disk_inodes_free",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT mean(inodes_total) as \"total\", mean(inodes_free) as \"free\", mean(inodes_used) as \"used\" FROM \"disk\" WHERE \"host\" =~ /$server$/ AND \"path\" = '/' AND $timeFilter GROUP BY time($interval), \"host\", \"path\"\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"disk\")\n  |> filter(fn: (r) => r.host == \"${host}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"inodes_total\" or r[\"_field\"] == \"inodes_free\" or r[\"_field\"] == \"inodes_used\")\n  |> filter(fn: (r) => r[\"path\"] == \"/\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"disk\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"inodes_total\" or r[\"_field\"] == \"inodes_free\" or r[\"_field\"] == \"inodes_used\")\n  |> filter(fn: (r) => r[\"path\"] == \"/\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -2539,7 +2539,7 @@
         "y": 49
       },
       "id": 65091,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -2593,7 +2593,7 @@
           "measurement": "disk_total",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT mean(\"inodes_free\") AS \"free\" FROM \"disk\" WHERE (\"host\" =~ /^$server$/) AND $timeFilter GROUP BY time($interval), \"path\", \"device\", \"fstype\" fill(null)\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"disk\")\n  |> filter(fn: (r) => r.host == \"${host}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"inodes_free\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"disk\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\")\n  |> filter(fn: (r) => r[\"_field\"] == \"inodes_free\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -2689,7 +2689,7 @@
         "y": 57
       },
       "id": 61850,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -2807,7 +2807,7 @@
         "y": 57
       },
       "id": 26024,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -2916,7 +2916,7 @@
         "y": 65
       },
       "id": 13782,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -2969,7 +2969,7 @@
           "measurement": "io_reads",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(reads),1s) as \"read\" FROM \"diskio\" WHERE \"host\" =~ /$server$/ AND \"name\" =~ /$disk$/ AND $timeFilter GROUP BY time($interval), *\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.name =~ /$disk$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"reads\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and (r.name == \"${disk_io}\" or \"${disk_io}\" == \"__all_devices\"))\n  |> filter(fn: (r) => r[\"_field\"] == \"reads\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -3023,7 +3023,7 @@
           "measurement": "io_reads",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(writes),1s) as \"write\" FROM \"diskio\" WHERE \"host\" =~ /$server$/ AND \"name\" =~ /$disk$/  AND $timeFilter GROUP BY time($interval), *\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.name =~ /$disk$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"write\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and (r.name == \"${disk_io}\" or \"${disk_io}\" == \"__all_devices\"))\n  |> filter(fn: (r) => r[\"_field\"] == \"writes\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "C",
           "resultFormat": "time_series",
@@ -3098,7 +3098,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "suffix: ms/s"
         },
         "overrides": []
       },
@@ -3109,7 +3109,7 @@
         "y": 65
       },
       "id": 56720,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -3162,7 +3162,7 @@
           "measurement": "io_reads",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(read_time),1s) as \"read\" FROM \"diskio\" WHERE \"host\" =~ /$server$/ AND \"name\" =~ /$disk$/  AND $timeFilter GROUP BY time($interval), *\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.name =~ /$disk$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"read_time\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and (r.name == \"${disk_io}\" or \"${disk_io}\" == \"__all_devices\"))\n  |> filter(fn: (r) => r[\"_field\"] == \"read_time\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -3216,7 +3216,7 @@
           "measurement": "io_reads",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(write_time),1s) as \"write\" FROM \"diskio\" WHERE \"host\" =~ /$server$/ AND \"name\" =~ /$disk$/ AND $timeFilter GROUP BY time($interval), *\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.name =~ /$disk$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"write_time\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and (r.name == \"${disk_io}\" or \"${disk_io}\" == \"__all_devices\"))\n  |> filter(fn: (r) => r[\"_field\"] == \"write_time\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -3291,7 +3291,7 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -3302,7 +3302,7 @@
         "y": 73
       },
       "id": 60200,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -3355,7 +3355,7 @@
           "measurement": "io_reads",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(read_bytes),1s) as \"read\" FROM \"diskio\" WHERE \"host\" =~ /$server$/ AND \"name\" =~ /$disk$/ AND $timeFilter GROUP BY time($interval), *\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.name =~ /$disk$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"read_bytes\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and (r.name == \"${disk_io}\" or \"${disk_io}\" == \"__all_devices\"))\n  |> filter(fn: (r) => r[\"_field\"] == \"read_bytes\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -3409,7 +3409,7 @@
           "measurement": "io_reads",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(write_bytes),1s) as \"write\" FROM \"diskio\" WHERE \"host\" =~ /$server$/ AND \"name\" =~ /$disk$/ AND $timeFilter GROUP BY time($interval), *\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.name =~ /$disk$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"write_bytes\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and (r.name == \"${disk_io}\" or \"${disk_io}\" == \"__all_devices\"))\n  |> filter(fn: (r) => r[\"_field\"] == \"write_bytes\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "C",
           "resultFormat": "time_series",
@@ -3497,7 +3497,7 @@
               }
             ]
           },
-          "unit": "bps"
+          "unit": "Bps"
         },
         "overrides": []
       },
@@ -3508,7 +3508,7 @@
         "y": 82
       },
       "id": 42026,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -3561,7 +3561,7 @@
           "measurement": "net_bytes_recv",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(bytes_recv),1s)*8 as \"in\"  FROM \"net\" WHERE host =~ /$server/ AND interface =~ /$interface/ AND $timeFilter GROUP BY time($interval), * fill(none)\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.interface =~ /$interface$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"bytes_recv\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and r.interface =~ /^(${interface:regex})$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"bytes_recv\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -3615,7 +3615,7 @@
           "measurement": "net_bytes_recv",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(bytes_sent),1s)*8 as \"out\" FROM \"net\" WHERE host =~ /$server/ AND interface =~ /$interface/ AND $timeFilter GROUP BY time($interval), * fill(none)\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.interface =~ /$interface$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"bytes_sent\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and r.interface =~ /^(${interface:regex})$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"bytes_sent\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -3701,7 +3701,7 @@
         "y": 90
       },
       "id": 28572,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -3754,7 +3754,7 @@
           "measurement": "net_bytes_recv",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(packets_recv), 1s) as \"in\" FROM \"net\" WHERE host =~ /$server/ AND interface =~ /$interface/ AND $timeFilter GROUP BY time($interval), * fill(none)\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.interface =~ /$interface$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"packets_recv\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and r.interface =~ /^(${interface:regex})$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"packets_recv\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -3808,7 +3808,7 @@
           "measurement": "net_bytes_recv",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(packets_sent), 1s) as \"out\" FROM \"net\" WHERE host =~ /$server/ AND interface =~ /$interface/ AND $timeFilter GROUP BY time($interval), * fill(none)\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.interface =~ /$interface$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"packets_sent\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and r.interface =~ /^(${interface:regex})$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"packets_sent\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -3896,7 +3896,7 @@
         "y": 98
       },
       "id": 65093,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -4015,7 +4015,7 @@
         "y": 105
       },
       "id": 65094,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -4122,7 +4122,7 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "pps"
         },
         "overrides": []
       },
@@ -4133,7 +4133,7 @@
         "y": 112
       },
       "id": 58901,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -4186,7 +4186,7 @@
           "measurement": "net_bytes_recv",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(drop_in), 1s) as \"in\" FROM \"net\" WHERE host =~ /$server/ AND interface =~ /$interface/ AND $timeFilter GROUP BY time($interval), host,interface fill(none)\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.interface =~ /$interface$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"drop_in\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and r.interface =~ /^(${interface:regex})$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"drop_in\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -4240,7 +4240,7 @@
           "measurement": "net_bytes_recv",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(drop_out), 1s) as \"out\" FROM \"net\" WHERE host =~ /$server/ AND interface =~ /$interface/ AND $timeFilter GROUP BY time($interval), host,interface fill(none)\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.interface =~ /$interface$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"drop_out\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and r.interface =~ /^(${interface:regex})$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"drop_out\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -4316,7 +4316,7 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "pps"
         },
         "overrides": []
       },
@@ -4327,7 +4327,7 @@
         "y": 112
       },
       "id": 50643,
-      "interval": "$inter",
+      "interval": "30s",
       "options": {
         "legend": {
           "calcs": [
@@ -4380,7 +4380,7 @@
           "measurement": "net_bytes_recv",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(err_in), 1s) as \"in\" FROM \"net\" WHERE host =~ /$server/ AND interface =~ /$interface/ AND $timeFilter GROUP BY time($interval), host,interface fill(none)\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.interface =~ /$interface$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"err_in\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and r.interface =~ /^(${interface:regex})$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"err_in\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -4434,7 +4434,7 @@
           "measurement": "net_bytes_recv",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "//SELECT non_negative_derivative(mean(err_out), 1s) as \"out\" FROM \"net\" WHERE host =~ /$server/ AND interface =~ /$interface/ AND $timeFilter GROUP BY time($interval), host,interface fill(none)\n\nfrom(bucket:  \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${host}\" and r.interface =~ /$interface$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"err_out\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket:  \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"net\")\n  |> filter(fn: (r) => r.host == \"${telegraf_host}\" and r.interface =~ /^(${interface:regex})$/)\n  |> filter(fn: (r) => r[\"_field\"] == \"err_out\")\n  |> derivative(unit: 1s, nonNegative: true)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -4470,194 +4470,98 @@
   "templating": {
     "list": [
       {
-        "current": {},
-        "includeAll": false,
-        "name": "datasource",
-        "options": [],
-        "query": "influxdb",
-        "refresh": 1,
-        "regex": "",
-        "type": "datasource"
-      },
-      {
-        "current": {},
-        "datasource": {
-          "type": "influxdb",
-          "uid": "${DS_INFLUXDB_GARMIN}"
-        },
-        "definition": "buckets()",
-        "includeAll": false,
-        "name": "bucket",
-        "options": [],
-        "query": {
-          "0": "b",
-          "1": "u",
-          "2": "c",
-          "3": "k",
-          "4": "e",
-          "5": "t",
-          "6": "s",
-          "7": "(",
-          "8": ")",
-          "query": "buckets()"
-        },
-        "refresh": 1,
-        "regex": "",
-        "type": "query"
-      },
-      {
-        "current": {},
-        "datasource": {
-          "type": "influxdb",
-          "uid": "${DS_INFLUXDB_GARMIN}"
-        },
-        "definition": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(bucket: \"${bucket}\", tag: \"host\")",
-        "includeAll": false,
-        "label": "host",
-        "name": "host",
-        "options": [],
-        "query": "import \"influxdata/influxdb/schema\"\n\nschema.tagValues(bucket: \"${bucket}\", tag: \"host\")",
-        "refresh": 1,
-        "regex": "",
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "auto": true,
-        "auto_count": 100,
-        "auto_min": "30s",
+        "name": "telegraf_bucket",
+        "query": "telegraf",
         "current": {
-          "text": "$__auto",
-          "value": "$__auto"
+          "text": "telegraf",
+          "value": "telegraf"
         },
-        "label": "Interval",
-        "name": "inter",
         "options": [
           {
-            "selected": false,
-            "text": "1s",
-            "value": "1s"
-          },
-          {
-            "selected": false,
-            "text": "5s",
-            "value": "5s"
-          },
-          {
-            "selected": false,
-            "text": "10s",
-            "value": "10s"
-          },
-          {
-            "selected": false,
-            "text": "15s",
-            "value": "15s"
-          },
-          {
-            "selected": false,
-            "text": "30s",
-            "value": "30s"
-          },
-          {
-            "selected": false,
-            "text": "1m",
-            "value": "1m"
-          },
-          {
-            "selected": false,
-            "text": "10m",
-            "value": "10m"
-          },
-          {
-            "selected": false,
-            "text": "30m",
-            "value": "30m"
-          },
-          {
-            "selected": false,
-            "text": "1h",
-            "value": "1h"
-          },
-          {
-            "selected": false,
-            "text": "6h",
-            "value": "6h"
-          },
-          {
-            "selected": false,
-            "text": "12h",
-            "value": "12h"
-          },
-          {
-            "selected": false,
-            "text": "1d",
-            "value": "1d"
-          },
-          {
-            "selected": false,
-            "text": "7d",
-            "value": "7d"
-          },
-          {
-            "selected": false,
-            "text": "14d",
-            "value": "14d"
-          },
-          {
-            "selected": false,
-            "text": "30d",
-            "value": "30d"
-          },
-          {
-            "selected": false,
-            "text": "60d",
-            "value": "60d"
-          },
-          {
-            "selected": false,
-            "text": "90d",
-            "value": "90d"
+            "selected": true,
+            "text": "telegraf",
+            "value": "telegraf"
           }
         ],
-        "query": "1s,5s,10s,15s,30s,1m,10m,30m,1h,6h,12h,1d,7d,14d,30d,60d,90d",
-        "refresh": 2,
-        "type": "interval"
+        "type": "constant",
+        "hide": 2,
+        "skipUrlSync": true
       },
       {
-        "allValue": ".*",
+        "name": "telegraf_host",
+        "query": "vps-host",
+        "current": {
+          "text": "vps-host",
+          "value": "vps-host"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "vps-host",
+            "value": "vps-host"
+          }
+        ],
+        "type": "constant",
+        "hide": 2,
+        "skipUrlSync": true
+      },
+      {
+        "allValue": "__all_cpus",
         "current": {
           "text": "All",
           "value": "$__all"
         },
         "datasource": {
-          "uid": "$datasource"
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB_FLUX}"
         },
-        "definition": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${bucket}\", tag: \"cpu\")",
+        "definition": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${telegraf_bucket}\", tag: \"cpu\", predicate: (r) => r._measurement == \"cpu\" and r.host == \"${telegraf_host}\", start: -24h)",
         "includeAll": true,
         "label": "CPU",
         "name": "cpu",
         "options": [],
-        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${bucket}\", tag: \"cpu\")",
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${telegraf_bucket}\", tag: \"cpu\", predicate: (r) => r._measurement == \"cpu\" and r.host == \"${telegraf_host}\", start: -24h)",
         "refresh": 1,
         "regex": "^cpu.*",
         "sort": 1,
         "type": "query"
       },
       {
-        "allValue": ".*",
+        "allValue": "__all_devices",
         "current": {
           "text": "All",
           "value": "$__all"
         },
         "datasource": {
-          "uid": "$datasource"
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB_FLUX}"
         },
-        "definition": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${bucket}\", tag: \"device\")",
+        "definition": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${telegraf_bucket}\", tag: \"device\", predicate: (r) => r._measurement == \"disk\" and r.host == \"${telegraf_host}\", start: -24h)",
         "includeAll": true,
-        "label": "disk",
+        "label": "Filesystem device",
         "name": "disk",
         "options": [],
-        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${bucket}\", tag: \"device\")",
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${telegraf_bucket}\", tag: \"device\", predicate: (r) => r._measurement == \"disk\" and r.host == \"${telegraf_host}\", start: -24h)",
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allValue": "__all_devices",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB_FLUX}"
+        },
+        "definition": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${telegraf_bucket}\", tag: \"name\", predicate: (r) => r._measurement == \"diskio\" and r.host == \"${telegraf_host}\", start: -24h)",
+        "includeAll": true,
+        "label": "Disk I/O device",
+        "name": "disk_io",
+        "options": [],
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${telegraf_bucket}\", tag: \"name\", predicate: (r) => r._measurement == \"diskio\" and r.host == \"${telegraf_host}\", start: -24h)",
         "refresh": 1,
         "regex": "",
         "type": "query"
@@ -4669,15 +4573,16 @@
           "value": "$__all"
         },
         "datasource": {
-          "uid": "$datasource"
+          "type": "influxdb",
+          "uid": "${DS_INFLUXDB_FLUX}"
         },
-        "definition": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${bucket}\", tag: \"interface\")",
+        "definition": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${telegraf_bucket}\", tag: \"interface\", predicate: (r) => r._measurement == \"net\" and r.host == \"${telegraf_host}\", start: -24h)",
         "includeAll": true,
-        "label": "interface",
+        "label": "Interface",
         "multi": true,
         "name": "interface",
         "options": [],
-        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${bucket}\", tag: \"interface\")",
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${telegraf_bucket}\", tag: \"interface\", predicate: (r) => r._measurement == \"net\" and r.host == \"${telegraf_host}\", start: -24h)",
         "refresh": 1,
         "regex": "^(?!.*veth|all|tap).*",
         "sort": 1,
@@ -4702,13 +4607,6 @@
       "type": "datasource",
       "pluginId": "influxdb",
       "pluginName": "InfluxDB Flux"
-    },
-    {
-      "name": "DS_INFLUXDB_GARMIN",
-      "label": "InfluxDB InfluxQL \u00b7 Garmin",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB InfluxQL \u00b7 Garmin"
     },
     {
       "name": "DS_PROMETHEUS",
