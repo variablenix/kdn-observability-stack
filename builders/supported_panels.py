@@ -134,7 +134,7 @@ def improve(model):
         change(2, 'Updates available', 'dockhand_updates_available', description='Native measured count per environment, including zero. Missing environments are not invented as zero.', legend='{{env}}')
         change(11, 'Containers by state — fleet total', 'sum by(state)(dockhand_containers)', legend='{{state}}', description='Fleet totals for each state emitted by Dockhand. Running counts per environment are shown separately. An absent exited/created series is not a measured zero.')
         change(32, 'Images with scan results', 'dockhand_images_scanned', legend='{{env}}', description='Native number of images with scan results. Zero means no scan results are recorded, not zero vulnerabilities. Scan age is not exported.')
-    elif uid == 'nNq1Iw5Gz':
+    elif uid == 'nNq1Iw5Gz' and ps.get(11, {}).get('title') in ('Number of Actions', 'Number of Projects'):
         change(11, 'Number of Projects', 'gitea_projects{job="gitea"}')
     elif uid == 'graylog-kdnlab':
         change(35, 'Failure queue depth', 'gl_failure_queue_size{job="graylog"}', description='Measured current failure queue size. This does not infer a historical scheduler failure count.')
