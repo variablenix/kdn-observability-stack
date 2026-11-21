@@ -76,15 +76,60 @@ def build(ds='${DS_PROMETHEUS}'):
     panel('Container health',gate('immich_container_health{immich_host=~"$host"}','containers'),w=12,h=5,x=12,legend='{{service}}',mappings=health_map)
     panel('Container uptime',gate('time()-immich_container_start_timestamp_seconds{immich_host=~"$host"}','containers'),'s',w=12,h=5,legend='{{service}}')
     panel('Container restart count',gate('immich_container_restarts{immich_host=~"$host"}','containers'),w=12,h=5,x=12,legend='{{service}}',description='Docker restart counter for this container, not lifetime service failures; recreating a container resets the count.')
-    row('Runtime • API and workers')
-    sel='job="immich",instance=~"${host}:809[12]"'
-    panel('Metrics endpoint availability','up{'+sel+'}',w=6,legend='{{instance}}')
-    panel('Process CPU · sum of user and system','sum by(instance) (rate(process_cpu_time_total{'+sel+'}[$__rate_interval]))','percentunit',w=9,x=6,legend='{{instance}}',description='CPU seconds per second; 100% equals one fully used core.')
-    panel('Process resident memory','process_memory_usage{'+sel+'}','bytes',w=9,x=15,legend='{{instance}}')
+    runtime_start, runtime_y = len(panels), y
+    sel = 'job="immich",instance=~"${host}:809[12]"'
+
+    def chart(title, targets, unit, width=12, x=0, description=''):
+        graph = panel(title, targets, unit, kind='timeseries', w=width, h=8, x=x,
+                      description=description)
+        graph['fieldConfig']['defaults'].update({
+            'min': 0, 'custom': {'lineWidth': 2, 'fillOpacity': 14,
+                                 'showPoints': 'never', 'spanNulls': False},
+        })
+        graph['options']['legend']['calcs'] = ['lastNotNull', 'max']
+        graph['options']['legend']['showLegend'] = True
+
+    row('API response times')
+    chart('API response time from Stargate', [
+        (gate('immich_api_probe_duration_seconds{immich_host=~"$host",endpoint="ping"}', 'api'), 'Server ping'),
+        (gate('immich_api_probe_duration_seconds{immich_host=~"$host",endpoint="version"}', 'api'), 'Server version'),
+    ], 's', width=16, description='Two local HTTP GET probes each minute. Measures the full response over the local port; it does not measure all client requests.')
+    panel('Metrics endpoint availability', [
+        ('up{' + sel + ',instance=~"${host}:8091"}', 'API metrics'),
+        ('up{' + sel + ',instance=~"${host}:8092"}', 'Worker metrics'),
+    ], w=8, h=8, x=16)
+
+    row('Background jobs')
+    chart('Active and waiting jobs', [
+        (total('immich_queue_jobs', 'state="active"', component='queues'), 'Active'),
+        (total('immich_queue_jobs', 'state=~"waiting|prioritized|delayed|waiting_children"', component='queues'), 'Waiting'),
+    ], 'short', description='Active jobs and the backlog across the configured Immich queues.')
+    chart('Retained failed jobs', [
+        (total('immich_queue_jobs', 'state="failed"', component='queues'), 'Failed'),
+    ], 'short', x=12, description='Failed jobs still present in Redis. The count can fall after retries or queue cleanup.')
+
+    row('API and worker resource usage')
+    worker_ports = (('8091', 'API'), ('8092', 'Background worker'))
+    chart('Process CPU', [
+        (f'sum by(instance) (rate(process_cpu_time_total{{job="immich",instance=~"${{host}}:{port}"}}[$__rate_interval]))', label)
+        for port, label in worker_ports
+    ], 'percentunit', description='CPU seconds per second. 100% equals one fully used core.')
+    chart('Process resident memory', [
+        (f'process_memory_usage{{job="immich",instance=~"${{host}}:{port}"}}', label)
+        for port, label in worker_ports
+    ], 'bytes', x=12)
+
+    # Put operational graphs first while keeping existing library panel IDs.
+    overview, library = panels[runtime_start:], panels[:runtime_start]
+    for entry in overview:
+        entry['gridPos']['y'] -= runtime_y
+    for entry in library:
+        entry['gridPos']['y'] += y - runtime_y
+    panels[:] = overview + library
+
+    row('Repository operations')
     panel('Repository operations / second','sum by(instance) (rate(label_replace({__name__=~"immich_.*_repository_.*_duration_count",'+sel+'},"operation","$1","__name__","(.+)")[5m:30s]))','ops',kind='timeseries',w=12,h=7,legend='{{instance}}',description='Instrumented repository calls, not HTTP requests.')
     panel('Mean repository operation latency','sum by(instance) (rate(label_replace({__name__=~"immich_.*_repository_.*_duration_sum",'+sel+'},"operation","$1","__name__","(.+)")[5m:30s])) / sum by(instance) (rate(label_replace({__name__=~"immich_.*_repository_.*_duration_count",'+sel+'},"operation","$1","__name__","(.+)")[5m:30s]))','ms',kind='timeseries',w=12,h=7,x=12,legend='{{instance}}',description='Native durations are milliseconds. No observations means no latency sample; no artificial zero is inserted.')
-    panel('Successful jobs / second · 5m','sum by(operation) (rate(label_replace({__name__=~"immich_jobs_.+_success_total",'+sel+'},"operation","$1","__name__","immich_jobs_(.+)_success_total")[5m:30s]))','ops',kind='timeseries',w=12,h=7,legend='{{operation}}')
-    panel('Failed jobs · rolling hour','sum by(operation) (increase(label_replace({__name__=~"immich_jobs_.+_failed_total",'+sel+'},"operation","$1","__name__","immich_jobs_(.+)_failed_total")[1h:30s]))','locale',kind='timeseries',w=12,h=7,x=12,legend='{{operation}}',description='Native failure counters, independently of the retained failed queue records. A counter must have observations to show a value.')
     row('Host and storage')
     node='job="node-exporters",instance=~"${host}:9100"'
     panel('Host CPU busy','1-avg by(instance)(rate(node_cpu_seconds_total{'+node+',mode="idle"}[$__rate_interval]))','percentunit',w=6)
@@ -110,14 +155,14 @@ def build(ds='${DS_PROMETHEUS}'):
     row('Observability • collection health')
     panel('Collector component success','immich_collector_success{immich_host=~"$host"}',w=12,h=4,legend='{{component}}')
     panel('Time since successful component read','time()-immich_collector_timestamp_seconds{immich_host=~"$host"}','s',w=12,h=4,x=12,legend='{{component}}')
-    pid+=1;panels.append({'id':pid,'type':'text','title':'What these numbers mean','gridPos':{'x':0,'y':y,'w':24,'h':5},'options':{'mode':'markdown','content':'Inventory and queue reads run every minute. Inventory, jobs and backup panels hide values after a component failure or 3 minutes without a successful read. Collection health stays visible. Native HTTP request metrics are not emitted by the tested Immich version, so repository operations are labelled separately. Counts include active originals; trash is separate. Logical content size is not NAS disk usage. Account labels are private and opt-in. Backup history and verification timestamps are reported as recorded; this dashboard does not run backups or mutate media.'}})
+    pid+=1;panels.append({'id':pid,'type':'text','title':'What these numbers mean','gridPos':{'x':0,'y':y,'w':24,'h':5},'options':{'mode':'markdown','content':'The collector samples inventory, queues, backup state and the local API every minute. Those graphs show gaps after a failed read or after three minutes without a fresh sample. The response time graph measures the two local probe requests. Repository operations have their own charts. Counts include active originals and show trash separately. Logical content size is distinct from NAS disk usage. Account labels are opt-in. Backup history and verification timestamps come from the existing backup status records.'}})
     for p in panels:
         if p.get('type')=='timeseries' and p.get('title') in ('Photo and video inventory','Original size by media type','Original references and unique content','Original size and unique logical size','Inventory by account','Original size by account over time'):
             p['fieldConfig']['defaults']['min']=0
             if p['fieldConfig']['defaults']['unit']=='locale':p['fieldConfig']['defaults']['decimals']=0
         if p.get('title')=='Unexpired session records':p['description']='Stored session records with no explicit expiry or an expiry in the future. This is not the number of people currently online.'
         if p.get('title')=='Missing previews':p['description']='Active assets without an asset_file preview record. Format support and processing state affect this count; it alone does not establish a media or backup error.'
-        if p.get('title') in ('Repository operations / second','Mean repository operation latency','Successful jobs / second · 5m','Failed jobs · rolling hour'):
+        if p.get('title') in ('Repository operations / second','Mean repository operation latency'):
             p['fieldConfig']['defaults']['noValue']='No observations in this interval'
         if p.get('title')=='Metrics endpoint availability':
             p['fieldConfig']['defaults']['mappings']=[{'type':'value','options':{'0':{'text':'Down','color':'red'},'1':{'text':'Up','color':'green'}}}]

@@ -2,8 +2,7 @@
 Description=Refresh Immich observability aggregates every minute
 
 [Timer]
-OnBootSec=30s
-OnUnitInactiveSec=60s
+OnCalendar=minutely
 AccuracySec=5s
 Persistent=true
 

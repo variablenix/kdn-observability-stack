@@ -6,6 +6,7 @@ Account labels are opt-in; filenames, email addresses and locations are never em
 """
 import argparse
 import datetime as dt
+from http.client import HTTPConnection
 import json
 import math
 import os
@@ -200,6 +201,10 @@ def status_metrics(metrics, root):
     for source,keys in ((cloud,('expected_unique_files','verified_unique_files','pending_files')),
                         (export,('source_files','canonical_files','unique_bytes','duplicate_paths_avoided','errors'))):
         for key in keys:
+            # Partial records contain progress fields. Completed records must
+            # still provide the full summary, and unknown values stay absent.
+            if key not in source and source.get('state') in ('running','deferred','failed','error','partial-verified'):
+                continue
             value=source[key]
             metrics.add('immich_'+('cloud_' if source is cloud else 'export_')+key,len(value) if isinstance(value,list) else value)
     cloud_ts=timestamp(cloud.get('time_utc'))
@@ -236,7 +241,27 @@ def container_metrics(metrics, config):
         metrics.add('immich_container_image_info',1,{**labels,'image':image,'version':version or 'not-labelled'})
 
 
-def collect(config):
+def api_probe_metrics(metrics, port):
+    probes = {
+        "ping": lambda body: body.get("res") == "pong",
+        "version": lambda body: all(type(body.get(part)) is int for part in ("major", "minor", "patch")),
+    }
+    for endpoint, valid in probes.items():
+        connection = HTTPConnection("127.0.0.1", port, timeout=3)
+        started = time.monotonic()
+        try:
+            connection.request("GET", f"/api/server/{endpoint}")
+            with connection.getresponse() as response:
+                body = json.loads(response.read(4096))
+                if response.status != 200 or not isinstance(body, dict) or not valid(body):
+                    raise ValueError("Unexpected Immich probe response")
+            metrics.add("immich_api_probe_duration_seconds", time.monotonic() - started,
+                        {"endpoint": endpoint})
+        finally:
+            connection.close()
+
+
+def collect(config, probe_port=None):
     started=time.time();result=Metrics(config['immich_host']);failed=[]
     def component(name, function):
         # A component commits its samples only after the entire read succeeds.
@@ -260,6 +285,8 @@ def collect(config):
     ]))))
     component('backup',lambda m:status_metrics(m,Path(config['backup_state_directory'])))
     component('containers',lambda m:container_metrics(m,config))
+    if probe_port is not None:
+        component('api', lambda m: api_probe_metrics(m, probe_port))
     result.add('immich_collector_duration_seconds',time.time()-started)
     return result.render(),failed
 
@@ -279,9 +306,12 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config',required=True)
     parser.add_argument('--output',required=True)
+    parser.add_argument('--probe-port', type=int, help='Probe the Immich API on this loopback TCP port')
     args=parser.parse_args()
+    if args.probe_port is not None and not 1 <= args.probe_port <= 65535:
+        parser.error('--probe-port must be between 1 and 65535')
     config=json.loads(Path(args.config).read_text())
-    text,failed=collect(config)
+    text,failed=collect(config, args.probe_port)
     atomic_write(args.output,text)
     return 1 if failed else 0
 

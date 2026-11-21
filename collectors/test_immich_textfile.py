@@ -67,6 +67,31 @@ class InventoryTests(unittest.TestCase):
         self.assertNotIn('immich_collector_timestamp_seconds{',text)
 
 
+class ApiProbeTests(unittest.TestCase):
+    def test_records_only_valid_immich_responses(self):
+        metrics = c.Metrics('example')
+        with patch.object(c, 'HTTPConnection') as connect:
+            response = connect.return_value.getresponse.return_value.__enter__.return_value
+            response.status = 200
+            response.read.side_effect = [b'{"res":"pong"}', b'{"major":3,"minor":4,"patch":2}']
+            c.api_probe_metrics(metrics, 2283)
+            connect.assert_called_with('127.0.0.1', 2283, timeout=3)
+            self.assertEqual(connect.return_value.close.call_count, 2)
+        self.assertIn('immich_api_probe_duration_seconds{endpoint="ping",immich_host="example"}', metrics.render())
+        self.assertIn('immich_api_probe_duration_seconds{endpoint="version",immich_host="example"}', metrics.render())
+
+    def test_http_error_is_never_exported_as_latency(self):
+        metrics = c.Metrics('example')
+        with patch.object(c, 'HTTPConnection') as connect:
+            response = connect.return_value.getresponse.return_value.__enter__.return_value
+            response.status = 503
+            response.read.return_value = b'{"res":"pong"}'
+            with self.assertRaises(ValueError):
+                c.api_probe_metrics(metrics, 2283)
+            connect.return_value.close.assert_called_once()
+        self.assertNotIn('immich_api_probe_duration_seconds', metrics.render())
+
+
 class BackupTests(unittest.TestCase):
     def status_fixture(self, root):
         for name in ('status.json','unas-status.json','daily-report-status.json'):
