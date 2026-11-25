@@ -8,7 +8,7 @@
   "graphTooltip": 1,
   "timezone": "browser",
   "time": {
-    "from": "now-15m",
+    "from": "now-30d",
     "to": "now"
   },
   "refresh": "1m",
