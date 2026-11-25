@@ -31,6 +31,24 @@ Import [pfSense - Telegraf](infrastructure/pfSense-Telegraf.json) with Prometheu
 
 The interface, system, and PF counter panels use standard Telegraf metrics. Peer handshakes and transfers, WireGuard interface state, the PF state limit, and WAN probe quality also need a separate collector that reports `wireguard_*` and `pfsense_*` metrics. For those panels, set **Collector server** to the `server` label on the `node-exporters` scrape job. Without those metrics, the corresponding panels show no data.
 
+### pfSense firewall blocks
+
+Import [pfSense — Firewall Blocks](infrastructure/pfSense-Firewall-Blocks.json)
+with the Grafana OpenSearch plugin. Bind the Graylog message indexes and use
+`timestamp` as the time field. Set **Firewall syslog sender** and **Graylog syslog
+input ID** to the values Graylog records for your firewall. The dashboard expects
+the original pfSense `filterlog` messages on `local0`.
+
+The logged total and inbound/outbound trend use the raw records. Full-range
+rankings and breakdowns require indexed `pfsense_*` fields. These include the IP
+family, packet addresses, TCP/UDP destination port, interface, protocol and rule
+tracker. **Parsed blocks** shows the coverage of enriched records. The
+pfBlockerNG count requires a tracker mapping verified against the active firewall
+rules. Trend graphs cover source and destination IPs, destination ports,
+interfaces, protocols, rule trackers, IP families, and parsed log coverage.
+Recent packets show the latest 100 enriched records. Graylog's existing
+retention applies. The dashboard covers firewall rules that log their blocks.
+
 ### Graylog
 
 Import [Log Analytics](security/Graylog-Log_Analytics-KDN_Lab.json) with the Grafana OpenSearch plugin. Map the OpenSearch input to your Graylog message indexes with `timestamp` as the time field. Enter your TCP syslog, UDP syslog, and GELF input IDs and your pfSense sender address in the dashboard controls. The fleet host dropdown is populated from the selected TCP syslog input. CrowdSec and Relay panels require their corresponding log records.

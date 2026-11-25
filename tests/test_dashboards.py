@@ -33,5 +33,5 @@ class DashboardTests(unittest.TestCase):
     d=json.loads(f.read_text());self.assertIsInstance(d,dict,f);self.assertTrue(d.get('uid'),f);self.assertIsInstance(d.get('panels'),list,f);count+=1
     declared={v['name'] for v in d.get('__inputs',[])}|{v['name'] for v in d.get('templating',{}).get('list',[])}
     for name in re.findall(r'\$\{(DS_[A-Za-z0-9_-]+)\}',json.dumps(d)):self.assertIn(name,declared,(f,name))
-  self.assertEqual(count,32)
+  self.assertEqual(count,33)
 if __name__=='__main__':unittest.main()
