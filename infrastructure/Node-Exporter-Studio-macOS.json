@@ -530,13 +530,13 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byRegexp",
-              "options": "/ io time/"
+              "id": "byFrameRefID",
+              "options": "C"
             },
             "properties": [
               {
                 "id": "unit",
-                "value": "s"
+                "value": "ops"
               },
               {
                 "id": "custom.axisPlacement",
@@ -572,7 +572,7 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "rate(node_disk_read_bytes_total{job=\"imac\", instance=~\"$instance\", device!=\"\"}[$__interval])",
+          "expr": "rate(node_disk_read_bytes_total{job=\"imac\", instance=~\"$instance\", device!=\"\"}[$__rate_interval])",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -583,7 +583,7 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "rate(node_disk_written_bytes_total{job=\"imac\", instance=~\"$instance\", device!=\"\"}[$__interval])",
+          "expr": "rate(node_disk_written_bytes_total{job=\"imac\", instance=~\"$instance\", device!=\"\"}[$__rate_interval])",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
@@ -594,16 +594,17 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "rate(node_disk_io_time_seconds_total{job=\"imac\", instance=~\"$instance\", device!=\"\"}[$__interval])",
+          "expr": "rate(node_disk_reads_completed_total{job=\"imac\",instance=~\"$instance\",device!=\"\"}[$__rate_interval]) + rate(node_disk_writes_completed_total{job=\"imac\",instance=~\"$instance\",device!=\"\"}[$__rate_interval])",
           "format": "time_series",
           "interval": "1m",
           "intervalFactor": 2,
-          "legendFormat": "{{device}} io time",
+          "legendFormat": "{{device}} operations",
           "refId": "C"
         }
       ],
       "title": "Disk I/O",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Read and write throughput and completed disk operations per second."
     },
     {
       "datasource": {

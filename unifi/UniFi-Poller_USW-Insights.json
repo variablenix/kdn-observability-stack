@@ -1598,11 +1598,11 @@
               "datasource": {
                 "uid": "${DS_PROMETHEUS}"
               },
-              "expr": "unpoller_device_port_satisfaction_percent{port_id=~\"$Port\", site_name=\"$Site\"}",
+              "expr": "100 * unpoller_device_port_satisfaction_ratio{port_id=~\"$Port\",site_name=\"$Site\",name=~\"$Switch\"}",
               "format": "time_series",
               "instant": true,
               "interval": "1m",
-              "legendFormat": "Satisfaction",
+              "legendFormat": "Satisfaction (%)",
               "refId": "M"
             }
           ],

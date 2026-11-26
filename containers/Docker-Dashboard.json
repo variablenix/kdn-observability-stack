@@ -82,7 +82,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_FLUX}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"n_cpus\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"n_cpus\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A"
         }
@@ -145,7 +145,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_FLUX}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"memory_total\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"memory_total\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A"
         }
@@ -211,7 +211,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_FLUX}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"n_containers_running\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"n_containers_running\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A"
         }
@@ -273,7 +273,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_FLUX}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"n_containers_paused\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"n_containers_paused\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A"
         }
@@ -336,12 +336,12 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_FLUX}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"n_containers_stopped\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"n_containers_stopped\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A"
         }
       ],
-      "title": "Paused Containers",
+      "title": "Stopped Containers",
       "type": "stat"
     },
     {
@@ -399,7 +399,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_FLUX}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"n_images\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\n  |> filter(fn: (r) => r[\"_field\"] == \"n_images\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A"
         }
@@ -497,7 +497,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_FLUX}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_percent\")\n  |> filter(fn: (r) => r[\"container_name\"] =~ /${container:regex}/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_percent\")\n  |> filter(fn: (r) => r[\"container_name\"] =~ /^${container:regex}$/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A"
         }
@@ -595,7 +595,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_FLUX}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_mem\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage\")\n  |> filter(fn: (r) => r[\"container_name\"] =~ /${container:regex}/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_mem\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage\")\n  |> filter(fn: (r) => r[\"container_name\"] =~ /^${container:regex}$/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
           "rawQuery": true,
           "refId": "A"
         }
@@ -693,7 +693,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_FLUX}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_blkio\")\n  |> filter(fn: (r) => r[\"_field\"] == \"io_service_bytes_recursive_read\" or r[\"_field\"] == \"io_service_bytes_recursive_write\")\n  |> filter(fn: (r) => r[\"container_name\"] =~ /${container:regex}/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_blkio\")\n  |> filter(fn: (r) => r[\"_field\"] == \"io_service_bytes_recursive_read\" or r[\"_field\"] == \"io_service_bytes_recursive_write\")\n  |> filter(fn: (r) => r[\"container_name\"] =~ /^${container:regex}$/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n",
           "rawQuery": true,
           "refId": "A"
         }
@@ -791,7 +791,7 @@
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_FLUX}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_net\")\n  |> filter(fn: (r) => r[\"_field\"] == \"rx_bytes\" or r[\"_field\"] == \"tx_bytes\")\n  |> filter(fn: (r) => r[\"container_name\"] =~ /${container:regex}/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n",
+          "query": "from(bucket: \"${telegraf_bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_net\")\n  |> filter(fn: (r) => r[\"_field\"] == \"rx_bytes\" or r[\"_field\"] == \"tx_bytes\")\n  |> filter(fn: (r) => r[\"container_name\"] =~ /^${container:regex}$/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")\n",
           "rawQuery": true,
           "refId": "A"
         }
@@ -810,37 +810,45 @@
   "templating": {
     "list": [
       {
-        "current": {},
-        "datasource": {
-          "type": "influxdb",
-          "uid": "${DS_INFLUXDB_GARMIN}"
+        "name": "telegraf_bucket",
+        "type": "textbox",
+        "hide": 0,
+        "skipUrlSync": false,
+        "query": "telegraf",
+        "current": {
+          "text": "telegraf",
+          "value": "telegraf"
         },
-        "definition": "buckets()",
-        "includeAll": false,
-        "name": "bucket",
-        "options": [],
-        "query": "buckets()",
-        "refresh": 1,
-        "regex": "",
-        "regexApplyTo": "value",
-        "type": "query"
+        "options": [
+          {
+            "selected": true,
+            "text": "telegraf",
+            "value": "telegraf"
+          }
+        ],
+        "label": "Telegraf bucket",
+        "description": "Bucket containing the Docker metrics collected by Telegraf."
       },
       {
-        "current": {},
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "influxdb",
-          "uid": "${DS_INFLUXDB_GARMIN}"
+          "uid": "${DS_INFLUXDB_FLUX}"
         },
-        "definition": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_cpu\")\n  |> keyValues(keyColumns: [\"container_name\"])\n  |> group()\n  |> keep(columns: [\"container_name\"])\n  |> distinct(column: \"container_name\")",
-        "includeAll": false,
+        "definition": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${telegraf_bucket}\", tag: \"container_name\", predicate: (r) => r._measurement == \"docker_container_cpu\", start: v.timeRangeStart, stop: v.timeRangeStop)",
+        "includeAll": true,
         "multi": true,
         "name": "container",
         "options": [],
-        "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_cpu\")\n  |> keyValues(keyColumns: [\"container_name\"])\n  |> group()\n  |> keep(columns: [\"container_name\"])\n  |> distinct(column: \"container_name\")",
-        "refresh": 1,
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"${telegraf_bucket}\", tag: \"container_name\", predicate: (r) => r._measurement == \"docker_container_cpu\", start: v.timeRangeStart, stop: v.timeRangeStop)",
+        "refresh": 2,
         "regex": "",
         "regexApplyTo": "value",
-        "type": "query"
+        "type": "query",
+        "allValue": ".*"
       }
     ]
   },
@@ -861,13 +869,6 @@
       "type": "datasource",
       "pluginId": "influxdb",
       "pluginName": "InfluxDB Flux"
-    },
-    {
-      "name": "DS_INFLUXDB_GARMIN",
-      "label": "InfluxDB InfluxQL \u00b7 Garmin",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB InfluxQL \u00b7 Garmin"
     }
   ]
 }

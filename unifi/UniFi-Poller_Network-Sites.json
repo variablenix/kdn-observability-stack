@@ -460,7 +460,7 @@
       "datasource": {
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "These are counters, totals, but they don't change much so the graph does not show rate.",
+      "description": "Site inventory and the internet drop counter. Internet drops use the site\u2019s www subsystem.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -607,9 +607,9 @@
           "datasource": {
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "unpoller_site_intenet_drops_total{site_name=\"$Site\",subsystem=~\"$Subsystem\"}",
+          "expr": "unpoller_site_intenet_drops_total{site_name=\"$Site\",subsystem=\"www\"}",
           "interval": "1m",
-          "legendFormat": "{{subsystem}} Drops",
+          "legendFormat": "Internet drops",
           "refId": "H"
         }
       ],

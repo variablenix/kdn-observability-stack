@@ -1404,7 +1404,7 @@
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "label_values(python_info,app)",
+        "definition": "label_values(django_http_requests_total_by_transport_total{app!=\"\"},app)",
         "hide": 0,
         "includeAll": true,
         "label": "application",
@@ -1412,7 +1412,7 @@
         "name": "application",
         "options": [],
         "query": {
-          "query": "label_values(python_info,app)",
+          "query": "label_values(django_http_requests_total_by_transport_total{app!=\"\"},app)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -1422,7 +1422,8 @@
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
-        "useTags": false
+        "useTags": false,
+        "allValue": ".+"
       },
       {
         "current": {

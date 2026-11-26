@@ -764,10 +764,20 @@
           "expr": "sum(dockhand_container_events_by_action{action=\"oom\"}) by (action)",
           "legendFormat": "oom",
           "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(dockhand_container_events_by_action{action=\"health_status: unhealthy\"}) by (action)",
+          "legendFormat": "unhealthy",
+          "refId": "E"
         }
       ],
       "title": "Container Events by Action (total)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Reported event counts for starts, exits, restarts, out-of-memory events, and transitions to unhealthy."
     },
     {
       "collapsed": false,

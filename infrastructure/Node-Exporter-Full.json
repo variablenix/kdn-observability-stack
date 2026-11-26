@@ -14304,7 +14304,7 @@
             "type": "prometheus",
             "uid": "${ds_prometheus}"
           },
-          "description": "Number of currently established TCP connections and the system's max supported limit. On Linux, MaxConn may return -1 to indicate a dynamic/unlimited configuration",
+          "description": "Established connections and TCP sockets in use as reported by the kernel.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -14356,37 +14356,7 @@
               },
               "unit": "short"
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "/.*Max*./"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "#890F02",
-                      "mode": "fixed"
-                    }
-                  },
-                  {
-                    "id": "custom.fillOpacity",
-                    "value": 0
-                  },
-                  {
-                    "id": "custom.lineStyle",
-                    "value": {
-                      "dash": [
-                        10,
-                        10
-                      ],
-                      "fill": "dash"
-                    }
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           },
           "gridPos": {
             "h": 10,
@@ -14419,17 +14389,17 @@
               "expr": "node_netstat_Tcp_CurrEstab{instance=\"$node\",job=\"$job\"}",
               "format": "time_series",
               "interval": "",
-              "legendFormat": "Current Connections",
+              "legendFormat": "Established",
               "range": true,
               "refId": "A",
               "step": 240
             },
             {
               "editorMode": "code",
-              "expr": "node_netstat_Tcp_MaxConn{instance=\"$node\",job=\"$job\"}",
+              "expr": "node_sockstat_TCP_inuse{instance=\"$node\",job=\"$job\"}",
               "format": "time_series",
               "interval": "",
-              "legendFormat": "Max Connections",
+              "legendFormat": "Sockets in use",
               "range": true,
               "refId": "B",
               "step": 240

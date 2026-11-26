@@ -747,14 +747,14 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(up{server=~\"$node\"},instance)",
+        "definition": "label_values(up{job=\"cadvisor\"},instance)",
         "includeAll": true,
         "label": "Host",
         "name": "host",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(up{server=~\"$node\"},instance)",
+          "query": "label_values(up{job=\"cadvisor\"},instance)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
