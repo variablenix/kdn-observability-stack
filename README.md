@@ -63,6 +63,17 @@ The [remaining-panel follow-up](docs/dashboard-followup-2026-10-24.md) repairs o
 
 InfluxDB dashboards need the correct query language: map the Flux input to a **Flux** connection and Garmin to **InfluxQL**. They are separate data sources. Example addresses, fixed host selectors, bucket names and collector paths must be adapted to the importing deployment. A missing optional metric is labelled as unavailable; it is not converted into a healthy zero.
 
+### Garmin Connect
+
+Import [Garmin Connect Stats](personal/Garmin-Connect-Stats.json) and select the
+InfluxQL data source that reads your Garmin database. The summary shows today’s
+reported steps, the latest heart-rate reading, and separate ages for the last
+watch upload and heart-rate sample. Recent charts keep their own 24-hour or
+local-day windows. Daily trends and sleep history follow the dashboard time
+picker, which defaults to 60 days. Set **Local Time Zone** for daily aggregation.
+The Sleep and recovery row opens on demand. Missing sensor samples leave gaps.
+[Garmin fetcher documentation](https://github.com/arpanghosh8453/garmin-grafana)
+
 Dashboard exports can be refreshed with [the sanitizer](tools/export_sanitized.py), a private binding map and optional private literal redactions. Saved query selections are cleared. Inspect every generated diff: automated masking alone does not prove an export is safe to publish. [Provisioning examples](provisioning/) contain no production credentials.
 
 ### Soju IRC Bouncer
