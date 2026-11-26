@@ -15,7 +15,7 @@
       }
     ]
   },
-  "description": "Cloudflare Tunnel (cloudflared) monitoring \u2014 tunnel capacity & scaling, traffic, QUIC transport, connections, latency, edge locations, RPC operations, process resources",
+  "description": "Cloudflare Tunnel (cloudflared) monitoring — tunnel capacity & scaling, traffic, QUIC transport, connections, latency, edge locations, RPC operations, process resources",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -33,6 +33,221 @@
       "panels": [],
       "title": "Tunnel Overview",
       "type": "row"
+    },
+    {
+      "id": 68,
+      "title": "Tunnel metrics coverage",
+      "description": "Scrape status for every selected tunnel. Down means Prometheus cannot read that metrics endpoint.",
+      "type": "table",
+      "gridPos": {
+        "h": 8,
+        "w": 13,
+        "x": 0,
+        "y": 1
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "sortBy": [
+          {
+            "displayName": "Tunnel",
+            "desc": false
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "up{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "editorMode": "code"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "instance": true,
+              "job": true,
+              "service": true,
+              "__name__": true
+            },
+            "indexByName": {
+              "tunnel": 0,
+              "server": 1,
+              "Value": 2
+            },
+            "renameByName": {
+              "tunnel": "Tunnel",
+              "Value": "Metrics",
+              "server": "Collector target"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Metrics"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "0": {
+                        "text": "Down",
+                        "color": "red"
+                      },
+                      "1": {
+                        "text": "Up",
+                        "color": "green"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Cloudflare edge connections reported by each selected tunnel. A scrape failure leaves a gap.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total HA"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 11,
+        "x": 13,
+        "y": 1
+      },
+      "id": 69,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by(tunnel)(cloudflared_tunnel_ha_connections{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
+          "legendFormat": "{{tunnel}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Edge connections by tunnel",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -67,7 +282,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 1
+        "y": 9
       },
       "id": 2,
       "options": {
@@ -94,7 +309,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_tunnel_total_requests{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(cloudflared_tunnel_total_requests{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "req/s",
           "refId": "A"
         }
@@ -142,7 +357,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 1
+        "y": 9
       },
       "id": 3,
       "options": {
@@ -169,7 +384,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_tunnel_request_errors{job=~\"$job\"}[$__rate_interval])) / sum(rate(cloudflared_tunnel_total_requests{job=~\"$job\"}[$__rate_interval])) * 100",
+          "expr": "sum(rate(cloudflared_tunnel_request_errors{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])) / sum(rate(cloudflared_tunnel_total_requests{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])) * 100",
           "legendFormat": "err%",
           "refId": "A"
         }
@@ -214,7 +429,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 1
+        "y": 9
       },
       "id": 4,
       "options": {
@@ -241,7 +456,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_tunnel_ha_connections{job=~\"$job\"})",
+          "expr": "sum(cloudflared_tunnel_ha_connections{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "conns",
           "refId": "A"
         }
@@ -286,7 +501,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 1
+        "y": 9
       },
       "id": 5,
       "options": {
@@ -313,7 +528,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_tunnel_concurrent_requests_per_tunnel{job=~\"$job\"})",
+          "expr": "sum(cloudflared_tunnel_concurrent_requests_per_tunnel{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "concurrent",
           "refId": "A"
         }
@@ -359,7 +574,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 1
+        "y": 9
       },
       "id": 6,
       "options": {
@@ -386,7 +601,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_proxy_connect_streams_errors{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(cloudflared_proxy_connect_streams_errors{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "err/s",
           "refId": "A"
         }
@@ -423,7 +638,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 1
+        "y": 9
       },
       "id": 7,
       "options": {
@@ -450,8 +665,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "build_info{job=~\"$job\"}",
-          "legendFormat": "{{version}}",
+          "expr": "build_info{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}} · {{version}}",
           "refId": "A"
         }
       ],
@@ -487,7 +702,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 5
+        "y": 13
       },
       "id": 8,
       "options": {
@@ -504,7 +719,7 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "auto",
+        "textMode": "value_and_name",
         "wideLayout": true
       },
       "pluginVersion": "12.4.2",
@@ -514,8 +729,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "cloudflared_orchestration_config_version{job=~\"$job\"}",
-          "legendFormat": "v{{pod}}",
+          "expr": "cloudflared_orchestration_config_version{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}}",
           "refId": "A"
         }
       ],
@@ -527,7 +742,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Total successful tunnel registration events. Should equal 4 \u00d7 number of replicas after startup.",
+      "description": "Total successful tunnel registration events. Should equal 4 × number of replicas after startup.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -551,7 +766,7 @@
         "h": 4,
         "w": 4,
         "x": 4,
-        "y": 5
+        "y": 13
       },
       "id": 9,
       "options": {
@@ -578,7 +793,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_tunnel_tunnel_register_success{job=~\"$job\"})",
+          "expr": "sum(cloudflared_tunnel_tunnel_register_success{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "registrations",
           "refId": "A"
         }
@@ -619,7 +834,7 @@
         "h": 4,
         "w": 4,
         "x": 8,
-        "y": 5
+        "y": 13
       },
       "id": 10,
       "options": {
@@ -646,7 +861,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_tcp_active_sessions{job=~\"$job\"})",
+          "expr": "sum(cloudflared_tcp_active_sessions{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "tcp",
           "refId": "A"
         }
@@ -687,7 +902,7 @@
         "h": 4,
         "w": 4,
         "x": 12,
-        "y": 5
+        "y": 13
       },
       "id": 11,
       "options": {
@@ -714,7 +929,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_udp_active_sessions{job=~\"$job\"})",
+          "expr": "sum(cloudflared_udp_active_sessions{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "udp",
           "refId": "A"
         }
@@ -751,7 +966,7 @@
         "h": 4,
         "w": 4,
         "x": 16,
-        "y": 5
+        "y": 13
       },
       "id": 12,
       "options": {
@@ -775,8 +990,8 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "time()-process_start_time_seconds{job=~\"$job\"}",
-          "legendFormat": "{{instance}}",
+          "expr": "time()-process_start_time_seconds{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}}",
           "instant": true,
           "range": false
         }
@@ -813,7 +1028,7 @@
         "h": 4,
         "w": 4,
         "x": 20,
-        "y": 5
+        "y": 13
       },
       "id": 13,
       "options": {
@@ -840,7 +1055,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_tunnel_total_requests{job=~\"$job\"})",
+          "expr": "sum(cloudflared_tunnel_total_requests{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "total",
           "refId": "A"
         }
@@ -854,7 +1069,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 17
       },
       "id": 14,
       "panels": [],
@@ -866,7 +1081,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "In-flight HTTP requests across all tunnels. This is the primary load indicator for HTTP-only tunnels. Each concurrent request uses one QUIC stream. High values indicate slow origins or high traffic \u2014 consider adding replicas.",
+      "description": "In-flight HTTP requests across all tunnels. This is the primary load indicator for HTTP-only tunnels. Each concurrent request uses one QUIC stream. High values indicate slow origins or high traffic — consider adding replicas.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -901,7 +1116,7 @@
         "h": 6,
         "w": 6,
         "x": 0,
-        "y": 10
+        "y": 18
       },
       "id": 15,
       "options": {
@@ -926,7 +1141,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_tunnel_concurrent_requests_per_tunnel{job=~\"$job\"})",
+          "expr": "sum(cloudflared_tunnel_concurrent_requests_per_tunnel{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "concurrent",
           "refId": "A"
         }
@@ -939,7 +1154,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "HTTP request throughput. For HTTP-only tunnels, this is the main scaling metric. Each request is multiplexed over QUIC streams on the 4 HA connections \u2014 no ephemeral port consumed on the host.",
+      "description": "HTTP request throughput. For HTTP-only tunnels, this is the main scaling metric. Each request is multiplexed over QUIC streams on the 4 HA connections — no ephemeral port consumed on the host.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -974,7 +1189,7 @@
         "h": 6,
         "w": 6,
         "x": 6,
-        "y": 10
+        "y": 18
       },
       "id": 16,
       "options": {
@@ -999,7 +1214,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_tunnel_total_requests{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(cloudflared_tunnel_total_requests{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "req/s",
           "refId": "A"
         }
@@ -1101,7 +1316,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 10
+        "y": 18
       },
       "id": 17,
       "options": {
@@ -1127,7 +1342,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_tunnel_total_requests{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(cloudflared_tunnel_total_requests{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "Requests/sec",
           "refId": "A"
         },
@@ -1136,7 +1351,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_tunnel_concurrent_requests_per_tunnel{job=~\"$job\"})",
+          "expr": "sum(cloudflared_tunnel_concurrent_requests_per_tunnel{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "Concurrent Requests",
           "refId": "B"
         }
@@ -1149,7 +1364,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Estimated TCP port utilization. Only relevant for WARP/private network tunnels (SSH, RDP, etc.) \u2014 HTTP tunnel traffic uses QUIC streams instead of host ports. TCP ports release almost instantly; at 50,000 ports you'd need 50,001 sustained req/s to exhaust capacity.",
+      "description": "Estimated TCP port utilization. Only relevant for WARP/private network tunnels (SSH, RDP, etc.) — HTTP tunnel traffic uses QUIC streams instead of host ports. TCP ports release almost instantly; at 50,000 ports you'd need 50,001 sustained req/s to exhaust capacity. The percentage shows the highest estimate among selected connectors.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1184,7 +1399,7 @@
         "h": 6,
         "w": 6,
         "x": 0,
-        "y": 16
+        "y": 24
       },
       "id": 18,
       "options": {
@@ -1209,7 +1424,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_tcp_total_sessions{job=~\"$job\"}[$__rate_interval])) / $available_ports * 100",
+          "expr": "max(rate(cloudflared_tcp_total_sessions{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])) / $available_ports * 100",
           "legendFormat": "TCP",
           "refId": "A"
         }
@@ -1222,7 +1437,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Estimated UDP port utilization. Only relevant for WARP/private network tunnels (private DNS, WARP UDP). DNS queries hold a port for ~5 seconds; at 50,000 ports with 5s timeout, max is 10,000 DNS queries/sec.",
+      "description": "Estimated UDP port utilization. Only relevant for WARP/private network tunnels (private DNS, WARP UDP). DNS queries hold a port for ~5 seconds; at 50,000 ports with 5s timeout, max is 10,000 DNS queries/sec. The percentage shows the highest estimate among selected connectors.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1257,7 +1472,7 @@
         "h": 6,
         "w": 6,
         "x": 6,
-        "y": 16
+        "y": 24
       },
       "id": 19,
       "options": {
@@ -1282,7 +1497,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_udp_total_sessions{job=~\"$job\"}[$__rate_interval])) * $dns_timeout / $available_ports * 100",
+          "expr": "max(rate(cloudflared_udp_total_sessions{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])) * $dns_timeout / $available_ports * 100",
           "legendFormat": "UDP",
           "refId": "A"
         }
@@ -1295,7 +1510,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Port capacity utilization for WARP/private network traffic. 0% is normal for HTTP-only tunnels \u2014 HTTP requests use QUIC streams, not host ports. Only non-zero when proxying TCP sessions (SSH/RDP) or UDP sessions (private DNS/WARP).",
+      "description": "Port capacity utilization for WARP/private network traffic. 0% is normal for HTTP-only tunnels — HTTP requests use QUIC streams, not host ports. Only non-zero when proxying TCP sessions (SSH/RDP) or UDP sessions (private DNS/WARP). The percentage shows the highest estimate among selected connectors.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1384,7 +1599,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 24
       },
       "id": 20,
       "options": {
@@ -1410,7 +1625,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_tcp_total_sessions{job=~\"$job\"}[$__rate_interval])) / $available_ports * 100",
+          "expr": "max(rate(cloudflared_tcp_total_sessions{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])) / $available_ports * 100",
           "legendFormat": "TCP Port %",
           "refId": "A"
         },
@@ -1419,7 +1634,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_udp_total_sessions{job=~\"$job\"}[$__rate_interval])) * $dns_timeout / $available_ports * 100",
+          "expr": "max(rate(cloudflared_udp_total_sessions{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])) * $dns_timeout / $available_ports * 100",
           "legendFormat": "UDP Port %",
           "refId": "B"
         }
@@ -1428,12 +1643,12 @@
       "type": "timeseries"
     },
     {
-      "description": "Quick reference for Cloudflare tunnel sizing \u2014 covers both HTTP-only and WARP/private network tunnels.",
+      "description": "Quick reference for Cloudflare tunnel sizing — covers both HTTP-only and WARP/private network tunnels.",
       "gridPos": {
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 30
       },
       "id": 21,
       "options": {
@@ -1442,7 +1657,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "## Tunnel Scaling Reference\n\nBased on [Cloudflare tunnel system requirements](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/configure-tunnels/tunnel-availability/system-requirements/):\n\n### Two types of tunnel traffic\n\n| Traffic Type | Bottleneck | Key Metric |\n|---|---|---|\n| **HTTP requests** (most common) | QUIC streams over 4 HA connections, CPU, memory | Concurrent Requests, Requests/sec |\n| **WARP / Private Network** (TCP/UDP) | Host ephemeral ports | TCP/UDP Port Capacity % |\n\nHTTP-only tunnels (like Cloudflare CDN \u2192 origin) do **not** consume host ports \u2014 requests are multiplexed over QUIC streams. The port-based capacity calculator only applies to WARP/Zero Trust private network access.\n\n### Resource recommendations\n\n| Resource | Recommendation |\n|---|---|\n| **Replicas** | \u2265 2 per location for redundancy |\n| **CPU / RAM** | 4 cores / 4 GB minimum per host |\n| **Ports** | 50,000 per host (`net.ipv4.ip_local_port_range = 11000 60999`) \u2014 WARP only |\n| **ulimit -n** | \u2265 70,000 open file descriptors |\n\n### Port capacity limits (WARP/private network only)\n\n| Traffic Type | Max Sustained / replica | Port Hold Time |\n|---|---|---|\n| **TCP requests** | 50,000 req/s | ~instant release |\n| **DNS (UDP)** | 10,000 queries/s | 5 seconds |\n| **Non-DNS UDP** | 50,000 concurrent | connection duration |\n\n### When to scale\n\n| Signal | Action |\n|---|---|\n| Concurrent requests consistently > 50 | Add replica |\n| TCP/UDP port capacity > 60% | Add replica |\n| Proxy connect latency p95 rising | Check origin health, then add replica |\n| HA connections < 4 per replica | Investigate connectivity |\n\n### \u26a0 Scaling limitations\n\ncloudflared has **no auto-scaling capability or integration**. You can add replicas manually for HA, but **scaling down will break active eyeball connections** pinned to that replica \u2014 there is no graceful drain. Replicas within the same tunnel are strictly for **high availability, not load balancing** \u2014 Cloudflare does not distribute requests evenly across replicas of the same tunnel.\n\nFor true horizontal scaling with controlled scale-down, run **multiple discrete tunnels** behind a load balancer (e.g. Cloudflare Load Balancing or an internal LB), so each tunnel can be drained and removed independently.\n",
+        "content": "## Tunnel Scaling Reference\n\nBased on [Cloudflare tunnel system requirements](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/configure-tunnels/tunnel-availability/system-requirements/):\n\n### Two types of tunnel traffic\n\n| Traffic Type | Bottleneck | Key Metric |\n|---|---|---|\n| **HTTP requests** (most common) | QUIC streams over 4 HA connections, CPU, memory | Concurrent Requests, Requests/sec |\n| **WARP / Private Network** (TCP/UDP) | Host ephemeral ports | TCP/UDP Port Capacity % |\n\nHTTP-only tunnels (like Cloudflare CDN → origin) do **not** consume host ports — requests are multiplexed over QUIC streams. The port-based capacity calculator only applies to WARP/Zero Trust private network access.\n\n### Resource recommendations\n\n| Resource | Recommendation |\n|---|---|\n| **Replicas** | ≥ 2 per location for redundancy |\n| **CPU / RAM** | 4 cores / 4 GB minimum per host |\n| **Ports** | 50,000 per host (`net.ipv4.ip_local_port_range = 11000 60999`) — WARP only |\n| **ulimit -n** | ≥ 70,000 open file descriptors |\n\n### Port capacity limits (WARP/private network only)\n\n| Traffic Type | Max Sustained / replica | Port Hold Time |\n|---|---|---|\n| **TCP requests** | 50,000 req/s | ~instant release |\n| **DNS (UDP)** | 10,000 queries/s | 5 seconds |\n| **Non-DNS UDP** | 50,000 concurrent | connection duration |\n\n### When to scale\n\n| Signal | Action |\n|---|---|\n| Concurrent requests consistently > 50 | Add replica |\n| TCP/UDP port capacity > 60% | Add replica |\n| Proxy connect latency p95 rising | Check origin health, then add replica |\n| HA connections < 4 per replica | Investigate connectivity |\n\n### ⚠ Scaling limitations\n\ncloudflared has **no auto-scaling capability or integration**. You can add replicas manually for HA, but **scaling down will break active eyeball connections** pinned to that replica — there is no graceful drain. Replicas within the same tunnel are strictly for **high availability, not load balancing** — Cloudflare does not distribute requests evenly across replicas of the same tunnel.\n\nFor true horizontal scaling with controlled scale-down, run **multiple discrete tunnels** behind a load balancer (e.g. Cloudflare Load Balancing or an internal LB), so each tunnel can be drained and removed independently.\n",
         "mode": "markdown"
       },
       "pluginVersion": "12.4.2",
@@ -1455,7 +1670,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 42
       },
       "id": 22,
       "panels": [],
@@ -1556,7 +1771,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 35
+        "y": 43
       },
       "id": 23,
       "options": {
@@ -1582,7 +1797,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_tunnel_total_requests{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(cloudflared_tunnel_total_requests{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "Total Requests",
           "refId": "A"
         },
@@ -1591,7 +1806,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_tunnel_request_errors{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(cloudflared_tunnel_request_errors{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "Errors",
           "refId": "B"
         }
@@ -1723,7 +1938,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 35
+        "y": 43
       },
       "id": 24,
       "options": {
@@ -1749,7 +1964,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum by (status_code) (rate(cloudflared_tunnel_response_by_code{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum by (status_code) (rate(cloudflared_tunnel_response_by_code{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "{{status_code}}",
           "refId": "A"
         }
@@ -1762,7 +1977,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Percentage of requests resulting in proxy errors. Sustained rates above 1% warrant investigation \u2014 check origin health, TLS config, and DNS resolution.",
+      "description": "Percentage of requests resulting in proxy errors. Sustained rates above 1% warrant investigation — check origin health, TLS config, and DNS resolution.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1836,7 +2051,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 43
+        "y": 51
       },
       "id": 25,
       "options": {
@@ -1862,7 +2077,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_tunnel_request_errors{job=~\"$job\"}[$__rate_interval])) / sum(rate(cloudflared_tunnel_total_requests{job=~\"$job\"}[$__rate_interval])) * 100",
+          "expr": "sum(rate(cloudflared_tunnel_request_errors{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])) / sum(rate(cloudflared_tunnel_total_requests{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])) * 100",
           "legendFormat": "Error %",
           "refId": "A"
         }
@@ -1994,7 +2209,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 43
+        "y": 51
       },
       "id": 26,
       "options": {
@@ -2020,7 +2235,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum by (status_code) (increase(cloudflared_tunnel_response_by_code{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum by (status_code) (increase(cloudflared_tunnel_response_by_code{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "{{status_code}}",
           "refId": "A"
         }
@@ -2034,7 +2249,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 59
       },
       "id": 27,
       "panels": [],
@@ -2120,7 +2335,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 52
+        "y": 60
       },
       "id": 28,
       "options": {
@@ -2146,7 +2361,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_tunnel_ha_connections{job=~\"$job\"})",
+          "expr": "sum(cloudflared_tunnel_ha_connections{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "Total HA",
           "refId": "A"
         },
@@ -2155,8 +2370,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "cloudflared_tunnel_ha_connections{job=~\"$job\"}",
-          "legendFormat": "{{pod}}",
+          "expr": "cloudflared_tunnel_ha_connections{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}}",
           "refId": "B"
         }
       ],
@@ -2226,7 +2441,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 52
+        "y": 60
       },
       "id": 29,
       "options": {
@@ -2252,8 +2467,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "cloudflared_tunnel_concurrent_requests_per_tunnel{job=~\"$job\"}",
-          "legendFormat": "{{pod}}",
+          "expr": "cloudflared_tunnel_concurrent_requests_per_tunnel{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}}",
           "refId": "A"
         }
       ],
@@ -2354,7 +2569,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 60
+        "y": 68
       },
       "id": 30,
       "options": {
@@ -2380,7 +2595,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_tcp_active_sessions{job=~\"$job\"})",
+          "expr": "sum(cloudflared_tcp_active_sessions{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "Active TCP",
           "refId": "A"
         },
@@ -2389,7 +2604,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_tcp_total_sessions{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(cloudflared_tcp_total_sessions{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "New TCP/sec",
           "refId": "B"
         }
@@ -2491,7 +2706,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 60
+        "y": 68
       },
       "id": 31,
       "options": {
@@ -2517,7 +2732,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_udp_active_sessions{job=~\"$job\"})",
+          "expr": "sum(cloudflared_udp_active_sessions{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "Active UDP",
           "refId": "A"
         },
@@ -2526,7 +2741,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_udp_total_sessions{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(cloudflared_udp_total_sessions{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "New UDP/sec",
           "refId": "B"
         }
@@ -2613,7 +2828,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 68
+        "y": 76
       },
       "id": 32,
       "options": {
@@ -2639,7 +2854,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_proxy_connect_streams_errors{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(cloudflared_proxy_connect_streams_errors{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "Stream Errors/sec",
           "refId": "A"
         }
@@ -2683,7 +2898,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 68
+        "y": 76
       },
       "id": 33,
       "options": {
@@ -2709,8 +2924,8 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "100*process_open_fds{job=~\"$job\"}/process_max_fds{job=~\"$job\"}",
-          "legendFormat": "{{instance}}",
+          "expr": "100*process_open_fds{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}/process_max_fds{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}}",
           "instant": false,
           "range": true
         }
@@ -2781,7 +2996,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 76
+        "y": 84
       },
       "id": 34,
       "options": {
@@ -2807,7 +3022,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_icmp_total_requests{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(cloudflared_icmp_total_requests{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "Requests/sec",
           "refId": "A"
         },
@@ -2816,7 +3031,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(cloudflared_icmp_total_replies{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(cloudflared_icmp_total_replies{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "Replies/sec",
           "refId": "B"
         }
@@ -2829,7 +3044,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Cumulative successful tunnel registrations. Should be 4 \u00d7 replicas after initial startup. Increases indicate reconnections (e.g. after pod restarts or edge failovers).",
+      "description": "Cumulative successful tunnel registrations. Should be 4 × replicas after initial startup. Increases indicate reconnections (e.g. after pod restarts or edge failovers).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2887,7 +3102,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 76
+        "y": 84
       },
       "id": 35,
       "options": {
@@ -2913,7 +3128,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(cloudflared_tunnel_tunnel_register_success{job=~\"$job\"})",
+          "expr": "sum(cloudflared_tunnel_tunnel_register_success{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
           "legendFormat": "Successful Registrations",
           "refId": "A"
         }
@@ -2927,7 +3142,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 84
+        "y": 92
       },
       "id": 36,
       "panels": [],
@@ -2972,7 +3187,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 85
+        "y": 93
       },
       "id": 37,
       "options": {
@@ -2992,10 +3207,10 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "cloudflared_tunnel_server_locations{job=~\"$job\"}",
+          "expr": "cloudflared_tunnel_server_locations{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
           "format": "table",
           "instant": true,
-          "legendFormat": "{{connection_id}} \u2192 {{edge_location}}",
+          "legendFormat": "{{tunnel}} · {{connection_id}} → {{edge_location}}",
           "refId": "A"
         }
       ],
@@ -3065,7 +3280,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 85
+        "y": 93
       },
       "id": 38,
       "options": {
@@ -3091,8 +3306,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "cloudflared_orchestration_config_version{job=~\"$job\"}",
-          "legendFormat": "{{pod}}",
+          "expr": "cloudflared_orchestration_config_version{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}}",
           "refId": "A"
         }
       ],
@@ -3105,7 +3320,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 91
+        "y": 99
       },
       "id": 39,
       "panels": [],
@@ -3175,7 +3390,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 92
+        "y": 100
       },
       "id": 40,
       "options": {
@@ -3201,8 +3416,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "quic_client_smoothed_rtt{job=~\"$job\"}",
-          "legendFormat": "Smoothed conn={{conn_index}}",
+          "expr": "quic_client_smoothed_rtt{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}} · Smoothed conn={{conn_index}}",
           "refId": "A"
         },
         {
@@ -3210,8 +3425,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "quic_client_min_rtt{job=~\"$job\"}",
-          "legendFormat": "Min conn={{conn_index}}",
+          "expr": "quic_client_min_rtt{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}} · Min conn={{conn_index}}",
           "refId": "B"
         },
         {
@@ -3219,8 +3434,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "quic_client_latest_rtt{job=~\"$job\"}",
-          "legendFormat": "Latest conn={{conn_index}}",
+          "expr": "quic_client_latest_rtt{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}} · Latest conn={{conn_index}}",
           "refId": "C"
         }
       ],
@@ -3290,7 +3505,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 92
+        "y": 100
       },
       "id": 41,
       "options": {
@@ -3316,8 +3531,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "quic_client_congestion_window{job=~\"$job\"}",
-          "legendFormat": "conn={{conn_index}}",
+          "expr": "quic_client_congestion_window{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}} · conn={{conn_index}}",
           "refId": "A"
         }
       ],
@@ -3418,7 +3633,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 100
+        "y": 108
       },
       "id": 42,
       "options": {
@@ -3444,7 +3659,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(quic_client_sent_bytes{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(quic_client_sent_bytes{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "Sent",
           "refId": "A"
         },
@@ -3453,7 +3668,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(quic_client_receive_bytes{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(quic_client_receive_bytes{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "Received",
           "refId": "B"
         }
@@ -3524,7 +3739,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 100
+        "y": 108
       },
       "id": 43,
       "options": {
@@ -3550,8 +3765,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(quic_client_sent_bytes{job=~\"$job\"}[$__rate_interval])",
-          "legendFormat": "Sent conn={{conn_index}}",
+          "expr": "rate(quic_client_sent_bytes{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])",
+          "legendFormat": "{{tunnel}} · Sent conn={{conn_index}}",
           "refId": "A"
         },
         {
@@ -3559,8 +3774,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(quic_client_receive_bytes{job=~\"$job\"}[$__rate_interval])",
-          "legendFormat": "Recv conn={{conn_index}}",
+          "expr": "rate(quic_client_receive_bytes{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])",
+          "legendFormat": "{{tunnel}} · Recv conn={{conn_index}}",
           "refId": "B"
         }
       ],
@@ -3572,7 +3787,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Rate of lost QUIC packets by connection and reason. 'reordering' = detected via packet number gaps. 'timeout' = detected via RTO. Sustained loss degrades throughput and increases latency.",
+      "description": "Rate of datagrams dropped as too large by the QUIC client.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -3622,7 +3837,7 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "pps"
         },
         "overrides": [
           {
@@ -3646,7 +3861,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 108
+        "y": 116
       },
       "id": 44,
       "options": {
@@ -3672,12 +3887,12 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum by (conn_index, reason) (rate(quic_client_lost_packets{job=~\"$job\"}[$__rate_interval]))",
-          "legendFormat": "conn={{conn_index}} ({{reason}})",
+          "expr": "sum by(tunnel,instance) (rate(quic_client_packet_too_big_dropped{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[5m]))",
+          "legendFormat": "{{tunnel}}",
           "refId": "A"
         }
       ],
-      "title": "QUIC Packet Loss",
+      "title": "Oversize QUIC packet drops",
       "type": "timeseries"
     },
     {
@@ -3685,7 +3900,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "QUIC congestion control state per connection. States: 0=SlowStart, 1=CongestionAvoidance, 2=Recovery, 3=ApplicationLimited. ApplicationLimited (3) is normal for low-traffic tunnels \u2014 means the bottleneck is traffic volume, not network capacity.",
+      "description": "QUIC congestion control state per connection. States: 0=SlowStart, 1=CongestionAvoidance, 2=Recovery, 3=ApplicationLimited. ApplicationLimited (3) is normal for low-traffic tunnels — means the bottleneck is traffic volume, not network capacity.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -3761,7 +3976,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 108
+        "y": 116
       },
       "id": 45,
       "options": {
@@ -3787,8 +4002,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "quic_client_congestion_state{job=~\"$job\"}",
-          "legendFormat": "conn={{conn_index}}",
+          "expr": "quic_client_congestion_state{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}} · conn={{conn_index}}",
           "refId": "A"
         }
       ],
@@ -3858,7 +4073,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 108
+        "y": 116
       },
       "id": 46,
       "options": {
@@ -3884,8 +4099,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "quic_client_mtu{job=~\"$job\"}",
-          "legendFormat": "MTU conn={{conn_index}}",
+          "expr": "quic_client_mtu{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}} · MTU conn={{conn_index}}",
           "refId": "A"
         },
         {
@@ -3893,8 +4108,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "quic_client_max_udp_payload{job=~\"$job\"}",
-          "legendFormat": "Max Payload conn={{conn_index}}",
+          "expr": "quic_client_max_udp_payload{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}} · Max Payload conn={{conn_index}}",
           "refId": "B"
         }
       ],
@@ -3964,7 +4179,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 116
+        "y": 124
       },
       "id": 47,
       "options": {
@@ -3990,7 +4205,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum by (frame_type) (rate(quic_client_sent_frames{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum by (frame_type) (rate(quic_client_sent_frames{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "{{frame_type}}",
           "refId": "A"
         }
@@ -4061,7 +4276,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 116
+        "y": 124
       },
       "id": 48,
       "options": {
@@ -4087,7 +4302,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum by (frame_type) (rate(quic_client_received_frames{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum by (frame_type) (rate(quic_client_received_frames{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "{{frame_type}}",
           "refId": "A"
         }
@@ -4189,7 +4404,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 124
+        "y": 132
       },
       "id": 49,
       "options": {
@@ -4215,7 +4430,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(quic_client_total_connections{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(quic_client_total_connections{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "New Connections/sec",
           "refId": "A"
         },
@@ -4224,7 +4439,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(quic_client_closed_connections{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(quic_client_closed_connections{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "Closed Connections/sec",
           "refId": "B"
         }
@@ -4237,7 +4452,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Rate of QUIC packets dropped because they exceeded the path MTU. Non-zero indicates MTU discovery issues \u2014 check for MTU blackholes or misconfigured network equipment between cloudflared and edge.",
+      "description": "Rate of QUIC packets dropped because they exceeded the path MTU. Non-zero indicates MTU discovery issues — check for MTU blackholes or misconfigured network equipment between cloudflared and edge.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -4311,7 +4526,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 124
+        "y": 132
       },
       "id": 50,
       "options": {
@@ -4337,7 +4552,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(quic_client_packet_too_big_dropped{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum(rate(quic_client_packet_too_big_dropped{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "Packets Dropped/sec",
           "refId": "A"
         }
@@ -4351,7 +4566,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 132
+        "y": 140
       },
       "id": 51,
       "panels": [],
@@ -4394,7 +4609,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 133
+        "y": 141
       },
       "id": 52,
       "options": {
@@ -4420,8 +4635,8 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "cloudflared_config_local_config_pushes{job=~\"$job\"}",
-          "legendFormat": "{{instance}} pushes",
+          "expr": "cloudflared_config_local_config_pushes{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}} pushes",
           "instant": false,
           "range": true
         },
@@ -4432,8 +4647,8 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "cloudflared_config_local_config_pushes_errors{job=~\"$job\"}",
-          "legendFormat": "{{instance}} errors",
+          "expr": "cloudflared_config_local_config_pushes_errors{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}} errors",
           "instant": false,
           "range": true
         }
@@ -4477,7 +4692,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 133
+        "y": 141
       },
       "id": 53,
       "options": {
@@ -4503,8 +4718,8 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.5, sum by(instance,le)(cloudflared_rpc_client_latency_secs_bucket{job=~\"$job\"}))",
-          "legendFormat": "{{instance}} p50",
+          "expr": "histogram_quantile(0.5, sum by(tunnel,instance,le)(cloudflared_rpc_client_latency_secs_bucket{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}))",
+          "legendFormat": "{{tunnel}} p50",
           "instant": false,
           "range": true
         },
@@ -4515,8 +4730,8 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by(instance,le)(cloudflared_rpc_client_latency_secs_bucket{job=~\"$job\"}))",
-          "legendFormat": "{{instance}} p95",
+          "expr": "histogram_quantile(0.95, sum by(tunnel,instance,le)(cloudflared_rpc_client_latency_secs_bucket{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}))",
+          "legendFormat": "{{tunnel}} p95",
           "instant": false,
           "range": true
         },
@@ -4527,13 +4742,13 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum by(instance,le)(cloudflared_rpc_client_latency_secs_bucket{job=~\"$job\"}))",
-          "legendFormat": "{{instance}} p99",
+          "expr": "histogram_quantile(0.99, sum by(tunnel,instance,le)(cloudflared_rpc_client_latency_secs_bucket{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}))",
+          "legendFormat": "{{tunnel}} p99",
           "instant": false,
           "range": true
         }
       ],
-      "title": "RPC client latency \u2014 since connector start",
+      "title": "RPC client latency — since connector start",
       "type": "timeseries"
     },
     {
@@ -4572,7 +4787,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 141
+        "y": 149
       },
       "id": 54,
       "options": {
@@ -4598,8 +4813,8 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "100*go_memstats_heap_inuse_bytes{job=~\"$job\"}/(go_memstats_heap_inuse_bytes{job=~\"$job\"}+go_memstats_heap_idle_bytes{job=~\"$job\"})",
-          "legendFormat": "{{instance}}",
+          "expr": "100*go_memstats_heap_inuse_bytes{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}/(go_memstats_heap_inuse_bytes{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}+go_memstats_heap_idle_bytes{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
+          "legendFormat": "{{tunnel}}",
           "instant": false,
           "range": true
         }
@@ -4643,7 +4858,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 141
+        "y": 149
       },
       "id": 55,
       "options": {
@@ -4669,13 +4884,13 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by(instance)(cloudflared_rpc_client_latency_secs_count{job=~\"$job\"})",
-          "legendFormat": "{{instance}}",
+          "expr": "sum by(tunnel,instance)(cloudflared_rpc_client_latency_secs_count{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"})",
+          "legendFormat": "{{tunnel}}",
           "instant": false,
           "range": true
         }
       ],
-      "title": "RPC client observations \u2014 since connector start",
+      "title": "RPC client observations — since connector start",
       "type": "timeseries"
     },
     {
@@ -4684,7 +4899,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 149
+        "y": 157
       },
       "id": 56,
       "panels": [],
@@ -4754,7 +4969,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 150
+        "y": 158
       },
       "id": 57,
       "options": {
@@ -4780,7 +4995,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum by (handler, method) (rate(cloudflared_rpc_client_operations{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum by (handler, method) (rate(cloudflared_rpc_client_operations{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "{{handler}}/{{method}}",
           "refId": "A"
         }
@@ -4851,7 +5066,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 150
+        "y": 158
       },
       "id": 58,
       "options": {
@@ -4877,7 +5092,7 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum by (handler, method) (rate(cloudflared_rpc_server_operations{job=~\"$job\"}[$__rate_interval]))",
+          "expr": "sum by (handler, method) (rate(cloudflared_rpc_server_operations{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval]))",
           "legendFormat": "{{handler}}/{{method}}",
           "refId": "A"
         }
@@ -4891,7 +5106,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 158
+        "y": 166
       },
       "id": 59,
       "panels": [],
@@ -4961,7 +5176,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 159
+        "y": 167
       },
       "id": 60,
       "options": {
@@ -4987,8 +5202,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(process_cpu_seconds_total{job=~\"$job\"}[$__rate_interval])",
-          "legendFormat": "{{pod}}",
+          "expr": "rate(process_cpu_seconds_total{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])",
+          "legendFormat": "{{tunnel}}",
           "refId": "A"
         }
       ],
@@ -5058,7 +5273,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 159
+        "y": 167
       },
       "id": 61,
       "options": {
@@ -5084,8 +5299,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "process_resident_memory_bytes{job=~\"$job\"}",
-          "legendFormat": "RSS {{pod}}",
+          "expr": "process_resident_memory_bytes{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "RSS {{tunnel}}",
           "refId": "A"
         },
         {
@@ -5093,8 +5308,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_alloc_bytes{job=~\"$job\"}",
-          "legendFormat": "Go Heap {{pod}}",
+          "expr": "go_memstats_alloc_bytes{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "Go Heap {{tunnel}}",
           "refId": "B"
         },
         {
@@ -5102,8 +5317,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_heap_idle_bytes{job=~\"$job\"}",
-          "legendFormat": "Heap Idle {{pod}}",
+          "expr": "go_memstats_heap_idle_bytes{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "Heap Idle {{tunnel}}",
           "refId": "C"
         }
       ],
@@ -5204,7 +5419,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 167
+        "y": 175
       },
       "id": 62,
       "options": {
@@ -5230,8 +5445,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(process_network_transmit_bytes_total{job=~\"$job\"}[$__rate_interval])",
-          "legendFormat": "TX {{pod}}",
+          "expr": "rate(process_network_transmit_bytes_total{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])",
+          "legendFormat": "TX {{tunnel}}",
           "refId": "A"
         },
         {
@@ -5239,8 +5454,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(process_network_receive_bytes_total{job=~\"$job\"}[$__rate_interval])",
-          "legendFormat": "RX {{pod}}",
+          "expr": "rate(process_network_receive_bytes_total{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])",
+          "legendFormat": "RX {{tunnel}}",
           "refId": "B"
         }
       ],
@@ -5310,7 +5525,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 167
+        "y": 175
       },
       "id": 63,
       "options": {
@@ -5336,8 +5551,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_goroutines{job=~\"$job\"}",
-          "legendFormat": "{{pod}}",
+          "expr": "go_goroutines{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}}",
           "refId": "A"
         }
       ],
@@ -5349,7 +5564,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Open vs maximum file descriptors. Cloudflare recommends ulimit -n \u2265 70,000. If Open approaches Max, connections will fail. In Kubernetes, check the pod's securityContext or the node's /proc/sys/fs/file-max.",
+      "description": "Open vs maximum file descriptors. Cloudflare recommends ulimit -n ≥ 70,000. If Open approaches Max, connections will fail. In Kubernetes, check the pod's securityContext or the node's /proc/sys/fs/file-max.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -5407,7 +5622,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 167
+        "y": 175
       },
       "id": 64,
       "options": {
@@ -5433,8 +5648,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "process_open_fds{job=~\"$job\"}",
-          "legendFormat": "Open {{pod}}",
+          "expr": "process_open_fds{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "Open {{tunnel}}",
           "refId": "A"
         },
         {
@@ -5442,8 +5657,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "process_max_fds{job=~\"$job\"}",
-          "legendFormat": "Max {{pod}}",
+          "expr": "process_max_fds{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "Max {{tunnel}}",
           "refId": "B"
         }
       ],
@@ -5513,7 +5728,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 175
+        "y": 183
       },
       "id": 65,
       "options": {
@@ -5539,8 +5754,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(go_gc_duration_seconds_sum{job=~\"$job\"}[$__rate_interval])",
-          "legendFormat": "GC {{pod}}",
+          "expr": "rate(go_gc_duration_seconds_sum{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])",
+          "legendFormat": "GC {{tunnel}}",
           "refId": "A"
         }
       ],
@@ -5610,7 +5825,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 175
+        "y": 183
       },
       "id": 66,
       "options": {
@@ -5636,8 +5851,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "go_memstats_heap_objects{job=~\"$job\"}",
-          "legendFormat": "{{pod}}",
+          "expr": "go_memstats_heap_objects{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}",
+          "legendFormat": "{{tunnel}}",
           "refId": "A"
         }
       ],
@@ -5649,7 +5864,7 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
-      "description": "Rate of Go heap allocations. High allocation rate drives more frequent GC. Correlates with request rate \u2014 each proxied request allocates buffers.",
+      "description": "Rate of Go heap allocations. High allocation rate drives more frequent GC. Correlates with request rate — each proxied request allocates buffers.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -5707,7 +5922,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 175
+        "y": 183
       },
       "id": 67,
       "options": {
@@ -5733,8 +5948,8 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "rate(go_memstats_alloc_bytes_total{job=~\"$job\"}[$__rate_interval])",
-          "legendFormat": "{{pod}}",
+          "expr": "rate(go_memstats_alloc_bytes_total{job=~\"${job:regex}\",tunnel=~\"${tunnel:regex}\"}[$__rate_interval])",
+          "legendFormat": "{{tunnel}}",
           "refId": "A"
         }
       ],
@@ -5753,7 +5968,10 @@
   "templating": {
     "list": [
       {
-        "current": {},
+        "current": {
+          "text": "cloudflared",
+          "value": "cloudflared"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
@@ -5764,13 +5982,38 @@
         "name": "job",
         "options": [],
         "query": {
-          "query": "label_values(cloudflared_tunnel_ha_connections, job)",
+          "query": "label_values(up{job=~\"cloudflared.*\"}, job)",
           "refId": "A"
         },
         "refresh": 2,
         "regex": "",
         "regexApplyTo": "value",
         "type": "query"
+      },
+      {
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "description": "Cloudflare tunnel names from the configured Prometheus scrape targets.",
+        "includeAll": true,
+        "label": "Tunnel",
+        "name": "tunnel",
+        "options": [],
+        "query": {
+          "query": "label_values(up{job=~\"${job:regex}\",tunnel!=\"\"}, tunnel)",
+          "refId": "tunnel"
+        },
+        "refresh": 2,
+        "regex": "",
+        "regexApplyTo": "value",
+        "type": "query",
+        "allValue": ".*",
+        "multi": true
       },
       {
         "current": {

@@ -129,13 +129,16 @@ def improve(model):
     def change(id_, title, query, unit='short', legend='{{instance}}', description='', kind=None):
         replace(ps[id_], title, query if isinstance(query, list) else [(query, legend)], unit, description, kind)
     if uid == 'cloudflared-tunnel':
-        sel = '{job=~"$job"}'
-        change(12, 'Connector uptime', 'time()-process_start_time_seconds'+sel, 's', description='Age of each currently scraped connector process; resets after restart.')
-        change(33, 'File descriptor capacity used', '100*process_open_fds'+sel+'/process_max_fds'+sel, 'percent')
-        change(52, 'Configuration push outcomes', [('cloudflared_config_local_config_pushes'+sel, '{{instance}} pushes'), ('cloudflared_config_local_config_pushes_errors'+sel, '{{instance}} errors')], description='Native cumulative configuration pushes and errors since connector start. This is not request latency.')
-        change(53, 'RPC client latency — since connector start', [(f'histogram_quantile({q}, sum by(instance,le)(cloudflared_rpc_client_latency_secs_bucket'+sel+'))', '{{instance}} '+name) for q,name in [(0.5,'p50'),(0.95,'p95'),(0.99,'p99')]], 's', description='Quantiles of retained control-plane RPC observations since process start, not latency in the selected rate window. Idle control planes need not issue new RPCs. Resets on restart.')
-        change(54, 'Go heap capacity in use', '100*go_memstats_heap_inuse_bytes'+sel+'/(go_memstats_heap_inuse_bytes'+sel+'+go_memstats_heap_idle_bytes'+sel+')', 'percent')
-        change(55, 'RPC client observations — since connector start', 'sum by(instance)(cloudflared_rpc_client_latency_secs_count'+sel+')', description='Actual histogram sample count. No origin proxy latency is inferred when its histogram has no observations.')
+        named_tunnels = any(variable['name'] == 'tunnel' for variable in d['templating']['list'])
+        sel = '{job=~"${job:regex}",tunnel=~"${tunnel:regex}"}' if named_tunnels else '{job=~"$job"}'
+        label = '{{tunnel}}' if named_tunnels else '{{instance}}'
+        group = 'tunnel,instance' if named_tunnels else 'instance'
+        change(12, 'Connector uptime', 'time()-process_start_time_seconds'+sel, 's', legend=label, description='Age of each currently scraped connector process; resets after restart.')
+        change(33, 'File descriptor capacity used', '100*process_open_fds'+sel+'/process_max_fds'+sel, 'percent', legend=label)
+        change(52, 'Configuration push outcomes', [('cloudflared_config_local_config_pushes'+sel, label+' pushes'), ('cloudflared_config_local_config_pushes_errors'+sel, label+' errors')], description='Native cumulative configuration pushes and errors since connector start. This is not request latency.')
+        change(53, 'RPC client latency — since connector start', [(f'histogram_quantile({q}, sum by({group},le)(cloudflared_rpc_client_latency_secs_bucket'+sel+'))', label+' '+name) for q,name in [(0.5,'p50'),(0.95,'p95'),(0.99,'p99')]], 's', description='Quantiles of retained control-plane RPC observations since process start, not latency in the selected rate window. Idle control planes need not issue new RPCs. Resets on restart.')
+        change(54, 'Go heap capacity in use', '100*go_memstats_heap_inuse_bytes'+sel+'/(go_memstats_heap_inuse_bytes'+sel+'+go_memstats_heap_idle_bytes'+sel+')', 'percent', legend=label)
+        change(55, 'RPC client observations — since connector start', f'sum by({group})(cloudflared_rpc_client_latency_secs_count'+sel+')', legend=label, description='Actual histogram sample count. No origin proxy latency is inferred when its histogram has no observations.')
     elif uid == 'dockhand-overview-v2':
         change(2, 'Updates available', 'dockhand_updates_available', description='Native measured count per environment, including zero. Missing environments are not invented as zero.', legend='{{env}}')
         change(11, 'Containers by state — fleet total', 'sum by(state)(dockhand_containers)', legend='{{state}}', description='Fleet totals for each state emitted by Dockhand. Running counts per environment are shown separately. An absent exited/created series is not a measured zero.')
