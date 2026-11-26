@@ -4313,7 +4313,7 @@
           "text": "America/Los_Angeles",
           "value": "America/Los_Angeles"
         },
-        "description": "Your local time zone for grouping stats",
+        "description": "Time zone used to group daily statistics. Match it to the dashboard time zone.",
         "hide": 0,
         "includeAll": false,
         "label": "Local Time Zone",
@@ -4345,7 +4345,7 @@
       "1d"
     ]
   },
-  "timezone": "browser",
+  "timezone": "America/Los_Angeles",
   "title": "Garmin Connect Stats",
   "uid": "feiibsx498gsgb",
   "version": 34,

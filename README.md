@@ -74,7 +74,12 @@ sleep summaries, and overnight sensor history follow the dashboard time picker,
 which defaults to 60 days. Click **Last recorded sleep** to zoom into the
 latest session. The stage timeline uses the recorded start and duration of
 each interval. Overnight graphs use finer buckets when zoomed in and leave
-gaps where samples are missing. Set **Local Time Zone** for daily aggregation.
+gaps where samples are missing.
+
+The dashboard uses **America/Los_Angeles** so the live view and PNG exports
+use the same midnight for daily cards. If you change the dashboard time zone,
+set **Local Time Zone** to match for daily aggregation. Use a range that includes
+the recording date when exporting sleep history.
 
 Body Battery is Garmin's wellness estimate. To graph the watch's hardware
 battery level, GarminHomeAssistant from Connect IQ must report a battery sensor
