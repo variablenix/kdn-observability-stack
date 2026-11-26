@@ -36,15 +36,30 @@ class SupportedPanels(unittest.TestCase):
 
     def test_garmin_sample_time_uses_timestamp_not_bpm_and_keeps_gaps(self):
         d = self.models['feiibsx498gsgb']
-        p = {p['id']: p for p in d['panels']}
-        self.assertEqual(p[46]['type'], 'stat')
-        self.assertEqual(p[46]['options']['reduceOptions']['fields'], 'Time')
-        self.assertEqual(p[46]['transformations'][-1]['options']['include']['names'], ['Time'])
-        for id_ in (48, 53, 54, 43, 50, 49, 45, 61, 57, 47):
-            for t in p[id_]['targets']:
-                self.assertIn('fill(null)', t['query'])
-                self.assertNotIn('fill(0)', t['query'])
-        queries = json.dumps([p.get('targets', []) for p in d['panels']])
+        panels = list(builder.walk(d['panels']))
+        by_id = {panel['id']: panel for panel in panels}
+        freshness_sources = {
+            73: ('Device_Name', 'DeviceSync'),
+            74: ('HeartRate', 'HeartRateIntraday'),
+        }
+        for panel_id, (field, measurement) in freshness_sources.items():
+            with self.subTest(panel_id=panel_id):
+                panel = by_id[panel_id]
+                self.assertEqual(panel['type'], 'stat')
+                self.assertEqual(panel['fieldConfig']['defaults']['unit'], 'dateTimeFromNow')
+                self.assertEqual(panel['options']['reduceOptions']['fields'], 'Time')
+                self.assertEqual(panel['transformations'][-1]['options']['include']['names'], ['Time'])
+                self.assertIn(f'SELECT LAST("{field}") FROM "{measurement}"', panel['targets'][0]['query'])
+
+        trends = [panel for panel in panels if panel['type'] == 'timeseries']
+        self.assertTrue(trends)
+        for panel in trends:
+            for target in panel['targets']:
+                with self.subTest(panel=panel['title'], target=target['refId']):
+                    self.assertIn('fill(null)', target['query'])
+                    self.assertNotIn('fill(0)', target['query'])
+
+        queries = json.dumps([panel.get('targets', []) for panel in panels])
         for unavailable in ('ActivityGPS', 'ActivitySummary', 'VO2_Max', 'BodyComposition'):
             self.assertNotIn(unavailable, queries, unavailable)
         # BodyBatteryLevel is wellness data; BatteryLevel was watch charge.
