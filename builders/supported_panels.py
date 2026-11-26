@@ -43,8 +43,8 @@ def replace(panel, title, queries, unit='short', description='', kind=None):
 
 
 def garmin(d):
-    # The maintained Daily trends and Sleep and recovery rows identify the
-    # current export. Only the older import needs the panel repacking below.
+    # The maintained daily activity and sleep rows identify the current export.
+    # Only the older import needs the panel repacking below.
     row_ids = {panel['id'] for panel in d['panels'] if panel['type'] == 'row'}
     if {100, 101} <= row_ids:
         return

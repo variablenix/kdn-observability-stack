@@ -41,6 +41,8 @@ class SupportedPanels(unittest.TestCase):
         freshness_sources = {
             73: ('Device_Name', 'DeviceSync'),
             74: ('HeartRate', 'HeartRateIntraday'),
+            200: ('StepsCount', 'StepsIntraday'),
+            202: ('sleepTimeSeconds', 'SleepSummary'),
         }
         for panel_id, (field, measurement) in freshness_sources.items():
             with self.subTest(panel_id=panel_id):

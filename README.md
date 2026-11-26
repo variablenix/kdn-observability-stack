@@ -68,10 +68,16 @@ InfluxDB dashboards need the correct query language: map the Flux input to a **F
 Import [Garmin Connect Stats](personal/Garmin-Connect-Stats.json) and select the
 InfluxQL data source that reads your Garmin database. The summary shows today’s
 reported steps, the latest heart-rate reading, and separate ages for the last
-watch upload and heart-rate sample. Recent charts keep their own 24-hour or
-local-day windows. Daily trends and sleep history follow the dashboard time
-picker, which defaults to 60 days. Set **Local Time Zone** for daily aggregation.
-The Sleep and recovery row opens on demand. Missing sensor samples leave gaps.
+watch upload, heart-rate sample, step sample, and sleep record. Recent charts
+keep their own 24-hour or local-day windows. Daily activity, Body Battery,
+sleep summaries, and overnight sensor history follow the dashboard time picker,
+which defaults to 60 days. Zoom to a recorded sleep session for detail, and set
+**Local Time Zone** for daily aggregation. Missing samples leave gaps.
+
+Body Battery is Garmin's wellness estimate. To graph the watch's hardware
+battery level, GarminHomeAssistant from Connect IQ must report a battery sensor
+to Home Assistant, and its samples must reach a Grafana data source.
+[GarminHomeAssistant background reporting](https://github.com/house-of-abbey/GarminHomeAssistant/blob/main/BackgroundService.md)
 [Garmin fetcher documentation](https://github.com/arpanghosh8453/garmin-grafana)
 
 Dashboard exports can be refreshed with [the sanitizer](tools/export_sanitized.py), a private binding map and optional private literal redactions. Saved query selections are cleared. Inspect every generated diff: automated masking alone does not prove an export is safe to publish. [Provisioning examples](provisioning/) contain no production credentials.

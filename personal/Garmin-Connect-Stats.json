@@ -291,6 +291,291 @@
       ]
     },
     {
+      "id": 200,
+      "type": "stat",
+      "title": "Step sample age",
+      "description": "Time since the last recorded 15-minute step sample, including zero-step samples.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 4
+      },
+      "timeFrom": "60d",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dateTimeFromNow",
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"StepsCount\") FROM \"StepsIntraday\" WHERE $timeFilter",
+          "resultFormat": "time_series",
+          "alias": "Step sample age"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false,
+          "fields": "Time"
+        }
+      },
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "targetField": "Time",
+                "destinationType": "number"
+              }
+            ]
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 201,
+      "type": "stat",
+      "title": "Resting heart rate today",
+      "description": "Daily resting heart rate reported by Garmin.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "red"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"restingHeartRate\") FROM \"DailyStats\" WHERE $timeFilter AND \"restingHeartRate\" > 0",
+          "resultFormat": "time_series",
+          "alias": "Resting heart rate"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false,
+          "fields": ""
+        }
+      },
+      "timeFrom": "now/d"
+    },
+    {
+      "id": 202,
+      "type": "stat",
+      "title": "Last recorded sleep",
+      "description": "Age of the newest stored sleep session in the last 60 days.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dateTimeFromNow",
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"sleepTimeSeconds\") FROM \"SleepSummary\" WHERE $timeFilter AND \"sleepTimeSeconds\" > 0",
+          "resultFormat": "time_series",
+          "alias": "Last recorded sleep"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false,
+          "fields": "Time"
+        }
+      },
+      "timeFrom": "60d",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "targetField": "Time",
+                "destinationType": "number"
+              }
+            ]
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "Time"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 203,
+      "type": "stat",
+      "title": "Latest Body Battery",
+      "description": "Latest Body Battery reading in the last 24 hours.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"BodyBatteryLevel\") FROM \"BodyBatteryIntraday\" WHERE $timeFilter",
+          "resultFormat": "time_series",
+          "alias": "Body Battery"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false,
+          "fields": ""
+        }
+      },
+      "timeFrom": "24h"
+    },
+    {
+      "id": 102,
+      "type": "row",
+      "title": "Last 24 hours",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      }
+    },
+    {
       "id": 15,
       "type": "timeseries",
       "title": "Heart rate",
@@ -303,7 +588,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 4
+        "y": 9
       },
       "targets": [
         {
@@ -367,7 +652,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 4
+        "y": 9
       },
       "targets": [
         {
@@ -431,7 +716,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 11
+        "y": 16
       },
       "targets": [
         {
@@ -495,7 +780,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 11
+        "y": 16
       },
       "targets": [
         {
@@ -559,7 +844,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 18
+        "y": 23
       },
       "targets": [
         {
@@ -623,7 +908,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 18
+        "y": 23
       },
       "targets": [
         {
@@ -675,17 +960,134 @@
       "timeFrom": "now/d"
     },
     {
+      "id": 204,
+      "type": "histogram",
+      "title": "Heart-rate distribution",
+      "description": "Distribution of positive heart-rate readings over the past 24 hours.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 30
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT \"HeartRate\" FROM \"HeartRateIntraday\" WHERE $timeFilter AND \"HeartRate\" > 0",
+          "resultFormat": "time_series",
+          "alias": "Heart rate"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "red"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "bucketSize": 5,
+        "combine": false,
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "timeFrom": "24h"
+    },
+    {
+      "id": 205,
+      "type": "timeseries",
+      "title": "Steps per hour",
+      "description": "Steps recorded in each hour over the past 24 hours.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 30
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT SUM(\"StepsCount\") FROM \"StepsIntraday\" WHERE $timeFilter GROUP BY time(1h) fill(null)",
+          "resultFormat": "time_series",
+          "alias": "Steps"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "spanNulls": false,
+            "showPoints": "never",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "timeFrom": "24h"
+    },
+    {
       "id": 100,
       "type": "row",
-      "title": "Daily trends",
+      "title": "Daily activity",
+      "collapsed": false,
+      "panels": [],
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
-      },
-      "collapsed": false,
-      "panels": []
+        "y": 37
+      }
     },
     {
       "id": 1,
@@ -700,7 +1102,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 26
+        "y": 38
       },
       "targets": [
         {
@@ -763,7 +1165,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 26
+        "y": 38
       },
       "targets": [
         {
@@ -814,153 +1216,6 @@
       }
     },
     {
-      "id": 58,
-      "type": "timeseries",
-      "title": "Daily heart-rate range",
-      "description": "Minimum, average, and maximum of the heart-rate samples collected each day.",
-      "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUXDB_GARMIN}"
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 33
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB_GARMIN}"
-          },
-          "refId": "A",
-          "rawQuery": true,
-          "query": "SELECT MIN(\"HeartRate\") FROM \"HeartRateIntraday\" WHERE $timeFilter AND \"HeartRate\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
-          "resultFormat": "time_series",
-          "alias": "Low"
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB_GARMIN}"
-          },
-          "refId": "B",
-          "rawQuery": true,
-          "query": "SELECT MEAN(\"HeartRate\") FROM \"HeartRateIntraday\" WHERE $timeFilter AND \"HeartRate\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
-          "resultFormat": "time_series",
-          "alias": "Average"
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB_GARMIN}"
-          },
-          "refId": "C",
-          "rawQuery": true,
-          "query": "SELECT MAX(\"HeartRate\") FROM \"HeartRateIntraday\" WHERE $timeFilter AND \"HeartRate\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
-          "resultFormat": "time_series",
-          "alias": "High"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "bpm",
-          "decimals": 0,
-          "noValue": "No sample",
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 10,
-            "spanNulls": false,
-            "showPoints": "always",
-            "pointSize": 4,
-            "barAlignment": 0,
-            "barWidthFactor": 0.75,
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "showLegend": true,
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      }
-    },
-    {
-      "id": 28,
-      "type": "timeseries",
-      "title": "Resting heart rate by day",
-      "description": "Resting heart rate reported in the daily summary.",
-      "datasource": {
-        "type": "influxdb",
-        "uid": "${DS_INFLUXDB_GARMIN}"
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 33
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB_GARMIN}"
-          },
-          "refId": "A",
-          "rawQuery": true,
-          "query": "SELECT LAST(\"restingHeartRate\") FROM \"DailyStats\" WHERE $timeFilter AND \"restingHeartRate\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
-          "resultFormat": "time_series",
-          "alias": "Resting heart rate"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "bpm",
-          "decimals": 0,
-          "noValue": "No sample",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "red"
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 2,
-            "fillOpacity": 10,
-            "spanNulls": false,
-            "showPoints": "always",
-            "pointSize": 4,
-            "barAlignment": 0,
-            "barWidthFactor": 0.75,
-            "axisPlacement": "auto"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "showLegend": false,
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      }
-    },
-    {
       "id": 10,
       "type": "timeseries",
       "title": "Daily calories",
@@ -973,7 +1228,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 45
       },
       "targets": [
         {
@@ -1079,7 +1334,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 40
+        "y": 45
       },
       "targets": [
         {
@@ -1185,7 +1440,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 47
+        "y": 52
       },
       "targets": [
         {
@@ -1291,7 +1546,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 47
+        "y": 52
       },
       "targets": [
         {
@@ -1385,10 +1640,23 @@
       }
     },
     {
-      "id": 47,
+      "id": 103,
+      "type": "row",
+      "title": "Heart rate, stress and Body Battery",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 59
+      }
+    },
+    {
+      "id": 58,
       "type": "timeseries",
-      "title": "Heart-rate samples by day",
-      "description": "Count of recorded readings per day. This shows coverage across the selected dates.",
+      "title": "Daily heart-rate range",
+      "description": "Minimum, average, and maximum of the heart-rate samples collected each day.",
       "datasource": {
         "type": "influxdb",
         "uid": "${DS_INFLUXDB_GARMIN}"
@@ -1397,7 +1665,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 54
+        "y": 60
       },
       "targets": [
         {
@@ -1407,14 +1675,98 @@
           },
           "refId": "A",
           "rawQuery": true,
-          "query": "SELECT COUNT(\"HeartRate\") FROM \"HeartRateIntraday\" WHERE $timeFilter AND \"HeartRate\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "query": "SELECT MIN(\"HeartRate\") FROM \"HeartRateIntraday\" WHERE $timeFilter AND \"HeartRate\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
           "resultFormat": "time_series",
-          "alias": "Samples"
+          "alias": "Low"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT MEAN(\"HeartRate\") FROM \"HeartRateIntraday\" WHERE $timeFilter AND \"HeartRate\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Average"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "C",
+          "rawQuery": true,
+          "query": "SELECT MAX(\"HeartRate\") FROM \"HeartRateIntraday\" WHERE $timeFilter AND \"HeartRate\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "High"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "locale",
+          "unit": "bpm",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": false,
+            "showPoints": "always",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 28,
+      "type": "timeseries",
+      "title": "Resting heart rate by day",
+      "description": "Resting heart rate reported in the daily summary.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 60
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"restingHeartRate\") FROM \"DailyStats\" WHERE $timeFilter AND \"restingHeartRate\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Resting heart rate"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
           "decimals": 0,
           "noValue": "No sample",
           "color": {
@@ -1422,11 +1774,11 @@
             "fixedColor": "red"
           },
           "custom": {
-            "drawStyle": "bars",
-            "lineWidth": 0,
-            "fillOpacity": 70,
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
             "spanNulls": false,
-            "showPoints": "never",
+            "showPoints": "always",
             "pointSize": 4,
             "barAlignment": 0,
             "barWidthFactor": 0.75,
@@ -1459,8 +1811,8 @@
       "gridPos": {
         "h": 7,
         "w": 12,
-        "x": 12,
-        "y": 54
+        "x": 0,
+        "y": 67
       },
       "targets": [
         {
@@ -1511,601 +1863,2355 @@
       }
     },
     {
+      "id": 206,
+      "type": "timeseries",
+      "title": "Daily stress by level",
+      "description": "Time Garmin classified as resting, low, medium or high stress.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 67
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"restStressDuration\") FROM \"DailyStats\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Rest"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"lowStressDuration\") FROM \"DailyStats\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Low"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "C",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"mediumStressDuration\") FROM \"DailyStats\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Medium"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "D",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"highStressDuration\") FROM \"DailyStats\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "High"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "spanNulls": false,
+            "showPoints": "never",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 207,
+      "type": "timeseries",
+      "title": "Daily Body Battery range",
+      "description": "Body Battery at waking and its daily high and low.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 74
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"bodyBatteryAtWakeTime\") FROM \"DailyStats\" WHERE $timeFilter AND \"bodyBatteryAtWakeTime\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "At wake"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"bodyBatteryHighestValue\") FROM \"DailyStats\" WHERE $timeFilter AND \"bodyBatteryHighestValue\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "High"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "C",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"bodyBatteryLowestValue\") FROM \"DailyStats\" WHERE $timeFilter AND \"bodyBatteryLowestValue\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Low"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 208,
+      "type": "timeseries",
+      "title": "Daily Body Battery charge and drain",
+      "description": "Garmin’s daily Body Battery gains and losses, shown as magnitudes.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 74
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"bodyBatteryChargedValue\") FROM \"DailyStats\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Charge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"bodyBatteryDrainedValue\") FROM \"DailyStats\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Drain"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 209,
+      "type": "timeseries",
+      "title": "Daily oxygen saturation",
+      "description": "Average and lowest SpO₂ in the Garmin daily summary.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 81
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"averageSpo2\") FROM \"DailyStats\" WHERE $timeFilter AND \"averageSpo2\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Average"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"lowestSpo2\") FROM \"DailyStats\" WHERE $timeFilter AND \"lowestSpo2\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Lowest"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 210,
+      "type": "timeseries",
+      "title": "Daily breathing rate",
+      "description": "Average breathing rate from positive intraday samples.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 81
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT MEAN(\"BreathingRate\") FROM \"BreathingRateIntraday\" WHERE $timeFilter AND \"BreathingRate\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Breaths per minute"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "suffix:breaths/min",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
       "id": 101,
       "type": "row",
       "title": "Sleep and recovery",
+      "collapsed": false,
+      "panels": [],
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 61
+        "y": 88
+      }
+    },
+    {
+      "id": 227,
+      "type": "stat",
+      "title": "Last sleep duration",
+      "description": "Duration of the latest recorded sleep session in the last 60 days.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
       },
-      "collapsed": true,
-      "panels": [
+      "gridPos": {
+        "x": 0,
+        "y": 89,
+        "w": 24,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "purple"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "targets": [
         {
-          "id": 32,
-          "type": "timeseries",
-          "title": "Sleep duration",
-          "description": "Total sleep time for nights with a recorded sleep summary.",
           "datasource": {
             "type": "influxdb",
             "uid": "${DS_INFLUXDB_GARMIN}"
           },
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 0,
-            "y": 62
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "A",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"sleepTimeSeconds\") FROM \"SleepSummary\" WHERE $timeFilter AND \"sleepTimeSeconds\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "Sleep duration"
-            }
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"sleepTimeSeconds\") FROM \"SleepSummary\" WHERE $timeFilter AND \"sleepTimeSeconds\" > 0",
+          "resultFormat": "time_series",
+          "alias": "Sleep duration"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
           ],
-          "fieldConfig": {
-            "defaults": {
-              "unit": "s",
-              "decimals": 0,
-              "noValue": "No sample",
-              "color": {
-                "mode": "fixed",
-                "fixedColor": "purple"
-              },
-              "custom": {
-                "drawStyle": "bars",
-                "lineWidth": 0,
-                "fillOpacity": 70,
-                "spanNulls": false,
-                "showPoints": "never",
-                "pointSize": 4,
-                "barAlignment": 0,
-                "barWidthFactor": 0.75,
-                "axisPlacement": "auto"
-              }
-            },
-            "overrides": []
+          "values": false,
+          "fields": ""
+        }
+      },
+      "timeFrom": "60d"
+    },
+    {
+      "id": 225,
+      "type": "piechart",
+      "title": "Last sleep stage breakdown",
+      "description": "Stage durations from the newest recorded sleep session in the last 60 days.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 93,
+        "w": 12,
+        "h": 7
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
           },
-          "options": {
-            "legend": {
-              "showLegend": false,
-              "displayMode": "list",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
+          "refId": "A",
+          "rawQuery": true,
+          "resultFormat": "table",
+          "query": "SELECT \"deepSleepSeconds\", \"lightSleepSeconds\", \"remSleepSeconds\", \"awakeSleepSeconds\" FROM \"SleepSummary\" WHERE $timeFilter AND \"sleepTimeSeconds\" > 0 ORDER BY time DESC LIMIT 1"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "palette-classic"
           }
         },
-        {
-          "id": 12,
-          "type": "timeseries",
-          "title": "Sleep score",
-          "description": "Garmin sleep score for each recorded sleep summary.",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB_GARMIN}"
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 12,
-            "y": 62
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "A",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"sleepScore\") FROM \"SleepSummary\" WHERE $timeFilter AND \"sleepScore\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "Sleep score"
-            }
-          ],
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "decimals": 0,
-              "noValue": "No sample",
-              "color": {
-                "mode": "fixed",
-                "fixedColor": "purple"
-              },
-              "custom": {
-                "drawStyle": "line",
-                "lineWidth": 2,
-                "fillOpacity": 10,
-                "spanNulls": false,
-                "showPoints": "always",
-                "pointSize": 4,
-                "barAlignment": 0,
-                "barWidthFactor": 0.75,
-                "axisPlacement": "auto"
-              }
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Deep"
             },
-            "overrides": []
-          },
-          "options": {
-            "legend": {
-              "showLegend": false,
-              "displayMode": "list",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          }
-        },
-        {
-          "id": 13,
-          "type": "timeseries",
-          "title": "Sleep stages",
-          "description": "Time spent in deep, light, REM, and awake stages for each recorded night.",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB_GARMIN}"
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 0,
-            "y": 69
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "A",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"deepSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "Deep"
-            },
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "B",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"lightSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "Light"
-            },
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "C",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"remSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "REM"
-            },
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "D",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"awakeSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "Awake"
-            }
-          ],
-          "fieldConfig": {
-            "defaults": {
-              "unit": "s",
-              "decimals": 0,
-              "noValue": "No sample",
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "drawStyle": "bars",
-                "lineWidth": 0,
-                "fillOpacity": 70,
-                "spanNulls": false,
-                "showPoints": "never",
-                "pointSize": 4,
-                "barAlignment": 0,
-                "barWidthFactor": 0.75,
-                "axisPlacement": "auto",
-                "stacking": {
-                  "mode": "normal",
-                  "group": "A"
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "purple"
                 }
-              }
-            },
-            "overrides": []
-          },
-          "options": {
-            "legend": {
-              "showLegend": true,
-              "displayMode": "list",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          }
-        },
-        {
-          "id": 48,
-          "type": "timeseries",
-          "title": "Overnight HRV",
-          "description": "The nightly HRV average recorded in Garmin’s sleep summary.",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB_GARMIN}"
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 12,
-            "y": 69
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "A",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"avgOvernightHrv\") FROM \"SleepSummary\" WHERE $timeFilter AND \"avgOvernightHrv\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "Overnight HRV"
-            }
-          ],
-          "fieldConfig": {
-            "defaults": {
-              "unit": "ms",
-              "decimals": 0,
-              "noValue": "No sample",
-              "color": {
-                "mode": "fixed",
-                "fixedColor": "purple"
-              },
-              "custom": {
-                "drawStyle": "line",
-                "lineWidth": 2,
-                "fillOpacity": 10,
-                "spanNulls": false,
-                "showPoints": "always",
-                "pointSize": 4,
-                "barAlignment": 0,
-                "barWidthFactor": 0.75,
-                "axisPlacement": "auto"
-              }
-            },
-            "overrides": []
-          },
-          "options": {
-            "legend": {
-              "showLegend": false,
-              "displayMode": "list",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          }
-        },
-        {
-          "id": 43,
-          "type": "timeseries",
-          "title": "Sleep breathing rate",
-          "description": "Average breathing rate from each recorded sleep summary.",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB_GARMIN}"
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 0,
-            "y": 76
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "A",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"averageRespirationValue\") FROM \"SleepSummary\" WHERE $timeFilter AND \"averageRespirationValue\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "Sleep breathing rate"
-            }
-          ],
-          "fieldConfig": {
-            "defaults": {
-              "unit": "suffix: br/min",
-              "decimals": 1,
-              "noValue": "No sample",
-              "color": {
-                "mode": "fixed",
-                "fixedColor": "teal"
-              },
-              "custom": {
-                "drawStyle": "line",
-                "lineWidth": 2,
-                "fillOpacity": 10,
-                "spanNulls": false,
-                "showPoints": "always",
-                "pointSize": 4,
-                "barAlignment": 0,
-                "barWidthFactor": 0.75,
-                "axisPlacement": "auto"
-              }
-            },
-            "overrides": []
-          },
-          "options": {
-            "legend": {
-              "showLegend": false,
-              "displayMode": "list",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          }
-        },
-        {
-          "id": 61,
-          "type": "timeseries",
-          "title": "Body Battery change during sleep",
-          "description": "Garmin’s recorded overnight Body Battery change.",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB_GARMIN}"
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 12,
-            "y": 76
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "A",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"bodyBatteryChange\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "Overnight change"
-            }
-          ],
-          "fieldConfig": {
-            "defaults": {
-              "unit": "short",
-              "decimals": 0,
-              "noValue": "No sample",
-              "color": {
-                "mode": "fixed",
-                "fixedColor": "green"
-              },
-              "custom": {
-                "drawStyle": "bars",
-                "lineWidth": 0,
-                "fillOpacity": 70,
-                "spanNulls": false,
-                "showPoints": "never",
-                "pointSize": 4,
-                "barAlignment": 0,
-                "barWidthFactor": 0.75,
-                "axisPlacement": "auto"
-              }
-            },
-            "overrides": []
-          },
-          "options": {
-            "legend": {
-              "showLegend": false,
-              "displayMode": "list",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          }
-        },
-        {
-          "id": 31,
-          "type": "timeseries",
-          "title": "Average overnight SpO₂",
-          "description": "Nightly average only on nights when Garmin records an SpO₂ measurement.",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB_GARMIN}"
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 0,
-            "y": 83
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "A",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"averageSpO2Value\") FROM \"SleepSummary\" WHERE $timeFilter AND \"averageSpO2Value\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "Average SpO₂"
-            }
-          ],
-          "fieldConfig": {
-            "defaults": {
-              "unit": "percent",
-              "decimals": 1,
-              "noValue": "No sample",
-              "color": {
-                "mode": "fixed",
-                "fixedColor": "purple"
-              },
-              "custom": {
-                "drawStyle": "line",
-                "lineWidth": 2,
-                "fillOpacity": 10,
-                "spanNulls": false,
-                "showPoints": "always",
-                "pointSize": 4,
-                "barAlignment": 0,
-                "barWidthFactor": 0.75,
-                "axisPlacement": "auto"
-              }
-            },
-            "overrides": []
-          },
-          "options": {
-            "legend": {
-              "showLegend": false,
-              "displayMode": "list",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "single",
-              "sort": "none"
-            }
-          }
-        },
-        {
-          "id": 54,
-          "type": "timeseries",
-          "title": "Sleep interruptions",
-          "description": "Awakenings and restless moments as reported by Garmin.",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${DS_INFLUXDB_GARMIN}"
-          },
-          "gridPos": {
-            "h": 7,
-            "w": 12,
-            "x": 12,
-            "y": 83
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "A",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"awakeCount\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "Awakenings"
-            },
-            {
-              "datasource": {
-                "type": "influxdb",
-                "uid": "${DS_INFLUXDB_GARMIN}"
-              },
-              "refId": "B",
-              "rawQuery": true,
-              "query": "SELECT LAST(\"restlessMomentsCount\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
-              "resultFormat": "time_series",
-              "alias": "Restless moments"
-            }
-          ],
-          "fieldConfig": {
-            "defaults": {
-              "unit": "locale",
-              "decimals": 0,
-              "noValue": "No sample",
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "drawStyle": "bars",
-                "lineWidth": 0,
-                "fillOpacity": 70,
-                "spanNulls": false,
-                "showPoints": "never",
-                "pointSize": 4,
-                "barAlignment": 0,
-                "barWidthFactor": 0.75,
-                "axisPlacement": "auto"
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Awakenings"
-                },
-                "properties": [
-                  {
-                    "id": "custom.barAlignment",
-                    "value": -1
-                  },
-                  {
-                    "id": "custom.barWidthFactor",
-                    "value": 0.42
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Restless moments"
-                },
-                "properties": [
-                  {
-                    "id": "custom.barAlignment",
-                    "value": 1
-                  },
-                  {
-                    "id": "custom.barWidthFactor",
-                    "value": 0.42
-                  }
-                ]
               }
             ]
           },
-          "options": {
-            "legend": {
-              "showLegend": true,
-              "displayMode": "list",
-              "placement": "bottom"
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Light"
             },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "REM"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Awake"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "pieType": "donut",
+        "displayLabels": [],
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "right",
+          "values": [
+            "percent"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "timeFrom": "60d",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "time": true
+            },
+            "renameByName": {
+              "deepSleepSeconds": "Deep",
+              "lightSleepSeconds": "Light",
+              "remSleepSeconds": "REM",
+              "awakeSleepSeconds": "Awake"
             }
           }
         }
       ]
+    },
+    {
+      "id": 226,
+      "type": "piechart",
+      "title": "Average sleep stage breakdown",
+      "description": "Mean durations by stage across recorded sleep sessions in the selected range.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 93,
+        "w": 12,
+        "h": 7
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "resultFormat": "time_series",
+          "alias": "Deep",
+          "query": "SELECT MEAN(\"deepSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter AND \"sleepTimeSeconds\" > 0"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "B",
+          "rawQuery": true,
+          "resultFormat": "time_series",
+          "alias": "Light",
+          "query": "SELECT MEAN(\"lightSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter AND \"sleepTimeSeconds\" > 0"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "C",
+          "rawQuery": true,
+          "resultFormat": "time_series",
+          "alias": "REM",
+          "query": "SELECT MEAN(\"remSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter AND \"sleepTimeSeconds\" > 0"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "D",
+          "rawQuery": true,
+          "resultFormat": "time_series",
+          "alias": "Awake",
+          "query": "SELECT MEAN(\"awakeSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter AND \"sleepTimeSeconds\" > 0"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Deep"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "purple"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Light"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "REM"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Awake"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "pieType": "donut",
+        "displayLabels": [],
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "right",
+          "values": [
+            "percent"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 32,
+      "type": "timeseries",
+      "title": "Sleep duration",
+      "description": "Total sleep time for nights with a recorded sleep summary.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 100
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"sleepTimeSeconds\") FROM \"SleepSummary\" WHERE $timeFilter AND \"sleepTimeSeconds\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Sleep duration"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "purple"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 0,
+            "fillOpacity": 70,
+            "spanNulls": false,
+            "showPoints": "never",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "Sleep score",
+      "description": "Garmin sleep score for each recorded sleep summary.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 100
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"sleepScore\") FROM \"SleepSummary\" WHERE $timeFilter AND \"sleepScore\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Sleep score"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "purple"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": false,
+            "showPoints": "always",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "Sleep stages",
+      "description": "Time spent in deep, light, REM, and awake stages for each recorded night.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 107
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"deepSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Deep"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"lightSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Light"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "C",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"remSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "REM"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "D",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"awakeSleepSeconds\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Awake"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 0,
+            "fillOpacity": 70,
+            "spanNulls": false,
+            "showPoints": "never",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 48,
+      "type": "timeseries",
+      "title": "Overnight HRV",
+      "description": "The nightly HRV average recorded in Garmin’s sleep summary.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 107
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"avgOvernightHrv\") FROM \"SleepSummary\" WHERE $timeFilter AND \"avgOvernightHrv\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Overnight HRV"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "purple"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": false,
+            "showPoints": "always",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 43,
+      "type": "timeseries",
+      "title": "Sleep breathing rate",
+      "description": "Average breathing rate from each recorded sleep summary.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 114
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"averageRespirationValue\") FROM \"SleepSummary\" WHERE $timeFilter AND \"averageRespirationValue\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Sleep breathing rate"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "suffix: br/min",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "teal"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": false,
+            "showPoints": "always",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 61,
+      "type": "timeseries",
+      "title": "Body Battery change during sleep",
+      "description": "Garmin’s recorded overnight Body Battery change.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 114
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"bodyBatteryChange\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Overnight change"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 0,
+            "fillOpacity": 70,
+            "spanNulls": false,
+            "showPoints": "never",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 31,
+      "type": "timeseries",
+      "title": "Average overnight SpO₂",
+      "description": "Nightly average only on nights when Garmin records an SpO₂ measurement.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 121
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"averageSpO2Value\") FROM \"SleepSummary\" WHERE $timeFilter AND \"averageSpO2Value\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Average SpO₂"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "purple"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": false,
+            "showPoints": "always",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 54,
+      "type": "timeseries",
+      "title": "Sleep interruptions",
+      "description": "Awakenings and restless moments as reported by Garmin.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 121
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"awakeCount\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Awakenings"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"restlessMomentsCount\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Restless moments"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "locale",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 0,
+            "fillOpacity": 70,
+            "spanNulls": false,
+            "showPoints": "never",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Awakenings"
+            },
+            "properties": [
+              {
+                "id": "custom.barAlignment",
+                "value": -1
+              },
+              {
+                "id": "custom.barWidthFactor",
+                "value": 0.42
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Restless moments"
+            },
+            "properties": [
+              {
+                "id": "custom.barAlignment",
+                "value": 1
+              },
+              {
+                "id": "custom.barWidthFactor",
+                "value": 0.42
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 211,
+      "type": "timeseries",
+      "title": "Overnight skin temperature deviation",
+      "description": "Garmin’s average overnight change from personal baseline in degrees Celsius.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 128
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"avgSkinTempDeviationC\") FROM \"SleepSummary\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Deviation"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "purple"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "spanNulls": false,
+            "showPoints": "never",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 212,
+      "type": "timeseries",
+      "title": "Average sleep stress",
+      "description": "Garmin’s average overnight stress score by date.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 128
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"avgSleepStress\") FROM \"SleepSummary\" WHERE $timeFilter AND \"avgSleepStress\" >= 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Sleep stress"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "orange"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 213,
+      "type": "timeseries",
+      "title": "Overnight oxygen saturation range",
+      "description": "Lowest and highest overnight SpO₂ reported for each night.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 135
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"lowestSpO2Value\") FROM \"SleepSummary\" WHERE $timeFilter AND \"lowestSpO2Value\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Lowest"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"highestSpO2Value\") FROM \"SleepSummary\" WHERE $timeFilter AND \"highestSpO2Value\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Highest"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 214,
+      "type": "timeseries",
+      "title": "Overnight breathing rate range",
+      "description": "Lowest and highest breathing rates reported for each night.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 135
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"lowestRespirationValue\") FROM \"SleepSummary\" WHERE $timeFilter AND \"lowestRespirationValue\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Lowest"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"highestRespirationValue\") FROM \"SleepSummary\" WHERE $timeFilter AND \"highestRespirationValue\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Highest"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "suffix:breaths/min",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": true,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 104,
+      "type": "row",
+      "title": "Sleep sensor history",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 142
+      }
+    },
+    {
+      "id": 215,
+      "type": "status-history",
+      "title": "Sleep stage changes",
+      "description": "Recorded sleep stage changes in the selected range. Zoom to an individual sleep session for detail. Bars mark recorded changes.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 143
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT LAST(\"SleepStageLevel\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"SleepStageLevel\" >= 0 AND \"SleepStageLevel\" <= 3 GROUP BY time(5m) fill(null)",
+          "resultFormat": "time_series",
+          "alias": "Stage"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "Deep",
+                  "color": "purple",
+                  "index": 0
+                },
+                "1": {
+                  "text": "Light",
+                  "color": "blue",
+                  "index": 1
+                },
+                "2": {
+                  "text": "REM",
+                  "color": "green",
+                  "index": 2
+                },
+                "3": {
+                  "text": "Awake",
+                  "color": "orange",
+                  "index": 3
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "mergeValues": true,
+        "showValue": "auto",
+        "alignValue": "center",
+        "rowHeight": 0.75,
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 216,
+      "type": "timeseries",
+      "title": "Heart rate during sleep",
+      "description": "Fifteen-minute averages of recorded sleep heart rate.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 148
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT MEAN(\"heartRate\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"heartRate\" > 0 GROUP BY time(15m) fill(null)",
+          "resultFormat": "time_series",
+          "alias": "Heart rate during sleep"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bpm",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "red"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 217,
+      "type": "timeseries",
+      "title": "HRV during sleep",
+      "description": "Fifteen-minute averages of recorded overnight heart-rate variability.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 148
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT MEAN(\"hrvValue\") FROM \"HRV_Intraday\" WHERE $timeFilter AND \"hrvValue\" > 0 GROUP BY time(15m) fill(null)",
+          "resultFormat": "time_series",
+          "alias": "HRV during sleep"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "purple"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 218,
+      "type": "timeseries",
+      "title": "Breathing during sleep",
+      "description": "Fifteen-minute averages of breathing samples recorded during sleep.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 155
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT MEAN(\"respirationValue\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"respirationValue\" > 0 GROUP BY time(15m) fill(null)",
+          "resultFormat": "time_series",
+          "alias": "Breathing during sleep"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "suffix:breaths/min",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 219,
+      "type": "timeseries",
+      "title": "Oxygen saturation during sleep",
+      "description": "Fifteen-minute averages of recorded overnight SpO₂ readings.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 155
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT MEAN(\"spo2Reading\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"spo2Reading\" > 0 GROUP BY time(15m) fill(null)",
+          "resultFormat": "time_series",
+          "alias": "Oxygen saturation during sleep"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 220,
+      "type": "timeseries",
+      "title": "Movement during sleep",
+      "description": "Garmin’s recorded sleep movement levels, averaged in fifteen-minute intervals.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 162
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT MEAN(\"SleepMovementActivityLevel\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"SleepMovementActivityLevel\" >= 0 GROUP BY time(15m) fill(null)",
+          "resultFormat": "time_series",
+          "alias": "Movement during sleep"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 1,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "orange"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 221,
+      "type": "timeseries",
+      "title": "Body Battery during sleep",
+      "description": "Fifteen-minute averages of recorded Body Battery during sleep.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 162
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT MEAN(\"bodyBattery\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"bodyBattery\" > 0 GROUP BY time(15m) fill(null)",
+          "resultFormat": "time_series",
+          "alias": "Body Battery during sleep"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 222,
+      "type": "timeseries",
+      "title": "Stress during sleep",
+      "description": "Fifteen-minute averages of recorded overnight stress scores.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 169
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT MEAN(\"stressValue\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"stressValue\" >= 0 GROUP BY time(15m) fill(null)",
+          "resultFormat": "time_series",
+          "alias": "Stress during sleep"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "orange"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 12,
+            "spanNulls": false,
+            "showPoints": "auto",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 105,
+      "type": "row",
+      "title": "Data coverage",
+      "collapsed": false,
+      "panels": [],
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 175
+      }
+    },
+    {
+      "id": 47,
+      "type": "timeseries",
+      "title": "Heart-rate samples by day",
+      "description": "Count of recorded readings per day. This shows coverage across the selected dates.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 176
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT COUNT(\"HeartRate\") FROM \"HeartRateIntraday\" WHERE $timeFilter AND \"HeartRate\" > 0 GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Samples"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "locale",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "red"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 0,
+            "fillOpacity": 70,
+            "spanNulls": false,
+            "showPoints": "never",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 223,
+      "type": "timeseries",
+      "title": "Step samples by day",
+      "description": "Count of recorded step intervals, including intervals with zero steps.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 176
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT COUNT(\"StepsCount\") FROM \"StepsIntraday\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Step samples"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "spanNulls": false,
+            "showPoints": "never",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 224,
+      "type": "timeseries",
+      "title": "Watch uploads by day",
+      "description": "Count of upload timestamps recorded by the Garmin fetcher.",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${DS_INFLUXDB_GARMIN}"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 176
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${DS_INFLUXDB_GARMIN}"
+          },
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT COUNT(\"Device_Name\") FROM \"DeviceSync\" WHERE $timeFilter GROUP BY time(1d) fill(null) tz('$TimeZone')",
+          "resultFormat": "time_series",
+          "alias": "Watch uploads"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "noValue": "No sample",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          },
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 2,
+            "fillOpacity": 60,
+            "spanNulls": false,
+            "showPoints": "never",
+            "pointSize": 4,
+            "barAlignment": 0,
+            "barWidthFactor": 0.75,
+            "axisPlacement": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "showLegend": false,
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
     }
   ],
   "preload": false,
@@ -2161,7 +4267,7 @@
   "title": "Garmin Connect Stats",
   "uid": "feiibsx498gsgb",
   "version": 34,
-  "description": "Garmin watch sync, recent activity, and historical trends from Garmin Connect. Gaps show periods without samples.",
+  "description": "Garmin watch uploads, recent readings, daily activity, and detailed sleep history from recorded samples.",
   "__inputs": [
     {
       "name": "DS_INFLUXDB_GARMIN",
