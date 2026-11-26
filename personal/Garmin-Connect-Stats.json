@@ -430,7 +430,7 @@
       "id": 202,
       "type": "stat",
       "title": "Last recorded sleep",
-      "description": "Age of the newest stored sleep session in the last 60 days.",
+      "description": "Age of the newest stored sleep session in the last 60 days. Click the value to open the session and its sensor graphs.",
       "datasource": {
         "type": "influxdb",
         "uid": "${DS_INFLUXDB_GARMIN}"
@@ -448,7 +448,14 @@
           "color": {
             "mode": "fixed",
             "fixedColor": "text"
-          }
+          },
+          "links": [
+            {
+              "title": "Open the latest recorded sleep session",
+              "url": "/d/feiibsx498gsgb/garmin-connect-stats?time=${__value.raw}&time.window=86400000&${TimeZone:queryparam}",
+              "targetBlank": false
+            }
+          ]
         },
         "overrides": []
       },
@@ -3492,9 +3499,9 @@
     },
     {
       "id": 215,
-      "type": "status-history",
-      "title": "Sleep stage changes",
-      "description": "Recorded sleep stage changes in the selected range. Zoom to an individual sleep session for detail. Bars mark recorded changes.",
+      "type": "state-timeline",
+      "title": "Sleep stage timeline",
+      "description": "Deep, light, REM and awake intervals use the watch’s recorded start and duration. Zoom with the Last recorded sleep card for a session view.",
       "datasource": {
         "type": "influxdb",
         "uid": "${DS_INFLUXDB_GARMIN}"
@@ -3513,9 +3520,8 @@
           },
           "refId": "A",
           "rawQuery": true,
-          "query": "SELECT LAST(\"SleepStageLevel\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"SleepStageLevel\" >= 0 AND \"SleepStageLevel\" <= 3 GROUP BY time(5m) fill(null)",
-          "resultFormat": "time_series",
-          "alias": "Stage"
+          "query": "SELECT \"SleepStageLevel\" AS \"Stage\", \"SleepStageSeconds\" * 1000 AS \"DurationMs\" FROM \"SleepIntraday\" WHERE $timeFilter AND \"SleepStageSeconds\" > 0 AND \"SleepStageLevel\" >= 0 AND \"SleepStageLevel\" <= 3",
+          "resultFormat": "table"
         }
       ],
       "fieldConfig": {
@@ -3568,13 +3574,79 @@
           "mode": "single",
           "sort": "none"
         }
-      }
+      },
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "targetField": "Time",
+                "destinationType": "number"
+              }
+            ]
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "timeSeries": false,
+            "binary": {
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Time"
+                }
+              },
+              "operator": "+",
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "DurationMs"
+                }
+              }
+            },
+            "alias": "End"
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "targetField": "Time",
+                "destinationType": "time"
+              },
+              {
+                "targetField": "End",
+                "destinationType": "time"
+              }
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "DurationMs": true
+            },
+            "indexByName": {
+              "Time": 0,
+              "End": 1,
+              "Stage": 2,
+              "DurationMs": 3
+            },
+            "renameByName": {}
+          }
+        }
+      ]
     },
     {
       "id": 216,
       "type": "timeseries",
       "title": "Heart rate during sleep",
-      "description": "Fifteen-minute averages of recorded sleep heart rate.",
+      "description": "Averages of recorded sleep heart rate.",
       "datasource": {
         "type": "influxdb",
         "uid": "${DS_INFLUXDB_GARMIN}"
@@ -3593,7 +3665,7 @@
           },
           "refId": "A",
           "rawQuery": true,
-          "query": "SELECT MEAN(\"heartRate\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"heartRate\" > 0 GROUP BY time(15m) fill(null)",
+          "query": "SELECT MEAN(\"heartRate\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"heartRate\" > 0 GROUP BY time($__interval) fill(null)",
           "resultFormat": "time_series",
           "alias": "Heart rate during sleep"
         }
@@ -3631,13 +3703,14 @@
           "mode": "single",
           "sort": "none"
         }
-      }
+      },
+      "interval": "5m"
     },
     {
       "id": 217,
       "type": "timeseries",
       "title": "HRV during sleep",
-      "description": "Fifteen-minute averages of recorded overnight heart-rate variability.",
+      "description": "Averages of recorded overnight heart-rate variability.",
       "datasource": {
         "type": "influxdb",
         "uid": "${DS_INFLUXDB_GARMIN}"
@@ -3656,7 +3729,7 @@
           },
           "refId": "A",
           "rawQuery": true,
-          "query": "SELECT MEAN(\"hrvValue\") FROM \"HRV_Intraday\" WHERE $timeFilter AND \"hrvValue\" > 0 GROUP BY time(15m) fill(null)",
+          "query": "SELECT MEAN(\"hrvValue\") FROM \"HRV_Intraday\" WHERE $timeFilter AND \"hrvValue\" > 0 GROUP BY time($__interval) fill(null)",
           "resultFormat": "time_series",
           "alias": "HRV during sleep"
         }
@@ -3694,13 +3767,14 @@
           "mode": "single",
           "sort": "none"
         }
-      }
+      },
+      "interval": "5m"
     },
     {
       "id": 218,
       "type": "timeseries",
       "title": "Breathing during sleep",
-      "description": "Fifteen-minute averages of breathing samples recorded during sleep.",
+      "description": "Averages of breathing samples recorded during sleep.",
       "datasource": {
         "type": "influxdb",
         "uid": "${DS_INFLUXDB_GARMIN}"
@@ -3719,7 +3793,7 @@
           },
           "refId": "A",
           "rawQuery": true,
-          "query": "SELECT MEAN(\"respirationValue\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"respirationValue\" > 0 GROUP BY time(15m) fill(null)",
+          "query": "SELECT MEAN(\"respirationValue\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"respirationValue\" > 0 GROUP BY time($__interval) fill(null)",
           "resultFormat": "time_series",
           "alias": "Breathing during sleep"
         }
@@ -3757,13 +3831,14 @@
           "mode": "single",
           "sort": "none"
         }
-      }
+      },
+      "interval": "5m"
     },
     {
       "id": 219,
       "type": "timeseries",
       "title": "Oxygen saturation during sleep",
-      "description": "Fifteen-minute averages of recorded overnight SpO₂ readings.",
+      "description": "Averages of recorded overnight SpO₂ readings.",
       "datasource": {
         "type": "influxdb",
         "uid": "${DS_INFLUXDB_GARMIN}"
@@ -3782,7 +3857,7 @@
           },
           "refId": "A",
           "rawQuery": true,
-          "query": "SELECT MEAN(\"spo2Reading\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"spo2Reading\" > 0 GROUP BY time(15m) fill(null)",
+          "query": "SELECT MEAN(\"spo2Reading\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"spo2Reading\" > 0 GROUP BY time($__interval) fill(null)",
           "resultFormat": "time_series",
           "alias": "Oxygen saturation during sleep"
         }
@@ -3820,13 +3895,14 @@
           "mode": "single",
           "sort": "none"
         }
-      }
+      },
+      "interval": "5m"
     },
     {
       "id": 220,
       "type": "timeseries",
       "title": "Movement during sleep",
-      "description": "Garmin’s recorded sleep movement levels, averaged in fifteen-minute intervals.",
+      "description": "Garmin’s recorded sleep movement levels, averaged in the chart interval.",
       "datasource": {
         "type": "influxdb",
         "uid": "${DS_INFLUXDB_GARMIN}"
@@ -3845,7 +3921,7 @@
           },
           "refId": "A",
           "rawQuery": true,
-          "query": "SELECT MEAN(\"SleepMovementActivityLevel\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"SleepMovementActivityLevel\" >= 0 GROUP BY time(15m) fill(null)",
+          "query": "SELECT MEAN(\"SleepMovementActivityLevel\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"SleepMovementActivityLevel\" >= 0 GROUP BY time($__interval) fill(null)",
           "resultFormat": "time_series",
           "alias": "Movement during sleep"
         }
@@ -3883,13 +3959,14 @@
           "mode": "single",
           "sort": "none"
         }
-      }
+      },
+      "interval": "5m"
     },
     {
       "id": 221,
       "type": "timeseries",
       "title": "Body Battery during sleep",
-      "description": "Fifteen-minute averages of recorded Body Battery during sleep.",
+      "description": "Averages of recorded Body Battery during sleep.",
       "datasource": {
         "type": "influxdb",
         "uid": "${DS_INFLUXDB_GARMIN}"
@@ -3908,7 +3985,7 @@
           },
           "refId": "A",
           "rawQuery": true,
-          "query": "SELECT MEAN(\"bodyBattery\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"bodyBattery\" > 0 GROUP BY time(15m) fill(null)",
+          "query": "SELECT MEAN(\"bodyBattery\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"bodyBattery\" > 0 GROUP BY time($__interval) fill(null)",
           "resultFormat": "time_series",
           "alias": "Body Battery during sleep"
         }
@@ -3946,13 +4023,14 @@
           "mode": "single",
           "sort": "none"
         }
-      }
+      },
+      "interval": "5m"
     },
     {
       "id": 222,
       "type": "timeseries",
       "title": "Stress during sleep",
-      "description": "Fifteen-minute averages of recorded overnight stress scores.",
+      "description": "Averages of recorded overnight stress scores.",
       "datasource": {
         "type": "influxdb",
         "uid": "${DS_INFLUXDB_GARMIN}"
@@ -3971,7 +4049,7 @@
           },
           "refId": "A",
           "rawQuery": true,
-          "query": "SELECT MEAN(\"stressValue\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"stressValue\" >= 0 GROUP BY time(15m) fill(null)",
+          "query": "SELECT MEAN(\"stressValue\") FROM \"SleepIntraday\" WHERE $timeFilter AND \"stressValue\" >= 0 GROUP BY time($__interval) fill(null)",
           "resultFormat": "time_series",
           "alias": "Stress during sleep"
         }
@@ -4009,7 +4087,8 @@
           "mode": "single",
           "sort": "none"
         }
-      }
+      },
+      "interval": "5m"
     },
     {
       "id": 105,

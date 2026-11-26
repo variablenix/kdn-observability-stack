@@ -71,8 +71,10 @@ reported steps, the latest heart-rate reading, and separate ages for the last
 watch upload, heart-rate sample, step sample, and sleep record. Recent charts
 keep their own 24-hour or local-day windows. Daily activity, Body Battery,
 sleep summaries, and overnight sensor history follow the dashboard time picker,
-which defaults to 60 days. Zoom to a recorded sleep session for detail, and set
-**Local Time Zone** for daily aggregation. Missing samples leave gaps.
+which defaults to 60 days. Click **Last recorded sleep** to zoom into the
+latest session. The stage timeline uses the recorded start and duration of
+each interval. Overnight graphs use finer buckets when zoomed in and leave
+gaps where samples are missing. Set **Local Time Zone** for daily aggregation.
 
 Body Battery is Garmin's wellness estimate. To graph the watch's hardware
 battery level, GarminHomeAssistant from Connect IQ must report a battery sensor
